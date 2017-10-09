@@ -39,7 +39,9 @@ class DataTable extends BaseComponent {
 	render () {
 		this.fire('pre-render');
 		this.renderTemplate();
-		this.renderHeader(getColumns(this.data));
+		this.columns = getColumns(this.data);
+		this.renderHeader(this.columns);
+		this.renderBody(this.data.items, this.columns)
 	}
 
 	// is overwritten by scrollable
@@ -67,6 +69,26 @@ class DataTable extends BaseComponent {
 			}, tr);
 		});
 		this.fire('render-header', {thead: this.thead});
+	}
+
+	renderBody (items, columns) {
+		const exclude = this.exclude || [];
+		dom.clean(this.tbody, true);
+
+		items.forEach((item, i) => {
+			item.index = i;
+			let
+				html, css, key,
+				tr = dom('tr', { 'data-index': i, 'data-id': item.id }, this.tbody);
+			columns.forEach((col) => {
+				key = col.key || col;
+				html = item[key];
+				css = key;
+				dom('td', {html: html, 'data-field': key, tabIndex: 1, css:css}, tr);
+			});
+		});
+		this.fire('render-body', {tbody: this.tbody});
+
 	}
 }
 
