@@ -1,8 +1,10 @@
 const BaseComponent = require('@clubajax/base-component');
 const dom = require('@clubajax/dom');
+const sortable = require('./sortable');
+const clickable = require('./clickable');
 
-const props = ['data'];
-const bools = [];
+const props = ['data', 'sort', 'dir'];
+const bools = ['sortable'];
 
 class DataTable extends BaseComponent {
 
@@ -23,14 +25,22 @@ class DataTable extends BaseComponent {
 	}
 
 	onData (value) {
-		console.log('DATA', value);
+		console.log('DATA', this.DOMSTATE, this.sortable, value);
+		this.mixPlugins();
 		clearTimeout(this.noDataTimer);
 		onDomReady(this, () => {
 			this.render();
 		});
 	}
 
+	mixPlugins () {
+		sortable.call(this);
+		clickable.call(this);
+		this.mixPlugins = noop;
+	}
+
 	domReady () {
+		console.log('attr:', this.sortable);
 		this.noDataTimer = setTimeout(() => {
 			console.warn('No data');
 		}, 1000);
@@ -41,7 +51,9 @@ class DataTable extends BaseComponent {
 		this.renderTemplate();
 		this.columns = getColumns(this.data);
 		this.renderHeader(this.columns);
-		this.renderBody(this.data.items, this.columns)
+		this.renderBody(this.data.items, this.columns);
+
+		this.fire('render', {table: this.table || this, thead: this.thead, tbody: this.tbody});
 	}
 
 	// is overwritten by scrollable
@@ -102,6 +114,10 @@ function getColumns (data) {
 			label: data.columns[key]
 		};
 	});
+}
+
+function noop () {
+
 }
 customElements.define('data-table', DataTable);
 

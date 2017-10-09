@@ -69,17 +69,30 @@
 					bp: 150
 				}
 			]
-		}
+		};
 
 		suite('create / destroy', function () {
 			test('it should...', function () {
-				var node = dom('data-table', { data: data1 }, body);
+				var node = dom('data-table', { data: data1, sortable: true  }, body);
 			});
 		});
 
 	});
 
 	window.mocha.run();
+
+	function testInheritance () {
+		class A {
+			constructor () {
+				console.log('A');
+			}
+		}
+
+		console.log('A::', A.prototype);
+
+		new A();
+	}
+	//testInheritance();
 
 </script>
 </body>
