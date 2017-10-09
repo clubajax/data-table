@@ -1,0 +1,9 @@
+{
+	"version": 3,
+	"file": "data-table.css",
+	"sources": [
+		"../src/data-table.scss"
+	],
+	"names": [],
+	"mappings": "AAAA,AAAA,UAAU,CAAA;EACN,OAAO,EAAE,KAAK,GACjB"
+}

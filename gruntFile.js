@@ -160,7 +160,7 @@ module.exports = function (grunt) {
     // watch build task
     grunt.registerTask('build-dev', function (which) {
         console.time('build');
-		grunt.task.run('sass');
+		grunt.task.run('sass:dev');
         grunt.task.run('browserify:dev');
 
     });
