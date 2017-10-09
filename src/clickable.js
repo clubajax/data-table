@@ -52,7 +52,6 @@ const Clickable = {
 				cell: cell,
 				target: event.target
 			};
-		console.log('head', emitEvent);
 		if(cell) {
 			this.fire('header-click', emitEvent);
 		}

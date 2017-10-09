@@ -73,7 +73,10 @@
 
 		suite('create / destroy', function () {
 			test('it should...', function () {
-				var node = dom('data-table', { data: data1, sortable: true  }, body);
+				var node = dom('data-table', { data: data1, sortable: true, clickable: true, sort: 'weight, desc' }, body);
+				setTimeout(() => {
+					//node.sort = 'age, desc';
+				}, 100);
 			});
 		});
 

@@ -2,8 +2,9 @@ const BaseComponent = require('@clubajax/base-component');
 const dom = require('@clubajax/dom');
 const sortable = require('./sortable');
 const clickable = require('./clickable');
+const util = require('./util');
 
-const props = ['data', 'sort', 'dir'];
+const props = ['data', 'sort'];
 const bools = ['sortable'];
 
 class DataTable extends BaseComponent {
@@ -25,7 +26,8 @@ class DataTable extends BaseComponent {
 	}
 
 	onData (value) {
-		console.log('DATA', this.DOMSTATE, this.sortable, value);
+		this.orgItems = value.items;
+		this.items = [...value.items];
 		this.mixPlugins();
 		clearTimeout(this.noDataTimer);
 		onDomReady(this, () => {
@@ -40,7 +42,6 @@ class DataTable extends BaseComponent {
 	}
 
 	domReady () {
-		console.log('attr:', this.sortable);
 		this.noDataTimer = setTimeout(() => {
 			console.warn('No data');
 		}, 1000);
@@ -49,9 +50,12 @@ class DataTable extends BaseComponent {
 	render () {
 		this.fire('pre-render');
 		this.renderTemplate();
-		this.columns = getColumns(this.data);
-		this.renderHeader(this.columns);
-		this.renderBody(this.data.items, this.columns);
+		const columns = getColumns(this.data);
+		if (!util.isEqual(columns, this.columns)) {
+			this.columns = columns;
+			this.renderHeader(this.columns);
+		}
+		this.renderBody(this.items, this.columns);
 
 		this.fire('render', {table: this.table || this, thead: this.thead, tbody: this.tbody});
 	}

@@ -12,6 +12,17 @@ function bindMethods (object, context) {
 	}
 }
 
+function isEqual (a, b) {
+	if (a === b) {
+		return true;
+	}
+	if (!a && b || a && !b) {
+		return false;
+	}
+	return JSON.stringify(a) === JSON.stringify(b);
+}
+
 module.exports = {
-	bindMethods
+	bindMethods,
+	isEqual
 };
