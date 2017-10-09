@@ -1,3 +1,29 @@
+$tbl-brd: 2px solid #ccc;
+$td-brd: 1px solid #eee;
+$th-brd: 1px solid #aaa;
+$head-bk: #eee;
 data-table{
     display: block;
+    table{
+        width: 100%;
+        border-collapse: collapse;
+        border: $tbl-brd;
+        font-size: 13px;
+        thead{
+            background-color: $head-bk;
+            border-bottom: $tbl-brd;
+            th{
+                border: $th-brd;
+                font-weight: normal;
+                text-align: center;
+                padding: 5px;
+            }
+        }
+        tbody{
+            td{
+                border: $td-brd;
+                padding: 5px;
+            }
+        }
+    }
 }

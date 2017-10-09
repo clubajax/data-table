@@ -1,4 +1,20 @@
 data-table {
   display: block; }
+  data-table table {
+    width: 100%;
+    border-collapse: collapse;
+    border: 2px solid #ccc;
+    font-size: 13px; }
+    data-table table thead {
+      background-color: #eee;
+      border-bottom: 2px solid #ccc; }
+      data-table table thead th {
+        border: 1px solid #aaa;
+        font-weight: normal;
+        text-align: center;
+        padding: 5px; }
+    data-table table tbody td {
+      border: 1px solid #eee;
+      padding: 5px; }
 
 /*# sourceMappingURL=data-table.css.map */
