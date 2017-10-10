@@ -2,10 +2,12 @@ const util = require('./util');
 
 const Sortable = {
 	init () {
+		this.current = {};
 		this.isDefaultSort = true;
 		this.on('render-header', this.onHeaderRender.bind(this));
 		this.on('render', () => {
-			this.hasRendered = true;
+			this.bodyHasRendered = true;
+			this.headHasRendered = true;
 		});
 		this.setSort(this.sort, this.dir);
 	},
@@ -16,22 +18,32 @@ const Sortable = {
 
 	setSort () {
 		const [sort, dir] = this.sort.split(',').map(w => w.trim());
-		console.log('set.sort:', sort, dir);
 		this.current = {
 			sort,
 			dir
 		};
 
-		this.items.sort((a, b) => {
-			if (a[sort] < b[sort]){
-				return 1;
-			} else if (a[sort] > b[sort]) {
-				return -1;
-			}
-			return 0;
-		});
-		if (this.hasRendered) {
+		if (!dir) {
+			this.items = [...this.orgItems];
+		} else {
+			const lt = dir === 'asc' ? -1 : 1;
+			const gt = dir === 'desc' ? -1 : 1;
+
+			this.items.sort((a, b) => {
+				if (a[sort] < b[sort]) {
+					return lt;
+				} else if (a[sort] > b[sort]) {
+					return gt;
+				}
+				return 0;
+			});
+		}
+
+		if (this.bodyHasRendered) {
 			this.renderBody(this.items, this.columns);
+		}
+		if (this.headHasRendered) {
+			this.displaySort();
 		}
 	},
 
@@ -40,16 +52,26 @@ const Sortable = {
 			this.clickHandle.remove();
 		}
 		this.clickHandle = this.on('header-click', this.onHeaderClick.bind(this));
+		this.displaySort();
+	},
+	
+	displaySort () {
+		if (this.currentSortField) {
+			this.currentSortField.classList.remove(this.currentSortClass);
+		}
+		if (this.current.dir){
+			this.currentSortField = dom.query(this.thead, `[data-field="${this.current.sort}"]`);
+			this.currentSortClass = this.current.dir === 'asc' ? 'asc' : 'desc';
+			this.currentSortField.classList.add(this.currentSortClass);
+		}
 	},
 
 	onHeaderClick (e) {
-		console.log('sort on:', e);
 		let
 			dir,
 			field = e.detail.field,
 			target = e.detail.cell;
 
-		console.log('onHeaderClick', e.detail);
 
 		if (!target || target.className.indexOf('no-sort') > -1) {
 			console.log('NOTARGET');
@@ -66,11 +88,7 @@ const Sortable = {
 				dir = 'desc';
 			}
 		} else {
-			if (this.current.dir === 'desc') {
-				dir = 'asc';
-			} else {
-				dir = 'desc';
-			}
+			dir = 'desc';
 		}
 		this.sort = `${field},${dir}`;
 	}

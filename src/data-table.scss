@@ -4,11 +4,13 @@ $th-brd: 1px solid #aaa;
 $head-bk: #eee;
 data-table{
     display: block;
+    outline: none;
     table{
         width: 100%;
         border-collapse: collapse;
         border: $tbl-brd;
         font-size: 13px;
+        outline: none;
         thead{
             background-color: $head-bk;
             border-bottom: $tbl-brd;
@@ -17,6 +19,21 @@ data-table{
                 font-weight: normal;
                 text-align: center;
                 padding: 5px;
+                position: relative;
+                cursor: pointer;
+                &.desc, &.asc{
+                    &:after{
+                        content: '\25BE';
+                        position: absolute;
+                        top: 5px;
+                        right: 5px;
+                    }
+                }
+                &.asc{
+                    &:after{
+                        transform: rotate(180deg);
+                    }
+                }
             }
         }
         tbody{

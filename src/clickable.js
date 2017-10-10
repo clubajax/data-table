@@ -77,6 +77,5 @@ const Clickable = {
 };
 
 module.exports = function () {
-	console.log('clickable!', this);
 	util.bindMethods(Clickable, this);
 };
