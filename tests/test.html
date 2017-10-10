@@ -53,16 +53,19 @@
 			},
 			items:[
 				{
+					id: 1,
 					age: 20,
 					height: 6.1,
 					weight: 170,
 					bp: 120
 				},{
+					id: 2,
 					age: 10,
 					height: 4.5,
 					weight: 90,
 					bp: 100
 				},{
+					id: 3,
 					age: 40,
 					height: 5.9,
 					weight: 220,
@@ -73,7 +76,13 @@
 
 		suite('create / destroy', function () {
 			test('it should...', function () {
-				var node = dom('data-table', { data: data1, sortable: true, clickable: true, sort: 'weight, desc' }, body);
+				var node = dom('data-table', {
+					data: data1,
+					sortable: true,
+					clickable: true,
+					selectable: true,
+					sort: 'weight, desc'
+				}, body);
 				setTimeout(() => {
 					//node.sort = 'age, desc';
 				}, 100);

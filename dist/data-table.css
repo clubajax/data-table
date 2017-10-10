@@ -24,6 +24,9 @@ data-table {
           right: 5px; }
         data-table table thead th.asc:after {
           transform: rotate(180deg); }
+    data-table table tbody tr.selected {
+      background-color: #4660bf;
+      color: white; }
     data-table table tbody td {
       border: 1px solid #eee;
       padding: 5px; }

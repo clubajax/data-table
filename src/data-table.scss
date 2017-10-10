@@ -1,6 +1,8 @@
 $tbl-brd: 2px solid #ccc;
 $td-brd: 1px solid #eee;
 $th-brd: 1px solid #aaa;
+$tr-sel-bk: #4660bf;
+$tr-sel-txt: white;
 $head-bk: #eee;
 data-table{
     display: block;
@@ -37,6 +39,12 @@ data-table{
             }
         }
         tbody{
+            tr{
+                &.selected{
+                    background-color: $tr-sel-bk;
+                    color: $tr-sel-txt;
+                }
+            }
             td{
                 border: $td-brd;
                 padding: 5px;

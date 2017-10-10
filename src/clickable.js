@@ -15,6 +15,7 @@ const Clickable = {
 			emitEvent,
 			field,
 			row,
+			rowId,
 			cell = event.target.closest('td');
 
 		if(!cell){
@@ -27,7 +28,8 @@ const Clickable = {
 		if(!row){ return; }
 
 		index = +row.getAttribute('data-index');
-		item = this.data.items[index];
+		rowId = dom.attr(row, 'data-row-id');
+		item = this.getItemById(rowId);
 
 		emitEvent = {
 			index: index,

@@ -5,10 +5,6 @@ const Sortable = {
 		this.current = {};
 		this.isDefaultSort = true;
 		this.on('render-header', this.onHeaderRender.bind(this));
-		this.on('render', () => {
-			this.bodyHasRendered = true;
-			this.headHasRendered = true;
-		});
 		this.setSort(this.sort, this.dir);
 	},
 
@@ -96,6 +92,5 @@ const Sortable = {
 
 
 module.exports = function () {
-	console.log('sortable!', this);
 	util.bindMethods(Sortable, this);
 };
