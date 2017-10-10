@@ -42,7 +42,7 @@ class DataTable extends BaseComponent {
 			this.displayNoData(true);
 			return;
 		}
-		this.displayNoData(true);
+		this.displayNoData();
 		this.items = [...items];
 		this.mixPlugins();
 		clearTimeout(this.noDataTimer);
@@ -53,7 +53,6 @@ class DataTable extends BaseComponent {
 
 	domReady () {
 		this.noDataTimer = setTimeout(() => {
-			console.warn('No data');
 			this.displayNoData(true);
 		}, 1000);
 	}
@@ -74,6 +73,7 @@ class DataTable extends BaseComponent {
 
 	render () {
 		this.fire('pre-render');
+		console.time('render');
 		this.renderTemplate();
 		const columns = getColumns(this.data);
 		if (!util.isEqual(columns, this.columns)) {
@@ -81,7 +81,7 @@ class DataTable extends BaseComponent {
 			this.renderHeader(this.columns);
 		}
 		this.renderBody(this.items, this.columns);
-
+		console.timeEnd('render');
 		this.fire('render', { table: this.table || this, thead: this.thead, tbody: this.tbody });
 	}
 
@@ -117,41 +117,29 @@ class DataTable extends BaseComponent {
 
 	renderBody (items, columns) {
 		const exclude = this.exclude || [];
-		dom.clean(this.tbody, true);
+		const tbody = this.tbody;
+		dom.clean(tbody, true);
+
+		if(!items || !items.length){
+			this.bodyHasRendered = true;
+			this.fire('render-body', { tbody: this.tbody });
+			this.displayNoData(true);
+			return;
+		}
 
 		const editable = this.editable;
 		const selectable = this.selectable;
 
 		// TODO: if sort, just reorder - do perf test
-
-		items.forEach((item, i) => {
-			item.index = i;
-			const itemCss = item.css || item.class || item.className;
-			let
-				html, css, key,
-				rowOptions = { 'data-index': i, 'data-row-id': item.id },
-				tr;
-			if (selectable) {
-				rowOptions.tabindex = 1;
-			}
-			if (itemCss) {
-				rowOptions.class = itemCss;
-			}
-
-			tr = dom('tr', rowOptions, this.tbody);
-			columns.forEach((col) => {
-				key = col.key || col;
-				html = item[key];
-				css = key;
-				const cellOptions = { html, 'data-field': key, css };
-				if (editable) {
-					cellOptions.tabindex = 1;
-				}
-				dom('td', cellOptions, tr);
-			});
+		console.time('render body');
+		render(items, columns, tbody, () => {
+			// PERF: makes no difference:
+			//this.table.appendChild(this.tbody);
+			console.timeEnd('render body');
+			this.bodyHasRendered = true;
+			this.fire('render-body', { tbody: this.tbody });
 		});
-		this.bodyHasRendered = true;
-		this.fire('render-body', { tbody: this.tbody });
+
 	}
 
 	getItemById (id) {
@@ -167,6 +155,84 @@ class DataTable extends BaseComponent {
 	}
 }
 
+function render (items, columns, tbody, callback) {
+	items.forEach((item, index) => {
+		item.index = index;
+		const itemCss = item.css || item.class || item.className;
+		let
+			html, css, key,
+			rowOptions = { 'data-row-id': item.id },
+			tr;
+		if (selectable) {
+			rowOptions.tabindex = 1;
+		}
+		if (itemCss) {
+			rowOptions.class = itemCss;
+		}
+
+		tr = dom('tr', rowOptions, tbody);
+		columns.forEach((col) => {
+			key = col.key || col;
+			html = item[key];
+			css = key;
+			const cellOptions = { html, 'data-field': key, css };
+			// if (editable) {
+			// 	cellOptions.tabindex = 1;
+			// }
+			dom('td', cellOptions, tr);
+		});
+	});
+	callback();
+}
+
+function lazyRender (allItems, columns, tbody, callback) {
+	let index = 0;
+	function renderRows (items) {
+		items.forEach((item) => {
+			item.index = index;
+			const itemCss = item.css || item.class || item.className;
+			let
+				html, css, key,
+				rowOptions = { 'data-row-id': item.id },
+				tr;
+			if (selectable) {
+				rowOptions.tabindex = 1;
+			}
+			if (itemCss) {
+				rowOptions.class = itemCss;
+			}
+
+			tr = dom('tr', rowOptions, tbody);
+			columns.forEach((col) => {
+				key = col.key || col;
+				html = item[key];
+				css = key;
+				const cellOptions = { html, 'data-field': key, css };
+				// if (editable) {
+				// 	cellOptions.tabindex = 1;
+				// }
+				dom('td', cellOptions, tr);
+			});
+			index++;
+		});
+	}
+
+	allItems = [...allItems];
+
+	function next () {
+		const items = allItems.splice(0, 5);
+		renderRows(items);
+
+		if(allItems.length){
+			setTimeout(() => {
+				next();
+			},1);
+		} else {
+			callback();
+		}
+	}
+	next();
+}
 function getColumns (data) {
 	if (Array.isArray(data.columns)) {
 		return data.columns;

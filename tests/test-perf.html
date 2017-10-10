@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Test Performance</title>
+	<link rel="stylesheet" href="./dist/data-table.css" />
+	<script src="./dist/vendor.js"></script>
+	<script src="./dist/output.js"></script>
+	<script src="./src/data-500.js"></script>
+	<script src="//localhost:35750/livereload.js"></script>
+
+	<style>
+		html, body {
+			height: 100%;
+		}
+
+		body {
+			padding: 20px;
+			font-family: sans-serif;
+		}
+
+		section {
+			border: 1px solid #ccc;
+			padding: 3px;
+			margin: 5px;
+		}
+		section label {
+			display: block;
+			padding: 5px;
+		}
+	</style>
+</head>
+<body>
+	<h1>Test Performance</h1>
+	<div id="tests"></div>
+	<script>
+		// 100: 75ms
+		// 500: 1000ms lazy: 2500ms
+		// 1000: 4000ms
+
+		var body = dom.byId('tests');
+		function run () {
+			var node = dom('data-table', {
+				data: getData500(),
+				sortable: true
+			}, body);
+		}
+		run();
+	</script>
+</body>
+</html>

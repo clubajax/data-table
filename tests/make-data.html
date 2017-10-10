@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Make Data</title>
+	<script src="./src/randomizer.js"></script>
+</head>
+<body>
+	<h1>Make Data</h1>
+	<p>Results in the console</p>
+	<textarea id="ta"></textarea>
+	<script>
+		var data = window.rand.data(500);
+		document.getElementById('ta').value = JSON.stringify(data, 0, 4);
+	</script>
+</body>
+</html>
