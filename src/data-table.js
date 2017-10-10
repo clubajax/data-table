@@ -8,6 +8,19 @@ const util = require('./util');
 const props = ['data', 'sort'];
 const bools = ['sortable', 'selectable'];
 
+
+// TODO
+// deselect row - (??? button???) - click again?
+// unselectable item (or deselects)
+// after new item render (optional):
+// 		remember selected id
+// 		remember sort
+// if sort, just reorder - do perf test
+//
+// TESTS - PERF TESTS
+//
+
+
 class DataTable extends BaseComponent {
 
 	static get observedAttributes () {
@@ -129,7 +142,6 @@ class DataTable extends BaseComponent {
 			});
 		});
 		this.bodyHasRendered = true;
-		console.log('render body');
 		this.fire('render-body', { tbody: this.tbody });
 	}
 

@@ -9,7 +9,6 @@ const Clickable = {
 	},
 
 	handleBodyClick (e) {
-		console.log('e', e);
 		let
 			index,
 			item,

@@ -74,18 +74,94 @@
 			]
 		};
 
-		suite('create / destroy', function () {
-			test('it should...', function () {
+		function selectedColumn (node) {
+			var th = dom.query(node, '.desc,.asc');
+			if (!th) {
+				return null;
+			}
+			return dom.attr(th, 'data-field');
+		}
+
+		function clickCol (node, field) {
+			var th = dom.query(node, '[data-field="'+field+'"]');
+			if (!th) {
+				console.warn('th not found', field);
+				return null
+			}
+			on.emit(th, 'click');
+		}
+
+		function clickRow (node, index) {
+			var row = node.tbody.rows[index];
+			on.emit(row, 'click');
+		}
+
+		function selectedRow (node) {
+			var tr = dom.query(node, '.selected');
+			return tr ? dom.attr(tr, 'data-row-id') : null;
+		}
+
+		function getColData (node, field) {
+			var cells = dom.queryAll(node, 'tbody [data-field="'+field+'"]');
+			return cells.map(function (cell) {
+				return cell.textContent;
+			}).join(',');
+		}
+
+		function destroy (node) {
+			//node.destroy();
+		}
+
+		suite('data table', function () {
+			test('it should sort', function (done) {
+				var section = dom('section', { html: dom('label', {html: 'Sortable'}) }, body);
 				var node = dom('data-table', {
 					data: data1,
 					sortable: true,
-					clickable: true,
-					selectable: true,
 					sort: 'weight, desc'
-				}, body);
-				setTimeout(() => {
-					//node.sort = 'age, desc';
-				}, 100);
+				}, section);
+				onDomReady(node, function () {
+					expect(selectedColumn(node)).to.equal('weight');
+					expect(getColData(node, 'weight')).to.equal('220,170,90');
+					clickCol(node, 'weight');
+					expect(getColData(node, 'weight')).to.equal('90,170,220');
+					// reset to default sort
+					clickCol(node, 'weight');
+					expect(getColData(node, 'weight')).to.equal('170,90,220');
+					expect(selectedColumn(node)).to.equal(null);
+
+					clickCol(node, 'age');
+					expect(selectedColumn(node)).to.equal('age');
+					expect(getColData(node, 'age')).to.equal('40,20,10');
+
+					clickCol(node, 'bp');
+					expect(selectedColumn(node)).to.equal('bp');
+					expect(getColData(node, 'bp')).to.equal('150,120,100');
+
+					destroy(node);
+					done();
+				});
+			});
+
+			test('it should be selectable', function (done) {
+				var section = dom('section', { html: dom('label', {html: 'Selectable'}) }, body);
+				var node = dom('data-table', {
+					data: data1,
+					selectable: true
+				}, section);
+				onDomReady(node, function () {
+					clickRow(node, 1);
+					expect(selectedRow(node)).to.equal('2');
+					clickRow(node, 0);
+					expect(selectedRow(node)).to.equal('1');
+					clickRow(node, 2);
+					expect(selectedRow(node)).to.equal('3');
+					// deselect
+					clickRow(node, 2);
+					expect(selectedRow(node)).to.equal(null);
+					destroy(node);
+					done();
+				});
 			});
 		});
 
@@ -93,18 +169,6 @@
 
 	window.mocha.run();
 
-	function testInheritance () {
-		class A {
-			constructor () {
-				console.log('A');
-			}
-		}
-
-		console.log('A::', A.prototype);
-
-		new A();
-	}
-	//testInheritance();
 
 </script>
 </body>
