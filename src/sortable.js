@@ -5,15 +5,26 @@ const Sortable = {
 		this.current = {};
 		this.isDefaultSort = true;
 		this.on('render-header', this.onHeaderRender.bind(this));
-		this.setSort(this.sort, this.dir);
-	},
-
-	onSort () {
 		this.setSort();
 	},
 
-	setSort () {
-		const [sort, dir] = this.sort.split(',').map(w => w.trim());
+	onSort () {
+		if (!this.sort) {
+			this.setSort();
+			return;
+		}
+		let [sort, dir] = this.sort.split(',').map(w => w.trim());
+		dir = !!sort ? dir || 'desc' : dir;
+		this.setSort(sort, dir);
+	},
+
+	setSort (sort, dir) {
+		if (!sort && this.sort) {
+			const split = this.sort.split(',').map(w => w.trim());
+			sort = split[0];
+			dir = split[1];
+		}
+
 		this.current = {
 			sort,
 			dir
@@ -60,6 +71,9 @@ const Sortable = {
 			this.currentSortClass = this.current.dir === 'asc' ? 'asc' : 'desc';
 			this.currentSortField.classList.add(this.currentSortClass);
 		}
+
+		const event = this.current.sort ? `${this.current.sort},${this.current.dir}` : null;
+		this.fire('sort', { value: event });
 	},
 
 	onHeaderClick (e) {
@@ -86,7 +100,7 @@ const Sortable = {
 		} else {
 			dir = 'desc';
 		}
-		this.sort = `${field},${dir}`;
+		this.setSort(field, dir);
 	}
 };
 

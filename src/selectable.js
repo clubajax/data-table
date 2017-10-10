@@ -9,24 +9,30 @@ const Selectable = {
 	},
 
 	onSelected (value) {
-		console.log('attr.select', value);
+		this.selectRow(value);
 	},
 
 	onRowClick (e) {
+		this.selectRow(e.detail.item.id);
+	},
+
+	selectRow (id) {
 		let currentId;
 		if (this.currentRow) {
 			this.currentRow.classList.remove(SEL_CLASS);
 			currentId = dom.attr(this.currentRow, 'data-row-id');
 		}
 
-		this.currentSelection = e.detail.item.id === this.currentSelection ? null : e.detail.item.id;
+		this.currentSelection = id === this.currentSelection ? null : id;
 
 		this.displaySelection();
 
 		if (this.currentSelection) {
-			const event = Object.assign({}, e.detail);
-			delete event.target;
-			event.value = e.detail.item.id;
+			const event = {
+				row: this.currentRow,
+				item: this.getItemById(id),
+				value: id
+			};
 			this.emit('change', event);
 		} else {
 			this.emit('change');

@@ -113,14 +113,20 @@
 		}
 
 		suite('data table', function () {
-			test('it should sort', function (done) {
+			test.only('it should sort', function (done) {
 				var section = dom('section', { html: dom('label', {html: 'Sortable'}) }, body);
 				var node = dom('data-table', {
 					data: data1,
 					sortable: true,
 					sort: 'weight, desc'
 				}, section);
+				var events = [];
 				onDomReady(node, function () {
+					node.on('sort', function (e) {
+						//console.log('sort.event', e);
+						events.push(e.detail.value);
+					});
+
 					expect(selectedColumn(node)).to.equal('weight');
 					expect(getColData(node, 'weight')).to.equal('220,170,90');
 					clickCol(node, 'weight');
@@ -138,6 +144,19 @@
 					expect(selectedColumn(node)).to.equal('bp');
 					expect(getColData(node, 'bp')).to.equal('150,120,100');
 
+					node.sort = 'height,desc';
+					expect(selectedColumn(node)).to.equal('height');
+					expect(getColData(node, 'height')).to.equal('6.1,5.9,4.5');
+
+
+					node.sort = 'age';
+					expect(selectedColumn(node)).to.equal('age');
+					expect(getColData(node, 'age')).to.equal('40,20,10');
+
+					node.sort = null;
+
+					expect(events.join(';')).to.equal('weight,asc;weight,;age,desc;bp,desc;height,desc;age,desc;');
+
 					destroy(node);
 					done();
 				});
@@ -152,6 +171,7 @@
 				var events = [];
 				onDomReady(node, function () {
 					node.on('change', function (e) {
+						//console.log('chn', e);
 						events.push(e.value);
 					});
 					clickRow(node, 1);
@@ -165,6 +185,16 @@
 					expect(selectedRow(node)).to.equal(null);
 					expect(events.join(',')).to.equal('2,1,3,'); // last one is blank
 					destroy(node);
+
+					node.selected = 1;
+					expect(selectedRow(node)).to.equal('1');
+
+					// test getter
+					expect(node.selected).to.equal(1);
+
+					node.selected = null;
+					expect(selectedRow(node)).to.equal(null);
+
 					done();
 				});
 			});
