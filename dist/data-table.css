@@ -1,38 +1,49 @@
 data-table {
   display: block;
   outline: none; }
+  data-table.sortable th {
+    cursor: pointer; }
+  data-table.no-data {
+    border: 2px solid #ccc;
+    padding-bottom: 25px; }
+    data-table.no-data:after {
+      content: 'No Data';
+      display: block;
+      margin-top: 15px;
+      text-align: center;
+      font-style: italic;
+      color: #aaa; }
   data-table table {
     width: 100%;
     border-collapse: collapse;
     border: 2px solid #ccc;
     font-size: 13px;
     outline: none; }
-    data-table table.sortable th {
-      cursor: pointer; }
     data-table table thead {
       background-color: #eee;
       border-bottom: 2px solid #ccc; }
-      data-table table thead th {
-        border: 1px solid #aaa;
-        font-weight: normal;
-        text-align: center;
-        padding: 5px;
-        position: relative; }
-        data-table table thead th.desc:after, data-table table thead th.asc:after {
-          content: '\25BE';
-          position: absolute;
-          top: 5px;
-          right: 5px; }
-        data-table table thead th.asc:after {
-          transform: rotate(180deg); }
+    data-table table th {
+      position: relative;
+      border: 1px solid #aaa;
+      font-weight: normal;
+      text-align: center;
+      padding: 15px; }
+      data-table table th.desc:after, data-table table th.asc:after {
+        content: '\25BE';
+        position: absolute;
+        top: 50%;
+        right: 5px;
+        transform: translateY(-50%); }
+      data-table table th.asc:after {
+        transform: rotate(180deg) translateY(50%); }
     data-table table tbody tr.selected {
       background-color: #4660bf;
       color: white; }
     data-table table tbody tr.unselectable {
       outline: 0;
       background-color: #d6e5f0; }
-    data-table table tbody td {
+    data-table table td {
       border: 1px solid #eee;
-      padding: 5px; }
+      padding: 15px; }
 
 /*# sourceMappingURL=data-table.css.map */

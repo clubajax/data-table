@@ -26,6 +26,10 @@
 			padding: 3px;
 			margin: 5px;
 		}
+		section label {
+			display: block;
+			padding: 5px;
+		}
 	</style>
 </head>
 <body>
@@ -147,6 +151,16 @@
 						job: 'Rubier'
 					}
 				]
+			},
+			dataNoItems = {
+				columns: {
+					name: 'Name',
+					age: 'Age',
+					height: 'Height',
+					weight: 'Weight',
+					bp: 'Bloodpressure'
+				},
+				items: []
 			};
 
 		function selectedColumn (node) {
@@ -193,6 +207,28 @@
 		}
 
 		suite('data table', function () {
+			test.only('it should handle "no data"', function (done) {
+				var section = dom('section', { html: dom('label', { html: 'Data is NULL' }) }, body);
+				var node = dom('data-table', {
+					data: null
+				}, section);
+				onDomReady(node, function () {
+					expect(node.classList.contains('no-data')).to.equal(true);
+					done();
+				});
+			});
+
+			test.only('it should handle "no items"', function (done) {
+				var section = dom('section', { html: dom('label', { html: 'Items are []' }) }, body);
+				var node = dom('data-table', {
+					data: dataNoItems
+				}, section);
+				onDomReady(node, function () {
+					expect(node.classList.contains('no-data')).to.equal(true);
+					done();
+				});
+			});
+
 			test('it should sort', function (done) {
 				var section = dom('section', { html: dom('label', { html: 'Sortable' }) }, body);
 				var node = dom('data-table', {

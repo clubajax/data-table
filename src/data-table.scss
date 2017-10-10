@@ -5,41 +5,56 @@ $tr-sel-bk: #4660bf;
 $tr-unsel-bk: #d6e5f0;
 $tr-sel-txt: white;
 $head-bk: #eee;
+$cell-pad: 15px;
 data-table{
     display: block;
     outline: none;
+    &.sortable{
+        th {
+            cursor: pointer;
+        }
+    }
+    &.no-data{
+        border: $tbl-brd;
+        padding-bottom: 25px;
+        &:after{
+            content: 'No Data';
+            display: block;
+            margin-top: 15px;
+            text-align: center;
+            font-style: italic;
+            color: #aaa;
+        }
+    }
     table{
         width: 100%;
         border-collapse: collapse;
         border: $tbl-brd;
         font-size: 13px;
         outline: none;
-        &.sortable{
-            th {
-                cursor: pointer;
-            }
-        }
+
         thead{
             background-color: $head-bk;
             border-bottom: $tbl-brd;
         }
         th{
+            position: relative;
             border: $th-brd;
             font-weight: normal;
             text-align: center;
-            padding: 5px;
-            position: relative;
+            padding: $cell-pad;
             &.desc, &.asc{
                 &:after{
                     content: '\25BE';
                     position: absolute;
-                    top: 5px;
+                    top: 50%;
                     right: 5px;
+                    transform: translateY(-50%);
                 }
             }
             &.asc{
                 &:after{
-                    transform: rotate(180deg);
+                    transform: rotate(180deg) translateY(50%);
                 }
             }
         }
@@ -57,7 +72,7 @@ data-table{
         }
         td{
             border: $td-brd;
-            padding: 5px;
+            padding: $cell-pad;
         }
     }
 }

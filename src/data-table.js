@@ -36,14 +36,26 @@ class DataTable extends BaseComponent {
 	}
 
 	onData (value) {
-		const items = value.items || value.data;
+		const items = value ? value.items || value.data : null;
 		this.orgItems = items;
+		if (!items) {
+			this.displayNoData(true);
+			return;
+		}
+		this.displayNoData(true);
 		this.items = [...items];
 		this.mixPlugins();
 		clearTimeout(this.noDataTimer);
 		onDomReady(this, () => {
 			this.render();
 		});
+	}
+
+	domReady () {
+		this.noDataTimer = setTimeout(() => {
+			console.warn('No data');
+			this.displayNoData(true);
+		}, 1000);
 	}
 
 	mixPlugins () {
@@ -58,11 +70,7 @@ class DataTable extends BaseComponent {
 		this.mixPlugins = noop;
 	}
 
-	domReady () {
-		this.noDataTimer = setTimeout(() => {
-			console.warn('No data');
-		}, 1000);
-	}
+
 
 	render () {
 		this.fire('pre-render');
@@ -148,6 +156,14 @@ class DataTable extends BaseComponent {
 
 	getItemById (id) {
 		return this.items.find(item => ''+item.id === ''+id);
+	}
+
+	displayNoData (show) {
+		if (show) {
+			this.classList.add('no-data');
+		} else {
+			this.classList.remove('no-data');
+		}
 	}
 }
 
