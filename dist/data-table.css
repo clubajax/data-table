@@ -7,6 +7,8 @@ data-table {
     border: 2px solid #ccc;
     font-size: 13px;
     outline: none; }
+    data-table table.sortable th {
+      cursor: pointer; }
     data-table table thead {
       background-color: #eee;
       border-bottom: 2px solid #ccc; }
@@ -15,8 +17,7 @@ data-table {
         font-weight: normal;
         text-align: center;
         padding: 5px;
-        position: relative;
-        cursor: pointer; }
+        position: relative; }
         data-table table thead th.desc:after, data-table table thead th.asc:after {
           content: '\25BE';
           position: absolute;
@@ -27,6 +28,9 @@ data-table {
     data-table table tbody tr.selected {
       background-color: #4660bf;
       color: white; }
+    data-table table tbody tr.unselectable {
+      outline: 0;
+      background-color: #d6e5f0; }
     data-table table tbody td {
       border: 1px solid #eee;
       padding: 5px; }

@@ -2,8 +2,8 @@ const util = require('./util');
 
 const Sortable = {
 	init () {
+		this.classList.add('sortable');
 		this.current = {};
-		this.isDefaultSort = true;
 		this.on('render-header', this.onHeaderRender.bind(this));
 		this.setSort();
 	},

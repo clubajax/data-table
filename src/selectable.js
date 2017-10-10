@@ -25,12 +25,21 @@ const Selectable = {
 
 		this.currentSelection = id === this.currentSelection ? null : id;
 
+		let item = this.getItemById(this.currentSelection);
+
+		if (item && item.css === 'unselectable'){
+			console.log('NO SELECT');
+			this.currentSelection = null;
+			item = null;
+			id = null;
+		}
+
 		this.displaySelection();
 
 		if (this.currentSelection) {
 			const event = {
 				row: this.currentRow,
-				item: this.getItemById(id),
+				item: item,
 				value: id
 			};
 			this.emit('change', event);

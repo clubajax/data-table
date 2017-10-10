@@ -121,12 +121,16 @@ class DataTable extends BaseComponent {
 
 		items.forEach((item, i) => {
 			item.index = i;
+			const itemCss = item.css || item.class || item.className;
 			let
 				html, css, key,
 				rowOptions = { 'data-index': i, 'data-row-id': item.id },
 				tr;
 			if (selectable) {
 				rowOptions.tabindex = 1;
+			}
+			if (itemCss) {
+				rowOptions.class = itemCss;
 			}
 
 			tr = dom('tr', rowOptions, this.tbody);
