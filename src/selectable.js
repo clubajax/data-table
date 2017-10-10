@@ -4,6 +4,7 @@ const SEL_CLASS = 'selected';
 
 const Selectable = {
 	init () {
+		this.classList.add('selectable');
 		this.on('row-click', this.onRowClick.bind(this));
 		this.on('render-body', this.displaySelection.bind(this));
 	},

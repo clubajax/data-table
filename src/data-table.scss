@@ -4,6 +4,7 @@ $th-brd: 1px solid #aaa;
 $tr-sel-bk: #4660bf;
 $tr-unsel-bk: #d6e5f0;
 $tr-sel-txt: white;
+$tr-hvr: #d6e5f2;
 $head-bk: #eee;
 $cell-pad: 15px;
 data-table{
@@ -12,6 +13,11 @@ data-table{
     &.sortable{
         th {
             cursor: pointer;
+        }
+    }
+    &.selectable{
+        tbody tr:not(.selected):not(.unselectable):hover{
+            background-color: $tr-hvr;
         }
     }
     &.no-data{

@@ -207,7 +207,7 @@
 		}
 
 		suite('data table', function () {
-			test.only('it should handle "no data"', function (done) {
+			test('it should handle "no data"', function (done) {
 				var section = dom('section', { html: dom('label', { html: 'Data is NULL' }) }, body);
 				var node = dom('data-table', {
 					data: null
@@ -218,7 +218,7 @@
 				});
 			});
 
-			test.only('it should handle "no items"', function (done) {
+			test('it should handle "no items"', function (done) {
 				var section = dom('section', { html: dom('label', { html: 'Items are []' }) }, body);
 				var node = dom('data-table', {
 					data: dataNoItems

@@ -3,6 +3,8 @@ data-table {
   outline: none; }
   data-table.sortable th {
     cursor: pointer; }
+  data-table.selectable tbody tr:not(.selected):not(.unselectable):hover {
+    background-color: #d6e5f2; }
   data-table.no-data {
     border: 2px solid #ccc;
     padding-bottom: 25px; }
