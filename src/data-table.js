@@ -10,11 +10,6 @@ const bools = ['sortable', 'selectable'];
 
 
 // TODO
-// deselect row - (??? button???) - click again?
-// unselectable item (or deselects)
-// after new item render (optional):
-// 		remember selected id
-// 		remember sort
 // if sort, just reorder - do perf test
 //
 // TESTS - PERF TESTS
@@ -40,7 +35,6 @@ class DataTable extends BaseComponent {
 	}
 
 	onData (value) {
-		console.log('onData', value);
 		this.orgItems = value.items;
 		this.items = [...value.items];
 		this.mixPlugins();

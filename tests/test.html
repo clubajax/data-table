@@ -314,8 +314,6 @@
 					clickRow(node, 1);
 					expect(selectedRow(node)).to.equal('1');
 
-					console.log(selectedRowIndex(node));
-
 					expect(selectedRowIndex(node)).to.equal(2);
 
 					clickCol(node, 'height');
@@ -326,7 +324,7 @@
 				});
 			});
 
-			test.only('it should maintain sort and select after new items', function (done) {
+			test('it should maintain sort and select after new items', function (done) {
 				var section = dom('section', { html: dom('label', { html: 'Sortable and Selectable' }) }, body);
 				var node = dom('data-table', {
 					data: data1,
@@ -341,15 +339,12 @@
 					clickRow(node, 1);
 					expect(selectedRow(node)).to.equal('1');
 
-					console.log(selectedRowIndex(node));
-
 					expect(selectedRowIndex(node)).to.equal(2);
 
 					clickCol(node, 'height');
 					expect(selectedRow(node)).to.equal('1');
 					expect(selectedRowIndex(node)).to.equal(1);
 
-					console.log('set again');
 					node.data = data2;
 
 					expect(selectedColumn(node)).to.equal('height');
