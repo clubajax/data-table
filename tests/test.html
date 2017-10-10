@@ -48,6 +48,7 @@
 
 		var data1 = {
 				columns: {
+					name: 'Name',
 					age: 'Age',
 					height: 'Height',
 					weight: 'Weight',
@@ -56,18 +57,21 @@
 				items: [
 					{
 						id: 1,
+						name: 'Moke',
 						age: 20,
 						height: 6.1,
 						weight: 170,
 						bp: 120
 					}, {
 						id: 2,
+						name: 'Joke',
 						age: 10,
 						height: 4.5,
 						weight: 90,
 						bp: 100
 					}, {
 						id: 3,
+						name: 'Doke',
 						age: 40,
 						height: 5.9,
 						weight: 220,
@@ -76,6 +80,39 @@
 				]
 			},
 			data2 = {
+				columns: {
+					name: 'Name',
+					age: 'Age',
+					height: 'Height',
+					weight: 'Weight',
+					bp: 'Bloodpressure'
+				},
+				items: [
+					{
+						id: 3,
+						name: 'Zeke',
+						age: 21,
+						height: 5.6,
+						weight: 220,
+						bp: 140
+					}, {
+						id: 2,
+						name: 'Meek',
+						age: 18,
+						height: 5.9,
+						weight: 98,
+						bp: 180
+					}, {
+						id: 1,
+						name: 'Geek',
+						age: 45,
+						height: 6.2,
+						weight: 150,
+						bp: 120
+					}
+				]
+			},
+			data3 = {
 				columns: {
 					first: 'First Name',
 					middle: 'Middle Name',
@@ -242,10 +279,10 @@
 				});
 			});
 
-			test.only('it should handle non-selectable items', function (done) {
+			test('it should handle non-selectable items', function (done) {
 				var section = dom('section', { html: dom('label', { html: 'Non Selectable Item' }) }, body);
 				var node = dom('data-table', {
-					data: data2,
+					data: data3,
 					selectable: true,
 					sortable: true
 				}, section);
@@ -284,6 +321,40 @@
 					clickCol(node, 'height');
 					expect(selectedRow(node)).to.equal('1');
 					expect(selectedRowIndex(node)).to.equal(1);
+
+					done();
+				});
+			});
+
+			test.only('it should maintain sort and select after new items', function (done) {
+				var section = dom('section', { html: dom('label', { html: 'Sortable and Selectable' }) }, body);
+				var node = dom('data-table', {
+					data: data1,
+					sortable: true,
+					selectable: true
+				}, section);
+				var events = [];
+				onDomReady(node, function () {
+					clickCol(node, 'weight');
+					expect(getColData(node, 'weight')).to.equal('220,170,90');
+
+					clickRow(node, 1);
+					expect(selectedRow(node)).to.equal('1');
+
+					console.log(selectedRowIndex(node));
+
+					expect(selectedRowIndex(node)).to.equal(2);
+
+					clickCol(node, 'height');
+					expect(selectedRow(node)).to.equal('1');
+					expect(selectedRowIndex(node)).to.equal(1);
+
+					console.log('set again');
+					node.data = data2;
+
+					expect(selectedColumn(node)).to.equal('height');
+					expect(selectedRow(node)).to.equal('1');
+					expect(selectedRowIndex(node)).to.equal(3);
 
 					done();
 				});

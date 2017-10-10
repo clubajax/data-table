@@ -40,6 +40,7 @@ class DataTable extends BaseComponent {
 	}
 
 	onData (value) {
+		console.log('onData', value);
 		this.orgItems = value.items;
 		this.items = [...value.items];
 		this.mixPlugins();
