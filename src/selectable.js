@@ -8,6 +8,10 @@ const Selectable = {
 		this.on('render-body', this.displaySelection.bind(this));
 	},
 
+	onSelected (value) {
+		console.log('attr.select', value);
+	},
+
 	onRowClick (e) {
 		let currentId;
 		if (this.currentRow) {
@@ -18,6 +22,15 @@ const Selectable = {
 		this.currentSelection = e.detail.item.id === this.currentSelection ? null : e.detail.item.id;
 
 		this.displaySelection();
+
+		if (this.currentSelection) {
+			const event = Object.assign({}, e.detail);
+			delete event.target;
+			event.value = e.detail.item.id;
+			this.emit('change', event);
+		} else {
+			this.emit('change');
+		}
 	},
 
 	displaySelection () {

@@ -5,7 +5,7 @@ const clickable = require('./clickable');
 const selectable = require('./selectable');
 const util = require('./util');
 
-const props = ['data', 'sort'];
+const props = ['data', 'sort', 'selected'];
 const bools = ['sortable', 'selectable'];
 
 

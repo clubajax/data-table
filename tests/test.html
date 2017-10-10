@@ -149,7 +149,11 @@
 					data: data1,
 					selectable: true
 				}, section);
+				var events = [];
 				onDomReady(node, function () {
+					node.on('change', function (e) {
+						events.push(e.value);
+					});
 					clickRow(node, 1);
 					expect(selectedRow(node)).to.equal('2');
 					clickRow(node, 0);
@@ -159,6 +163,7 @@
 					// deselect
 					clickRow(node, 2);
 					expect(selectedRow(node)).to.equal(null);
+					expect(events.join(',')).to.equal('2,1,3,'); // last one is blank
 					destroy(node);
 					done();
 				});
