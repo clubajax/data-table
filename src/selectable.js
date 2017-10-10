@@ -29,5 +29,8 @@ const Selectable = {
 
 
 module.exports = function () {
-	util.bindMethods(Selectable, this);
+	if (!this.hasSelectable) {
+		util.bindMethods(Selectable, this);
+		this.hasSelectable = true;
+	}
 };

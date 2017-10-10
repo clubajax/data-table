@@ -50,12 +50,12 @@ const Sortable = {
 		this.clickHandle = this.on('header-click', this.onHeaderClick.bind(this));
 		this.displaySort();
 	},
-	
+
 	displaySort () {
 		if (this.currentSortField) {
 			this.currentSortField.classList.remove(this.currentSortClass);
 		}
-		if (this.current.dir){
+		if (this.current.dir) {
 			this.currentSortField = dom.query(this.thead, `[data-field="${this.current.sort}"]`);
 			this.currentSortClass = this.current.dir === 'asc' ? 'asc' : 'desc';
 			this.currentSortField.classList.add(this.currentSortClass);
@@ -92,5 +92,8 @@ const Sortable = {
 
 
 module.exports = function () {
-	util.bindMethods(Sortable, this);
+	if (!this.hasSortable) {
+		util.bindMethods(Sortable, this);
+		this.hasSortable = true;
+	}
 };

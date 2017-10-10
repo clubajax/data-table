@@ -8,7 +8,8 @@ const Clickable = {
 		this.on('render', this.handleClicks.bind(this));
 	},
 
-	handleBodyClick (event) {
+	handleBodyClick (e) {
+		console.log('e', e);
 		let
 			index,
 			item,
@@ -16,16 +17,16 @@ const Clickable = {
 			field,
 			row,
 			rowId,
-			cell = event.target.closest('td');
+			cell = e.target.closest('td');
 
-		if(!cell){
+		if (cell) {
+			field = cell.getAttribute('data-field');
+		}
+		row = e.target.closest('tr');
+
+		if (!row) {
 			return;
 		}
-
-		field = cell.getAttribute('data-field');
-		row = event.target.closest('tr');
-
-		if(!row){ return; }
 
 		index = +row.getAttribute('data-index');
 		rowId = dom.attr(row, 'data-row-id');
@@ -38,10 +39,9 @@ const Clickable = {
 			item: item,
 			field: field,
 			value: item[field],
-			target: event.target
+			target: e.target
 		};
 
-		console.log('emitEvent', emitEvent);
 		this.fire('row-click', emitEvent);
 	},
 
@@ -54,30 +54,31 @@ const Clickable = {
 				cell: cell,
 				target: event.target
 			};
-		if(cell) {
+		if (cell) {
 			this.fire('header-click', emitEvent);
 		}
 	},
 
 	handleClicks (event) {
-		if(this.handle){
+		if (this.handle) {
 			this.handle.remove();
 		}
 
 		this.handle = on.makeMultiHandle([
-			this.on(event.detail.tbody, 'keyup', function(e){
-				if(e.key === 'Enter'){
-					self.handleBodyClick(e);
+			this.on(event.detail.tbody, 'keyup', (e) => {
+				if (e.key === 'Enter') {
+					this.handleBodyClick(e);
 				}
 			}),
 			this.on(event.detail.tbody, 'click', this.handleBodyClick.bind(this)),
 			this.on(event.detail.thead, 'click', this.handleHeaderClick.bind(this))
 		]);
-
-
 	}
 };
 
 module.exports = function () {
-	util.bindMethods(Clickable, this);
+	if (!this.hasClickable) {
+		util.bindMethods(Clickable, this);
+		this.hasClickable = true;
+	}
 };

@@ -6,7 +6,7 @@ const selectable = require('./selectable');
 const util = require('./util');
 
 const props = ['data', 'sort'];
-const bools = ['sortable'];
+const bools = ['sortable', 'selectable'];
 
 class DataTable extends BaseComponent {
 
@@ -37,9 +37,14 @@ class DataTable extends BaseComponent {
 	}
 
 	mixPlugins () {
-		sortable.call(this);
-		clickable.call(this);
-		selectable.call(this);
+		if (this.sortable) {
+			clickable.call(this);
+			sortable.call(this);
+		}
+		if (this.selectable) {
+			clickable.call(this);
+			selectable.call(this);
+		}
 		this.mixPlugins = noop;
 	}
 
