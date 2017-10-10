@@ -22,24 +22,24 @@ data-table{
         thead{
             background-color: $head-bk;
             border-bottom: $tbl-brd;
-            th{
-                border: $th-brd;
-                font-weight: normal;
-                text-align: center;
-                padding: 5px;
-                position: relative;
-                &.desc, &.asc{
-                    &:after{
-                        content: '\25BE';
-                        position: absolute;
-                        top: 5px;
-                        right: 5px;
-                    }
+        }
+        th{
+            border: $th-brd;
+            font-weight: normal;
+            text-align: center;
+            padding: 5px;
+            position: relative;
+            &.desc, &.asc{
+                &:after{
+                    content: '\25BE';
+                    position: absolute;
+                    top: 5px;
+                    right: 5px;
                 }
-                &.asc{
-                    &:after{
-                        transform: rotate(180deg);
-                    }
+            }
+            &.asc{
+                &:after{
+                    transform: rotate(180deg);
                 }
             }
         }
@@ -54,10 +54,10 @@ data-table{
                     background-color: $tr-unsel-bk;
                 }
             }
-            td{
-                border: $td-brd;
-                padding: 5px;
-            }
+        }
+        td{
+            border: $td-brd;
+            padding: 5px;
         }
     }
 }

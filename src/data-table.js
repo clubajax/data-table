@@ -10,6 +10,7 @@ const bools = ['sortable', 'selectable'];
 
 
 // TODO
+// Handle no data
 // if sort, just reorder - do perf test
 //
 // TESTS - PERF TESTS
@@ -35,8 +36,9 @@ class DataTable extends BaseComponent {
 	}
 
 	onData (value) {
-		this.orgItems = value.items;
-		this.items = [...value.items];
+		const items = value.items || value.data;
+		this.orgItems = items;
+		this.items = [...items];
 		this.mixPlugins();
 		clearTimeout(this.noDataTimer);
 		onDomReady(this, () => {
