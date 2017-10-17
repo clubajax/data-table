@@ -3,6 +3,7 @@ const util = require('./util');
 
 const Scrollable = {
 	init () {
+		console.log('SCROLLABLE');
 		this.classList.add('scrollable');
 		this.on('render', this.onRender.bind(this));
 		this.on('resize', this.onRender.bind(this));
@@ -68,8 +69,7 @@ const Scrollable = {
 		const head = this.thead.parentNode;
 		const body = this.tbody.parentNode;
 		let
-			self = this,
-			grid = this.grid,
+			grid = this,
 			tempNode = dom('div', {style:{position:'absolute', width: '100px', height: '100px', zIndex:-1}}, document.body),
 			gridParent = grid.parentNode,
 			i, minWidth, thw, tdw,
@@ -113,7 +113,7 @@ const Scrollable = {
 		}
 
 		// wait for DOM to render before getting sizes
-		window.requestAnimationFrame(function(){
+		window.requestAnimationFrame(() => {
 			// after the next
 			for(i = 0; i < ths.length; i++){
 				thw = dom.box(ths[i]).width;
@@ -125,7 +125,7 @@ const Scrollable = {
 				}
 			}
 
-			var headeHeight = dom.box(self.gridElements.tableHeader).height;
+			var headeHeight = dom.box(this.tableHeader).height;
 			grid.tableBodyWrapper.style.top = (headeHeight - 1) + 'px';
 
 			// remove temp body styles
@@ -141,7 +141,7 @@ const Scrollable = {
 			gridParent.appendChild(grid);
 			dom.destroy(tempNode);
 
-			self.connectScroll();
+			this.connectScroll();
 		});
 
 	}

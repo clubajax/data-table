@@ -3,10 +3,10 @@ const dom = require('@clubajax/dom');
 const sortable = require('./sortable');
 const clickable = require('./clickable');
 const selectable = require('./selectable');
-//const scrollable = require('./scrollable');
+const scrollable = require('./scrollable');
 const util = require('./util');
 
-const props = ['data', 'sort', 'selected'];
+const props = ['data', 'sort', 'selected', 'scrollable'];
 const bools = ['sortable', 'selectable'];
 
 
@@ -150,9 +150,9 @@ class DataTable extends BaseComponent {
 			clickable.call(this);
 			selectable.call(this);
 		}
-		// if (this.scrollable) {
-		// 	scrollable.call(this);
-		// }
+		if (this.scrollable) {
+			scrollable.call(this);
+		}
 		this.mixPlugins = noop;
 	}
 }
