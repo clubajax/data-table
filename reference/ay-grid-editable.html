@@ -1,0 +1,117 @@
+<script>
+    // ay-grid-selection
+    // Adds the ability to select a grid row
+    //
+    (function () {
+        'use strict';
+        alloy.createComponent({
+            tag: 'ay-grid-editable',
+            setGrid: function (grid) {
+                var editable = this.getAttribute('editable');
+                if(!editable){
+                    console.error('The `editable` attribute id required for the ay-grid-editable plugin');
+                    return;
+                }
+                grid.has.editable = true;
+                this.editable = {};
+                editable.split(',').forEach(function (field) {
+                    this.editable[field.trim().toLowerCase()] = 1;
+                }, this);
+
+                this.grid = grid;
+
+                this.grid.classList.add('ay-highlightable');
+                grid.on('row-click', this.onClick.bind(this));
+                grid.on('keyup', function (e) {
+                    if(e.key === 'Enter'){
+                        this.onClick(e);
+                    }
+                }.bind(this));
+                grid.on('data', function (e) {
+                    if(e.detail.data.validation){
+                        this.validation = e.detail.data.validation;
+                    }
+                }.bind(this));
+                grid.ensure('clickable', 'The ay-grid-clickable plugin is required for ay-grid-editable');
+
+            },
+
+            validate: function (cell, item, prop, value) {
+                var result = this.validation(prop, value, item);
+                if(typeof result === 'string'){
+                    cell.classList.add('invalid');
+                }else{
+                    cell.classList.remove('invalid');
+                }
+            },
+
+            open: function (cell, item, prop) {
+                var
+                    input, div,
+                    value = item[prop];
+                this.current = cell;
+                this.currentValue = value;
+                cell.innerHTML = '';
+                cell.classList.add('ay-editable');
+                div = dom('div', {}, cell);
+                input = dom('input', {attr:{value: value}}, div);
+                input.focus();
+                this.isEditing = true;
+
+                this.handle = on.makeMultiHandle([
+                    on(input, 'keyup', function (e) {
+                        if(e.key === 'Escape'){
+                            this.close();
+                        }else if(e.key === 'Enter'){
+                            this.currentValue = input.value;
+                            item[prop] = input.value;
+                            this.close();
+                        }else if(this.validation){
+                            this.validate(cell, item, prop, input.value);
+                        }
+                    }.bind(this)),
+                    on(input, 'blur', this.close.bind(this))
+                ]);
+            },
+
+            close: function () {
+                this.isEditing = false;
+                this.handle.remove();
+                this.current.innerHTML = this.currentValue;
+                this.current.classList.remove('ay-editable');
+                this.current.focus();
+
+                // FIXME: when executing a value, the tab placement gets lost
+
+                //console.log('active', document.activeElement);
+            },
+
+            onClick: function(event){
+                if(this.isEditing){
+                    return;
+                }
+                if(typeof event.detail.index !== 'number'){
+                    console.warn('Failed to select numeric row index of', event.index);
+                    return;
+                }
+                var
+                    item = event.detail.item,
+                    cell = event.detail.cell,
+                    prop = cell.getAttribute('data-field'),
+                    table = this.grid.tbody;
+
+                if(!this.editable[prop.toLowerCase()]){
+                    //console.log('nope', prop, cell);
+                    return;
+                }
+
+                if(!table){
+                    console.warn('Table not ready to select row');
+                    return;
+                }
+
+                this.open(cell, item, prop);
+            }
+        });
+    }());
+</script>

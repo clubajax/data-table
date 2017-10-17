@@ -1,0 +1,196 @@
+//
+// grid.less
+//
+
+
+
+ay-grid{
+    * {
+        box-sizing: content-box;
+    }
+    display: block;
+    position: relative;
+    table{
+        border-collapse: collapse;
+        width: 100%;
+        outline: 0;
+        thead{
+            top: -1px;
+            border-bottom: 1px solid grid-thead-brd;
+        }
+        th{
+            background-clip: padding-box !important; // Fix FF bug where borders don't show: https://developer.mozilla.org/en-US/docs/CSS/background-clip
+            background: @grid-th-bg;
+            color: @grid-th-txt;
+            font-weight: normal;
+            text-align: left;
+            padding: 8px 10px;
+
+        }
+        td{
+            padding: 8px 10px;
+            outline: none;
+        }
+        tbody tr:nth-child(even){
+            background: @grid-tr-even;
+        }
+        tbody tr:nth-child(odd){
+            background: @grid-tr-odd;
+        }
+
+        tbody tr.ay-selected,
+        tbody tr.ay-selected:nth-child(even){
+            background: @grid-tr-even-sel;
+        }
+    }
+    &.ay-highlightable{
+        td:focus{
+            outline: 1px solid blue;
+        }
+    }
+    &.dark.sortable,
+    &.dark,
+    &.dark-header.sortable,
+    &.dark-header{
+        th {
+            background: @grid-hdr-sort-bg;
+            border-top-color: @grid-hdr-sort-brd-top;
+            color: @grid-hdr-sort-txt;
+            &:hover{
+                background: @grid-hdr-sort-hov;
+            }
+            &.no-sort:hover{
+                background: @grid-hdr-no-sort-hov;
+                cursor: default;
+            }
+        }
+        th:first-child{
+            border-left-color: @grid-hdr-sort-brd-left;
+        }
+        th:last-child{
+            border-right-color: @grid-hdr-sort-brd-right;
+        }
+    }
+    &.borders{
+        //border: 1px solid #ccc;
+        th, td{
+            border: 1px solid #ccc;
+        }
+        th{
+            border-bottom: 0;
+        }
+        tr:first-child td{
+            border-top: 0;
+        }
+    }
+    &.lines{
+        border: 2px solid @grid-lines-brd;
+        th{
+            border: 1px solid @grid-lines-th-brd;
+        }
+        td{
+            border: 1px solid @grid-lines-td-brd;
+        }
+    }
+
+    &.abs{
+        display: block;
+        position: absolute;
+        top:0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        border: 2px solid @grid-abs-brd;
+        border-top: 0;
+    }
+
+    td.ay-icon-pencil{
+        cursor: pointer;
+        text-align: center;
+        font-weight: bold;
+        font-size: 14px;
+    }
+
+    &.sortable th{
+        position: relative;
+        cursor: pointer;
+        &.ay-icon-caret-up:before, &.ay-icon-caret-down:before{
+            position: absolute;
+            right: 2px;
+            top: 50%;
+        }
+        &:hover{
+            background: @grid-sort-hov;
+        }
+        &.no-sort:hover{
+            background: @grid-no-sort-hov;
+            cursor: default;
+        }
+        span{
+            display: inline-block;
+            margin-right: 12px;
+        }
+    }
+
+    &.scrollable{
+        overflow: auto;
+        .ay-table-header-wrapper{
+            overflow: hidden;
+            width: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+        .ay-table-body-wrapper{
+            overflow: auto;
+            width: 100%;
+            height: auto;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+        }
+        .ay-table-header{
+
+        }
+        th, td{
+            border: 1px solid @grid-scroll-brd;
+        }
+        th{
+            white-space: nowrap;
+        }
+    }
+
+    .ay-grid-chk{
+        width: 10px;
+        max-width: 10px;
+        input, span{
+            display: block;
+            margin: 0 !important;
+        }
+    }
+    .ay-editable{
+        box-sizing: border-box;
+        padding: 0;
+        position: relative;
+        &.invalid{
+            outline: 1px solid red;
+        }
+        div{
+            box-sizing: border-box;
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0; height: auto;
+        }
+        input{
+            box-sizing: border-box;
+            width: 100%;
+            height: 100%;
+            outline: 0;
+        }
+    }
+}
+
+
+
+

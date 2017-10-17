@@ -1,0 +1,85 @@
+<!doctype html>
+<html>
+<head>
+    <title>Grid Filterable</title>
+    <meta name="alloy-status" content="ux=1,prod=0,qa=0,dev=0,roadmap=1">
+
+    <link rel="stylesheet" href="../../dist/components.css">
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            font-family: "Helvetic Neue", Helvetica, Arial sans-serif;
+            font-size: 12px;
+            color: #666;
+            background: white;
+            padding: 20px;
+        }
+        .wrap{
+            width: 50%;
+            height: 400px;
+            margin: 5px;
+        }
+        .ay-layout{
+            width: 50%;
+        }
+        ay-grid{
+            width: 100%;
+            height: 100%;
+        }
+        ay-drop-down{
+            width: 150px;
+        }
+    </style>
+    <script src="../../bower_components/webcomponentsjs/webcomponents-lite.js"></script>
+    <link rel="import" href="../lib.html">
+    <link rel="import" href="./ay-grid.html">
+    <link rel="import" href="./ay-grid-model.html">
+    <link rel="import" href="./ay-grid-clickable.html">
+    <link rel="import" href="./ay-grid-checkbox.html">
+    <link rel="import" href="./ay-grid-sortable.html">
+    <link rel="import" href="./ay-grid-scrollable.html">
+    <link rel="import" href="./ay-grid-filterable.html">
+    <link rel="import" href="../ay-drop-down/ay-drop-down.html">
+    <script src="//localhost:35729/livereload.js"></script>
+</head>
+<!-- purposely outside of HEAD -->
+<script src="../demo_assets/filterable-data.js"></script>
+<body>
+    <h1>ay-grid demo</h1>
+    <div class="ay-layout">
+        <div class="ay-col">
+            <ay-drop-down id="filter" class="ay-icon-filter"></ay-drop-down>
+        </div>
+        <div class="ay-col">
+            <button id="logValue" class="ay-btn">Log Value</button>
+        </div>
+    </div>
+    <div class="wrap">
+        <ay-grid id="grid" defaultSort="name" defaultDir="asc">
+            <ay-grid-model></ay-grid-model>
+            <ay-grid-checkbox></ay-grid-checkbox>
+            <ay-grid-clickable></ay-grid-clickable>
+            <ay-grid-sortable></ay-grid-sortable>
+            <ay-grid-scrollable></ay-grid-scrollable>
+            <ay-grid-filterable data-bind="filter" data-key="type"></ay-grid-filterable>
+        </ay-grid>
+    </div>
+    <script>
+        document.addEventListener('WebComponentsReady', function() {
+
+            var
+                data = window.data;
+
+            dom.query('ay-drop-down').setModel(data.dropData);
+            dom.query('ay-grid-model').setModel(data.gridData);
+
+            on('logValue', 'click', function () {
+                console.log('grid.value', grid.value);
+            });
+
+        });
+
+    </script>
+</body>
+</html>

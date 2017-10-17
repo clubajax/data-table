@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Wave</title>
+</head>
+<body>
+
+<svg width="300" height="300" xmlns="http://www.w3.org/2000/svg">
+	<path d="M10 290 l0 -280 l280 0 l0 280 Z" stroke="black" fill="rgba(0,255,255,0.3)"/>
+</svg>
+
+<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg">
+	<path d="
+	M 0 100
+	L 0 0
+	C 25 0, 25 25, 50 25
+	C 75 25, 75 0, 100 0
+	L 100 100 Z"
+		stroke="black" fill="rgba(0,255,255,0.3)"/>
+</svg>
+
+<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg">
+	<path d="
+	M 0 100
+	l 0 -100
+	c 25 0, 25 25, 50 25
+	c 25 0, 25 -25, 50 -25
+	l 0 100
+	Z"
+		stroke="black" fill="rgba(0,255,255,0.3)"/>
+</svg>
+
+<svg width="200" height="100" xmlns="http://www.w3.org/2000/svg">
+	<path id="p1" stroke="black" fill="rgba(0,255,255,0.3)"/>
+</svg>
+
+<script>
+	function drawWave1 () {
+
+		const p = document.getElementById('p1');
+		const w = 200;
+		const h = 100;
+		const seg1 = 'c 25 0, 25 25, 50 25';
+		const seg2 = 'c 25 0, 25 -25, 50 -25';
+
+		const s = `M 0 100 l 0 -100 ${seg1} ${seg2} ${seg1} ${seg2} l 0 100 Z`;
+
+		p.setAttribute('d', s);
+	}
+	drawWave1();
+</script>
+
+<svg width="200" height="100" xmlns="http://www.w3.org/2000/svg">
+	<path id="p2" stroke="black" fill="rgba(255,0,255,0.3)"/>
+</svg>
+
+<script>
+	function drawWave2 () {
+
+		const path = document.getElementById('p2');
+		const w = 200;
+		const h = 100;
+		const a = 20; // amplitude - height of wave)
+		const p = 15; // phase  - how gradual is the wave (width of bezier)
+		const f = 50; // frequency - width of wave (must be a divisor of svg width
+		const seg1 = 'c 25 0, 25 25, 50 25';
+		const seg2 = 'c 25 0, 25 -25, 50 -25';
+
+		const seg1a = `c ${p} 0, ${f-p} ${a}, ${f} ${a}`;
+		const seg2a = `c ${p} 0, ${f-p} ${-a}, ${f} ${-a}`;
+		const s = `M 0 ${h} l 0 ${-h} ${seg1a} ${seg2a} ${seg1a} ${seg2a} l 0 ${h} Z`;
+
+		path.setAttribute('d', s);
+	}
+	drawWave2();
+</script>
+
+</body>
+</html>

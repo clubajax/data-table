@@ -1,0 +1,214 @@
+<script>
+    (function () {
+        'use strict';
+
+        alloy.createComponent({
+            tag: 'ay-grid-model',
+            setGrid: function (grid) {
+                this.grid = grid;
+                grid.has.model = true;
+                grid.on('sort', this.onSort.bind(this));
+                grid.on('filter', this.onFilter.bind(this));
+                grid.on('pagination', this.onPaginate.bind(this));
+                if(this.initialData){
+                    grid.fire('model', this.initialData);
+                    this.parseData(this.initialData);
+                    this.initialData = null;
+                }
+            },
+
+            domReady: function () {
+                this.pagination = {};
+                this.sort = {};
+
+                this.url = this.getAttribute('url');
+                this.restURL = this.getAttribute('restURL');
+                this.dataPropertyName = this.getAttribute('dataPropertyName');
+
+                if(this.dataPropertyName){
+                    this.data = window[this.dataPropertyName];
+
+                    // time out needed to prevent content flash
+                    setTimeout(function () {
+                        this.parseData(this.data);
+                    }.bind(this), 1);
+                }
+                else if(this.restURL){
+                    throw new Error('Not implemented');
+                }
+                else if(this.url){
+                    this.get(this.url);
+                }
+            },
+
+            get: function (url) {
+                xhr(url, function (data) {
+                    this.data = data;
+                    this.parseData(this.data);
+                }.bind(this));
+            },
+
+            setModel: function (data) {
+                if(this.grid) {
+                    this.grid.fire('model', data);
+                    this.parseData(data);
+                }else{
+                    this.initialData = data;
+                }
+            },
+
+            parseData: function (data) {
+
+                var
+                    defaultSort = this.grid.getAttribute('defaultSort'),
+                    defaultDir = this.grid.getAttribute('defaultDir') || 'desc',
+                    exclude = [],
+                    columns;
+
+                if(data.items){
+                    this.data = data;
+                    this.items = this.data.items || data.Items;
+                    exclude = this.data.exclude || exclude;
+                    columns = this.data.columns;
+                }
+                else{
+                    this.data = data;
+                    this.items = this.data;
+                }
+                if(defaultSort){
+                    this.items = this.memorySort(defaultSort, defaultDir, this.items);
+                }
+                this.orgItems = [].concat(this.items);
+
+
+                if(!columns){
+                    columns = [];
+                    Object.keys(this.items[0]).forEach(function (key) {
+                        if(exclude.indexOf(key) === -1){
+                            columns.push(key);
+                        }
+                    })
+                }
+
+                this.columns = columns;
+
+                if(!this.grid){
+                    console.error('No grid');
+                    return;
+                }
+
+                this.render();
+
+
+            },
+
+            render: function(){
+                var
+                    grid = this.grid,
+                    items = this.orgItems,
+                    columns = this.columns;
+
+                if(grid.columnfilters){
+                    grid.columnfilters.forEach(function (filter) {
+                        columns = filter(columns);
+                    });
+
+                }
+
+                if(grid.datafilters){
+                    grid.datafilters.forEach(function (filter) {
+                        items = filter(items);
+                    });
+                }
+
+                if(this.filter){
+                    items = this.memoryFilter(this.filter.key, this.filter.value, items);
+                }
+
+                if(this.sort){
+                    items = this.memorySort(this.sort.prop, this.sort.dir, items);
+                }
+
+                this.grid.render(items, columns, this.data);   /// pass data as third option <---------------
+                this.grid.fire('data', {data: this.data});
+            },
+
+            onFilter: function (event) {
+                console.log('onFilter', event);
+                var
+                    key = event.detail ? event.detail.key : event.key,
+                    value = event.detail ? event.detail.value : event.value;
+
+                if(value !== null && value !== undefined){
+                    this.filter = {
+                        key: key,
+                        value: value
+                    }
+                }
+                else{
+                    this.filter = null;
+                }
+
+                this.render();
+            },
+
+            memoryFilter: function (key, value, items) {
+                return items.filter(function (item) {
+                    return item[key] === value;
+                });
+            },
+
+            onSort: function (event) {
+                this.sort = {
+                    prop: event.detail.sort,
+                    dir: event.detail.dir
+                };
+                this.render();
+            },
+
+            memorySort: function (prop, dir, items) {
+                var
+                    bLess = dir === 'desc' ? -1 : 1,
+                    aLess = dir === 'desc' ? 1 : -1;
+
+                if(!prop && !dir){
+                    return items;
+                }
+
+                function wordSort(a, b){
+                    var n1 = a[prop].toLowerCase(), n2 = b[prop].toLowerCase();
+                    if(n1 < n2){
+                        return aLess;
+                    }
+                    else if(n1 > n2){
+                        return bLess;
+                    }
+                    return 0;
+                }
+
+                function numSort(a, b){
+                    var n1 = +a[prop], n2 = +b[prop];
+                    if(n1 < n2){
+                        return aLess;
+                    }
+                    else if(n1 > n2){
+                        return bLess;
+                    }
+                    return 0;
+                }
+
+                return items.sort(function(a, b){
+                    if(isNaN(+a[prop]) || isNaN(+b[prop])){
+                        return wordSort(a, b);
+                    }
+                    return numSort(a, b);
+                });
+
+            },
+            onPaginate: function (event) {
+                this.pagination.start = event.detail.params.start;
+                this.pagination.count = event.detail.params.count;
+            }
+        });
+    }());
+</script>

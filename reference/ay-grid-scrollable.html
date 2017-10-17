@@ -1,0 +1,167 @@
+<script>
+    // ay-grid-scrollable
+    // Provides the grid scrollable rows and a fixed header
+    //
+    (function () {
+        'use strict';
+        alloy.createComponent({
+            tag: 'ay-grid-scrollable',
+            setGrid: function (grid) {
+                var scroller = this;
+                this.grid = grid;
+                grid.has.scrollable = true;
+                grid.classList.add('scrollable');
+                grid.on('render', this.onRender.bind(this));
+                grid.on('resize', this.onRender.bind(this));
+                grid.on('pre-render', this.onPreRender.bind(this));
+
+                grid.renderTemplate = function () {
+                    if(scroller.gridElements){ return; }
+                    this.tableHeadWrapper = dom('div', {className: 'ay-table-header-wrapper'}, this);
+                    this.tableHeader = dom('table', {className: 'ay-table-header', attr:{tabindex:'1'}}, this.tableHeadWrapper);
+                    this.thead = dom('thead', {}, this.tableHeader);
+                    this.tableBodyWrapper = dom('div', {className: 'ay-table-body-wrapper'}, this);
+                    this.tableBody = dom('table', {className: 'ay-table-body', attr:{tabindex:'1'}}, this.tableBodyWrapper);
+                    this.tbody = dom('tbody', {}, this.tableBody);
+
+                    scroller.gridElements = {
+                        table: this,
+                        tableHeadWrapper: this.tableHeadWrapper,
+                        tableHeader: this.tableHeader,
+                        thead: this.thead,
+                        tableBodyWrapper: this.tableBodyWrapper,
+                        tableBody: this.tableBody,
+                        tbody: this.tbody
+                    };
+                }
+            },
+
+            onPreRender: function () {
+                if(this.grid.table){
+                    this.scrollPos = this.grid.table.scrollLeft;
+                }
+            },
+
+            onRender: function (event) {
+                this.sizeColumns(event.detail.thead, event.detail.tbody);
+
+
+                if(this.scrollPos){
+                    var sp = this.scrollPos;
+                    window.requestAnimationFrame(function () {
+                        event.detail.table.scrollLeft = sp;
+                    });
+                    this.scrollPos = 0;
+                }
+            },
+
+            handleScroll: function(event){
+                var
+                    head = this.gridElements.tableHeadWrapper,
+                    body = this.gridElements.tableBodyWrapper,
+                    amt;
+                head.scrollLeft = body.scrollLeft;
+                if(head.scrollLeft !== body.scrollLeft) {
+                    amt = Math.ceil(head.scrollLeft - body.scrollLeft);
+                    head.style.left = amt + 1 + 'px';
+                    this.hasShift = true;
+                }
+                else if(this.hasShift){
+                    head.style.left = '';
+                    this.hasShift = false;
+                }
+            },
+
+            connectScroll: function (detail) {
+                window.requestAnimationFrame(function() {
+                    if (this.scrollHandle) {
+                        this.scrollHandle.remove();
+                    }
+                    this.scrollHandle = this.grid.on(this.gridElements.tableBodyWrapper, 'scroll', this.handleScroll.bind(this));
+                }.bind(this));
+            },
+
+            sizeColumns: function(head, body){
+                head = head.parentNode;
+                body = body.parentNode;
+                var
+                    self = this,
+                    grid = this.grid,
+                    tempNode = dom('div', {style:{position:'absolute', width: '100px', height: '100px', zIndex:-1}}, document.body),
+                    gridParent = grid.parentNode,
+                    i, minWidth, thw, tdw,
+                    ths = head.querySelectorAll('th'),
+                //colPercent = (100 / ths.length) + '%',
+                    firstTR = body.querySelector('tr'),
+                    tds;
+
+                if(!firstTR){
+                    return;
+                }
+
+                // remove grid from its current location
+                // mainly because if it is in a dialog, the animation
+                // CSS will mess up dimensions
+                tempNode.appendChild(grid);
+
+                tds = firstTR.querySelectorAll('td');
+
+                // reset
+                //
+                // set containers to absolute and an arbitrary, small width
+                // to force cells to squeeze together so we can measure their
+                // natural widths
+
+                dom.style(head, {
+                    position:'absolute',
+                    width:100
+                });
+                dom.style(body, {
+                    position:'absolute',
+                    width:100
+                });
+
+                // reset head THs
+                for(i = 0; i < ths.length; i++){
+                    dom.style(ths[i], {width:'', minWidth:''});
+                    // TDs shouldn't have a width yet,
+                    // unless this is a resize
+                    dom.style(tds[i], {width:'', minWidth:''});
+                }
+
+                // wait for DOM to render before getting sizes
+                window.requestAnimationFrame(function(){
+                    // after the next
+                    for(i = 0; i < ths.length; i++){
+                        thw = dom.box(ths[i]).width;
+                        tdw = dom.box(tds[i]).width;
+                        if(!/fixed\-width/.test(tds[i].className)) {
+                            minWidth = Math.max(thw, tdw);
+                            dom.style(ths[i], {minWidth: minWidth});
+                            dom.style(tds[i], {minWidth: minWidth});
+                        }
+                    }
+
+                    var headeHeight = dom.box(self.gridElements.tableHeader).height;
+                    grid.tableBodyWrapper.style.top = (headeHeight - 1) + 'px';
+
+                    // remove temp body styles
+                    dom.style(head, {
+                        position:'',
+                        width:''
+                    });
+                    dom.style(body, {
+                        position:'',
+                        width:''
+                    });
+
+                    gridParent.appendChild(grid);
+                    dom.destroy(tempNode);
+
+                    self.connectScroll();
+                });
+
+            }
+        });
+    }());
+</script>

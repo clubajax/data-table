@@ -1,0 +1,52 @@
+<script>
+    // ay-grid-selection
+    // Adds the ability to select a grid row
+    //
+    (function () {
+        'use strict';
+        alloy.createComponent({
+            tag: 'ay-grid-selection',
+            setGrid: function (grid) {
+                this.grid = grid;
+                grid.has.selection = true;
+                grid.on('row-click', this.select.bind(this));
+                grid.ensure('clickable', 'The ay-grid-clickable plugin is required for ay-grid-selection');
+
+            },
+            select: function(event){
+                if(typeof event.detail.index !== 'number'){
+                    console.warn('Failed to select numeric row index of', event.index);
+                    return;
+                }
+                var table = this.grid.tbody;
+                if(!table){
+                    console.warn('Table not ready to select row');
+                    return;
+                }
+                var
+                    // row[0] is the header
+                    row = table.rows[event.detail.index],
+                    item = event.detail.item,
+                    emitEvent = {
+                        item:item,
+                        index: event.detail.index,
+                        row: row
+                    };
+
+                if(event.detail.cell){
+                    emitEvent.cell = event.detail.cell;
+                    emitEvent.field = event.detail.cell.getAttribute('data-field');
+                }
+
+                if(this.currentRow){
+                    this.currentRow.classList.remove('ay-selected');
+                }
+
+                this.currentRow = row;
+                this.currentRow.classList.add('ay-selected');
+
+                this.grid.fire('select-row', emitEvent);
+            }
+        });
+    }());
+</script>

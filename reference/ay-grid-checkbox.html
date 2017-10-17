@@ -1,0 +1,169 @@
+<script>
+    // ay-grid-checkbox
+    // used for adding input[checkbox] to a grid column/cell
+    //
+    (function () {
+        'use strict';
+        alloy.createComponent({
+            tag: 'ay-grid-checkbox',
+            properties: ['select-type'],
+            setGrid: function (grid) {
+                var
+                    chkCss = 'ay-grid-chk fixed-width',
+                    allSelected = false,
+                    selected = {},
+                    selectType = selectTypes[this['select-type']] || 'checkbox';
+
+                grid.has.checkbox = true;
+                grid.ensure('clickable', 'The ay-grid-clickable plugin is required for ay-grid-checkable');
+
+                function selectable(event){
+                    var
+                        node,
+                        target = event.detail && event.detail.target ? event.detail.target : event.target;
+                    if(selectType === 'checkbox'){
+                        if(dom.attr(target, 'type') === 'checkbox'){
+                            return target;
+                        }
+                    }
+                    else{
+                        node = dom.ancestor(target, selectType);
+                        console.log('node');
+                        return node ? dom.query(node, 'input[type="checkbox"]') : null;
+                    }
+
+                    return null;
+                }
+
+
+                this.grid = grid;
+
+                grid.getValue = function () {
+                    console.log('grid.items', grid.items);
+
+                    function isVisible (id){
+                        return !!grid.items.filter(function (item) {
+                            return ''+item.id === ''+id;
+                        }).length;
+                    }
+
+                    return Object.keys(selected).filter(function (id) {
+                        return !!selected[id] && isVisible(id);
+                    });
+                };
+
+                grid.setValue = function (values) {
+                    values = Array.isArray(values) ? values : [values];
+                    var
+                        rows = dom.queryAll(grid.tbody, 'tr');
+
+                    selected = toObject(values);
+
+                    rows.forEach(function (row) {
+                        var
+                            id = row.getAttribute('data-id'),
+                            checkbox = dom.query(row, 'input[type="checkbox"]');
+                        checkbox.checked = selected[id];
+                    });
+                    grid.emit('change', {value:grid.getValue()});
+                };
+
+                grid.once('model', function (event) {
+                    event.detail.items.forEach(function (item) {
+                        selected[item.id] = !!item.selected;
+                    });
+                });
+
+                grid.addColumnFilter(function columnFilter (columns) {
+                    // on render column header
+                    //
+                    var checked = allSelected ? 'checked' : '';
+                    if(typeof columns[0] === 'string'){
+                        console.error('actions can\'t be used with column strings; please use objects');
+                    }
+                    else if(/<input/.test(columns[0].label)){
+                        columns[0].label = '<input type="checkbox" '+checked+'/>';
+                    }
+                    else{
+                        columns.unshift({
+                            key: chkCss,
+                            label: '<input type="checkbox" '+checked+'/>',
+                            css: chkCss + ' no-sort'
+                        });
+                    }
+                    return columns;
+                });
+
+                grid.addDataFilter(function dataFilter (items) {
+                    // on items render
+                    items.forEach(function (item) {
+                        var checked = selected[item.id] ? 'checked' : '';
+                        item[chkCss] = '<input type="checkbox" '+checked+'/>';
+                    });
+                    return items;
+                });
+
+                grid.onNextRender(function () {
+                    // on first render, connect to grid clicks
+                    //
+                    grid.on('row-click', function (event) {
+                        var target = selectable(event);
+                        if(target){
+                            selected[event.detail.item.id] = !selected[event.detail.item.id];
+                            target.checked = selected[event.detail.item.id];
+                            grid.emit('change', {value:grid.getValue()});
+                        }
+                    }.bind(this));
+
+                    grid.on('header-click', function (event) {
+                        if(isCheckbox(event)){
+                            allSelected = event.detail.target.checked;
+                            var checkboxes = dom.queryAll(grid.tbody, 'input[type="checkbox"]');
+                            checkboxes.forEach(function (checkbox, i) {
+                                checkbox.checked = allSelected;
+                                selected[grid.items[i].id] = allSelected;
+                                grid.emit('change', {value:grid.getValue()});
+                            });
+                        }
+                    }.bind(this));
+
+                }.bind(this));
+            }
+        });
+
+        var
+            dom = alloy.dom,
+            selectTypes = {
+                'row': 'tr',
+                'tr': 'tr',
+                'cell': 'td',
+                'td': 'td'
+            };
+
+        function toObject(items){
+            items = toArray(items);
+            var object = {};
+            items.forEach(function (item) {
+                object[item] = true;
+            });
+            return object;
+        }
+
+        function toArray(items){
+            if(typeof items === 'string'){
+                return items.split(',').map(function (item) {
+                    return item.trim();
+                });
+            }
+            if(Array.isArray(items)){
+                return items;
+            }
+            return [items];
+        }
+
+        function isCheckbox(event){
+            var target = event.detail && event.detail.target ? event.detail.target : event.target;
+            return dom.attr(target, 'type') === 'checkbox';
+        }
+    }());
+</script>

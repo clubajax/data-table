@@ -1,0 +1,91 @@
+<!doctype html>
+<html>
+<head>
+    <title>Grid Small Demo</title>
+    <meta name="alloy-status" content="ux=1,prod=1,qa=1,dev=1,roadmap=.6">
+
+    <link rel="stylesheet" href="../../dist/components.css">
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            font-family: "Helvetic Neue", Helvetica, Arial sans-serif;
+            font-size: 12px;
+            color: #666;
+            background: #fff;
+            padding: 20px;
+        }
+        .wrap{
+            position: relative;
+            width: 500px;
+            height: 400px;
+            float: left;
+            margin: 5px;
+        }
+    </style>
+    <script src="../../bower_components/webcomponentsjs/webcomponents-lite.js"></script>
+    <link rel="import" href="../lib.html">
+    <link rel="import" href="./ay-grid.html">
+    <link rel="import" href="./ay-grid-model.html">
+    <link rel="import" href="./ay-grid-clickable.html">
+    <link rel="import" href="./ay-grid-sortable.html">
+    <script src="//localhost:35729/livereload.js"></script>
+</head>
+<body>
+    <h1>ay-grid demo</h1>
+    <!--<div class="wrap">-->
+    <!--<ay-grid id="grid1"></ay-grid>-->
+    <!--</div>-->
+    <div class="wrap">
+        <ay-grid id="grid2" defaultSort="Coverage" defaultDir="asc" class="dark borders">
+            <ay-grid-model></ay-grid-model>
+            <ay-grid-clickable></ay-grid-clickable>
+            <ay-grid-sortable></ay-grid-sortable>
+        </ay-grid>
+    </div>
+    <script>
+        document.addEventListener('WebComponentsReady', function() {
+
+            alloy.xhr('../demo_assets/data.json', {
+                callback: function (data) {
+                    var
+                    //grid1 = dom.byId('grid1'),
+                        grid2 = dom.byId('grid2'),
+                        model2 = dom.query(grid2, 'ay-grid-model');
+
+                    console.log('init...');
+                    //grid2.init = function () {
+                    grid2.on('data', function (data) {
+                        console.log(' ---- > DATA', data);
+                    });
+                    model2.setModel({
+                        //exclude: ['id'],
+                        //columns: ['OfferOfCoverage', 'SafeHarborCode', 'EmployeeCost'],
+                        columns: [{
+                            key: 'id',
+                            label: 'ID',
+                            css: 'no-sort'
+                        }, {
+                            key: 'Coverage',
+                            label: 'Coverage'
+                        }, {
+                            key: 'Code',
+                            label: 'Code'
+                        }, {
+                            key: 'Cost',
+                            label: 'Cost'
+                        }],
+                        items: data.EmployeeResults
+                    });
+                    //grid2.setContent(data.EmployeeResults);
+                    //};
+
+                    //grid1.init = function(){
+                    //grid1.setContent(data.EmployeeResults);
+                    //};
+                }
+            });
+        });
+    </script>
+</body>
+</html>

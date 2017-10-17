@@ -1,0 +1,62 @@
+<!doctype html>
+<html>
+<head>
+    <title>Grid Checkboxes</title>
+    <meta name="alloy-status" content="ux=1,prod=0,qa=0,dev=0,roadmap=.8">
+
+    <link rel="stylesheet" href="../../dist/components.css">
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            font-family: "Helvetic Neue", Helvetica, Arial sans-serif;
+            font-size: 12px;
+            color: #666;
+            background: #fff;
+            padding: 20px;
+        }
+        .wrap{
+            position: relative;
+            width: 50%;
+            height: 400px;
+            margin: 5px;
+        }
+        ay-grid{
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+    <script src="../../bower_components/webcomponentsjs/webcomponents-lite.js"></script>
+    <link rel="import" href="../lib.html">
+    <link rel="import" href="./ay-grid.html">
+    <link rel="import" href="./ay-grid-model.html">
+    <link rel="import" href="./ay-grid-checkbox.html">
+    <link rel="import" href="./ay-grid-clickable.html">
+    <link rel="import" href="./ay-grid-sortable.html">
+    <link rel="import" href="./ay-grid-selection.html">
+    <link rel="import" href="./ay-grid-scrollable.html">
+    <script src="//localhost:35729/livereload.js"></script>
+</head>
+<!-- purposely outside of HEAD -->
+<script src="../demo_assets/filterable-data.js"></script>
+<body>
+    <h1>ay-grid demo</h1>
+    <div class="wrap">
+        <ay-grid id="grid" defaultSort="name" defaultDir="asc" class="dark-header">
+            <ay-grid-model></ay-grid-model>
+            <ay-grid-clickable></ay-grid-clickable>
+            <ay-grid-sortable></ay-grid-sortable>
+            <ay-grid-checkbox select-type="cell"></ay-grid-checkbox>
+            <ay-grid-scrollable></ay-grid-scrollable>
+        </ay-grid>
+    </div>
+    <script>
+        document.addEventListener('WebComponentsReady', function() {
+
+            dom.query('ay-grid-model').setModel(data.gridData);
+
+        });
+
+    </script>
+</body>
+</html>

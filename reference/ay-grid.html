@@ -1,0 +1,224 @@
+<script>
+    (function () {
+        'use strict';
+
+        alloy.createComponent({
+            tag: 'ay-grid-column'
+        });
+        alloy.createComponent({
+            tag: 'ay-grid-row'
+        });
+        alloy.createComponent({
+            tag: 'ay-grid-cell'
+        });
+
+        alloy.createComponent({
+            tag: 'ay-grid',
+
+            created: function () {
+                // for testing if plugins exist
+                this.has = {};
+            },
+
+            render: function(items, columns, data){
+                if(items.items){
+                    // render(data);
+                    this.setContent(items.items, items.columns, items.data);
+                }else{
+                    // render(items, ?columns, ?data);
+                    this.setContent(items, columns, data);
+                }
+            },
+
+            setContent: function (items, columns, data) {
+
+                this.data = data || items;
+                this.items = items;
+
+                this.fire('pre-render');
+
+                this.renderTemplate();
+
+                this.exclude = this.data.exclude || [];
+
+                //columns = this.filterColumns(columns);
+
+                if(columns !== false) {
+                    columns = this.columns = columns || Object.keys(this.items[0]);
+                    this.renderHeader(columns);
+                }
+                else if(!this.columns){
+                    this.columns = [];
+                }
+
+                this.renderBody(items);
+
+                this.fire('render', {table: this.table || this, thead: this.thead, tbody: this.tbody});
+
+                if(this.nextrendercallbacks){
+                    this.nextrendercallbacks.forEach(function (cb) {
+                        cb();
+                    });
+                    this.nextrendercallbacks = null;
+                }
+            },
+
+            // is overwritten by scrollable
+            renderTemplate: function () {
+                //console.log('grid.renderTemplate');
+                if(this.table){
+                    return;
+                }
+                this.table = dom('table', {attr:{tabindex:'1'}}, this);
+                this.thead = dom('thead', {}, this.table);
+                this.tbody = dom('tbody', {}, this.table);
+            },
+
+            // TODO i18n in closure
+            renderHeader: function(columns){
+                dom.clean(this.thead, true);
+                var
+                    self = this,
+                    css,
+                    key, label,
+                    thead = this.thead,
+                    tr = dom('tr', {}, thead);
+
+                columns.forEach(function(col){
+                    key = col.key || col;
+                    label = col.label === undefined ? col : col.label;
+                    css = col.css || col.className || '';
+                    dom('th', {html: '<span>'+self.i18n(label)+'</span>', css: css, attr:{'data-field': key}}, tr);
+                });
+                this.fire('render-header', {thead: thead});
+            },
+
+            renderBody: function(items){
+                var
+                    exclude = this.exclude || [],
+                    columns = this.columns,
+                    tbody = this.tbody;
+
+                dom.clean(tbody, true);
+
+                if(!columns || !columns.length){
+                    columns = [];
+                    Object.keys(items[0]).forEach(function (key) {
+                        if(exclude.indexOf(key) === -1){
+                            columns.push(key);
+                        }
+                    })
+                }
+
+                items.forEach(function(item, i){
+                    item.index = i;
+                    var
+                        html, css, key,
+                        tr = dom('tr', {attr:{'data-index': i, 'data-id': item.id}}, tbody);
+                    columns.forEach(function(col){
+                        key = col.key || col;
+                        html = item[key];
+                        css = key;
+                        dom('td', {html: html, attr:{'data-field': key, tabIndex: 1}, css:css}, tr)
+                    });
+                });
+                this.fire('render-body', {tbody: tbody});
+
+            },
+
+            getRowById: function (id) {
+                return dom.query(this.tbody, 'tr[data-id="'+id+'"]');
+            },
+
+            getItemById: function (id) {
+                for(var i = 0; i < this.items.length; i++){
+                    if(this.items[i].id === id){
+                        return this.items[i];
+                    }
+                }
+                return null;
+            },
+
+            onNextRender: function(callback){
+                this.nextrendercallbacks = this.nextrendercallbacks || [];
+                this.nextrendercallbacks.push(callback);
+            },
+
+            domReady: function () {
+                if(this.plugins){ return; }
+                this.plugins = {};
+                var i, model, contentNodes = this.childNodes;
+                if(contentNodes.length) {
+                    for(i = 0; i < contentNodes.length; i++){
+                        if(contentNodes[i].nodeType === 1) {
+                            if (contentNodes[i].setGrid) {
+                                this.plugins[contentNodes[i].tag] = contentNodes[i].tag;
+
+                                if (contentNodes[i].nodeName.indexOf('MODEL') > -1) {
+                                    model = contentNodes[i];
+                                }
+                                else {
+                                    contentNodes[i].setGrid(this);
+                                }
+                            }
+                        }
+                    }
+                }
+
+                // ensure model is last, because it will set initialData
+                // and all of the plugins need to be in place for filtering
+                if(model){
+                    model.setGrid(this);
+                }
+                this.parentNode.classList.add('content-self-scrolls');
+            },
+
+            setModel: function () {
+                console.warn('No `setModel`, use `render` or data-grid-model');
+            },
+
+            resize: function (box) {
+                this.fire('render', {table: this.table || this, thead: this.thead, tbody: this.tbody});
+            },
+
+            // data and column filters are used by model
+            addDataFilter: function(cb){
+                this.datafilters = this.datafilters || [];
+                this.datafilters.push(cb);
+            },
+
+            addColumnFilter: function(cb){
+                this.columnfilters = this.columnfilters || [];
+                this.columnfilters.push(cb);
+            },
+
+            ensure: function (feature, msg) {
+                var has = this.has;
+                setTimeout(function () {
+                    if(!has[feature]){
+                        throw new Error(msg);
+                    }
+                }, 1);
+            },
+
+            value: {
+                get: function () {
+                    return this.getValue();
+                },
+                set: function (val) {
+                    this.setValue(val);
+                }
+            },
+
+            // these should be overwritten by plugins
+            getValue: function () {
+                return null;
+            },
+
+            setValue: function () {
+
+            }
+        });
+    }());
+
+</script>

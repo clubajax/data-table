@@ -1,0 +1,143 @@
+<script>
+    (function () {
+        'use strict';
+
+        var
+            icons = {
+                'desc': 'ay-icon-caret-down',
+                'asc': 'ay-icon-caret-up'
+            },
+            dom = window.dom;
+
+        alloy.createComponent({
+            tag: 'ay-grid-sortable',
+            setGrid: function (grid) {
+                this.grid = grid;
+                grid.has.sortable = true;
+                grid.classList.add('sortable');
+                grid.on('render', this.onGridRender.bind(this));
+                this.defaultSort = grid.getAttribute('defaultSort') || false;
+                if(this.defaultSort){
+                    this.defaultDir = grid.getAttribute('defaultDir') || 'desc';
+                    grid.onNextRender(this.setDefaultSort.bind(this));
+                }
+                grid.ensure('clickable', 'The ay-grid-clickable plugin is required for ay-grid-sortable');
+            },
+
+            onGridRender: function () {
+                if(this.clickHandle){
+                    this.clickHandle.remove();
+                }
+                this.clickHandle = this.grid.on('header-click', this.onHeaderClick.bind(this));
+
+                if(this.currentCell) {
+                    this.currentCell = this.getNodeByField(dom.attr(this.currentCell, 'data-field'));
+                    if (this.currentDir) {
+                        this.currentCell.classList.add(icons[this.currentDir]);
+                    }
+                }
+            },
+
+            setDefaultSort: function () {
+                var node = this.getNodeByField(this.defaultSort);
+                this.currentDir = this.defaultDir;
+                this.currentCell = node;
+                this.currentField = this.defaultSort;
+                this.currentCell.classList.add(icons[this.currentDir]);
+            },
+
+
+            setSort: function(nodeOrField, dir){
+                var
+                    field,
+                    node,
+                    sortEvent;
+
+                if(typeof nodeOrField === 'string'){
+                    field = nodeOrField;
+                    node = this.getNodeByField(nodeOrField);
+                }else{
+                    node = nodeOrField;
+                    field = node.getAttribute('data-field');
+                }
+                if(this.currentCell && this.currentDir){
+                    this.currentCell.classList.remove(icons[this.currentDir]);
+                }
+
+                this.currentDir = dir || '';
+                if(!this.currentDir){
+                    this.currentDir = this.defaultDir;
+                    field = this.defaultSort;
+                    node = this.getNodeByField(field);
+                }
+                this.currentCell = node;
+                this.currentField = field;
+
+                sortEvent = {
+                    dir: this.currentDir,
+                    sort: this.currentDir ? field : ''
+                };
+                this.grid.fire('sort', sortEvent);
+            },
+
+            onHeaderClick: function(event){
+
+                var
+                    sort = 'desc',
+                    field = event.detail.field,
+                    target = event.detail.cell;
+
+                console.log('onHeaderClick', event.detail);
+
+                if(!target || target.className.indexOf('no-sort') > -1){
+                    console.log('NOTARGET');
+                    return;
+                }
+                if(field === this.currentField){
+                    if(this.currentField === this.defaultSort){
+                        if (this.currentDir === 'desc') {
+                            sort = 'asc';
+                        }else{
+                            sort = 'desc';
+                        }
+                    }else {
+                        if (this.currentDir === 'desc') {
+                            sort = 'asc';
+                        }
+                        else if (this.currentDir === 'asc') {
+                            sort = '';
+                        }
+                        else {
+                            sort = 'desc';
+                        }
+                    }
+                }
+                this.setSort(target, sort);
+            },
+
+            getNodeByField: function(field){
+                this.cells = this.getHeaderCells();
+                return this.cells.map[field];
+            },
+
+            getHeaderCells: function(){
+                this.cells = [];
+                this.cells.map = {};
+                var
+                    i,
+                    field,
+                    cells = this.grid.thead.getElementsByTagName('TH');
+
+                for(i = 0; i < cells.length; i++){
+                    field = cells[i].getAttribute('data-field');
+                    if(field){
+                        this.cells.push(cells[i]);
+                        this.cells.map[field] = cells[i];
+                    }
+                }
+                return this.cells;
+            }
+        });
+    }());
+
+</script>

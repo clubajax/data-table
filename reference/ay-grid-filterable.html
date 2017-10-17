@@ -1,0 +1,45 @@
+<script>
+    (function () {
+        'use strict';
+        var dom = window.alloy.dom;
+        alloy.createComponent({
+
+            tag: 'ay-grid-filterable',
+
+            properties:['bind', 'key'],
+
+            setGrid: function (grid) {
+                console.log('GRID');
+                this.grid = grid;
+                grid.has.filterable = true;
+                if(this.bind){
+                    var widget = dom.byId(this.bind);
+                    if(!widget){
+                        throw new Error('filterable: Widget not found with ID of ' + this.bind);
+                    }
+                    this.setSelector(widget);
+                }
+                grid.setFilter = function (filter) {
+                    grid.fire('filter', {
+                        key: filter.key,
+                        value: filter.value
+                    });
+                }
+            },
+
+            setSelector: function (widget, key) {
+                key = key || this.key;
+                var
+                    grid = this.grid;
+                grid.on(widget, 'change', function (event) {
+                    grid.fire('filter', {
+                        key: key,
+                        value: event.value
+                    });
+
+                    grid.emit('change', {value:grid.getValue()});
+                });
+            }
+        });
+    }());
+</script>
