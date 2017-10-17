@@ -3,6 +3,7 @@ const dom = require('@clubajax/dom');
 const sortable = require('./sortable');
 const clickable = require('./clickable');
 const selectable = require('./selectable');
+//const scrollable = require('./scrollable');
 const util = require('./util');
 
 const props = ['data', 'sort', 'selected'];
@@ -42,7 +43,7 @@ class DataTable extends BaseComponent {
 			this.displayNoData(true);
 			return;
 		}
-		this.displayNoData();
+		this.displayNoData(false);
 		this.items = [...items];
 		this.mixPlugins();
 		clearTimeout(this.noDataTimer);
@@ -56,20 +57,6 @@ class DataTable extends BaseComponent {
 			this.displayNoData(true);
 		}, 1000);
 	}
-
-	mixPlugins () {
-		if (this.sortable) {
-			clickable.call(this);
-			sortable.call(this);
-		}
-		if (this.selectable) {
-			clickable.call(this);
-			selectable.call(this);
-		}
-		this.mixPlugins = noop;
-	}
-
-
 
 	render () {
 		this.fire('pre-render');
@@ -152,6 +139,21 @@ class DataTable extends BaseComponent {
 		} else {
 			this.classList.remove('no-data');
 		}
+	}
+
+	mixPlugins () {
+		if (this.sortable) {
+			clickable.call(this);
+			sortable.call(this);
+		}
+		if (this.selectable) {
+			clickable.call(this);
+			selectable.call(this);
+		}
+		// if (this.scrollable) {
+		// 	scrollable.call(this);
+		// }
+		this.mixPlugins = noop;
 	}
 }
 
