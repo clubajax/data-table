@@ -5,6 +5,27 @@ data-table {
     cursor: pointer; }
   data-table.selectable tbody tr:not(.selected):not(.unselectable):hover {
     background-color: #d6e5f2; }
+  data-table.scrollable {
+    overflow: auto; }
+    data-table.scrollable .table-header-wrapper {
+      overflow: hidden;
+      width: 100%;
+      position: absolute;
+      top: 0;
+      left: 0; }
+    data-table.scrollable .table-body-wrapper {
+      overflow: auto;
+      width: 100%;
+      height: auto;
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0; }
+    data-table.scrollable th, data-table.scrollable td {
+      border: 1px solid red; }
+    data-table.scrollable th {
+      white-space: nowrap; }
   data-table.no-data {
     border: 2px solid #ccc;
     padding-bottom: 25px; }

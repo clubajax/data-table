@@ -20,6 +20,32 @@ data-table{
             background-color: $tr-hvr;
         }
     }
+    &.scrollable{
+        overflow: auto;
+        .table-header-wrapper{
+            overflow: hidden;
+            width: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+        .table-body-wrapper{
+            overflow: auto;
+            width: 100%;
+            height: auto;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+        }
+        th, td{
+            border: 1px solid red;
+        }
+        th{
+            white-space: nowrap;
+        }
+    }
     &.no-data{
         border: $tbl-brd;
         padding-bottom: 25px;
