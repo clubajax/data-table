@@ -62,7 +62,9 @@
 	var section = dom('section', { class: 'sized' }, body);
 	var node = dom('data-table', {
 		data: getData(),
-		scrollable: true
+		scrollable: true,
+		sortable: true,
+		'stretch-column': 'company'
 	}, section);
 	onDomReady(node, function () {
 

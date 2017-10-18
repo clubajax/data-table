@@ -5,7 +5,7 @@ const Scrollable = {
 	init () {
 		console.log('SCROLLABLE');
 		this.classList.add('scrollable');
-		this.on('render', this.onRender.bind(this));
+		this.on('render-body', this.onRender.bind(this));
 		this.on('resize', this.onRender.bind(this));
 		this.on('pre-render', this.onPreRender.bind(this));
 	},
@@ -27,6 +27,7 @@ const Scrollable = {
 	},
 
 	onRender (event) {
+		console.log('ON RENDER');
 		this.sizeColumns();
 
 		if(this.scrollPos){
@@ -74,9 +75,12 @@ const Scrollable = {
 			gridParent = grid.parentNode,
 			i, minWidth, thw, tdw,
 			ths = head.querySelectorAll('th'),
-			//colPercent = (100 / ths.length) + '%',
+			colPercent = (100 / ths.length) + '%',
 			firstTR = body.querySelector('tr'),
-			tds;
+			tds,
+			stretchy = getStretchyColumn(this);
+
+		console.log('stretchy', stretchy);
 
 		if(!firstTR){
 			return;
@@ -123,9 +127,17 @@ const Scrollable = {
 					dom.style(ths[i], {minWidth: minWidth});
 					dom.style(tds[i], {minWidth: minWidth});
 				}
+
+				if (stretchy === 'all') {
+					dom.style(tds[i], {width: colPercent});
+					dom.style(ths[i], {width: colPercent});
+				} else if (stretchy === i) {
+					dom.style(tds[i], {width: '100%'});
+					dom.style(ths[i], {width: '100%'});
+				}
 			}
 
-			var headeHeight = dom.box(this.tableHeader).height;
+			const headeHeight = dom.box(this.tableHeader).height;
 			grid.tableBodyWrapper.style.top = (headeHeight - 1) + 'px';
 
 			// remove temp body styles
@@ -147,6 +159,20 @@ const Scrollable = {
 	}
 };
 
+function getStretchyColumn (self) {
+	const sCol = self['stretch-column'];
+	const cols = self.columns;
+	if (sCol === 'all') {
+		return 'all';
+	}
+	if (sCol === 'none') {
+		return -1;
+	}
+	if (!sCol || sCol === 'last') {
+		return cols.length - 1;
+	}
+	return cols.findIndex(col => col.key === sCol);
+}
 
 module.exports = function () {
 	if (!this.hasScrollable) {
