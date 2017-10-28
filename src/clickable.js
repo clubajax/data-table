@@ -29,6 +29,11 @@ const Clickable = {
 
 		index = +row.getAttribute('data-index');
 		rowId = dom.attr(row, 'data-row-id');
+
+		if (!rowId) {
+			return;
+		}
+
 		item = this.getItemById(rowId);
 
 		emitEvent = {

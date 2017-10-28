@@ -233,6 +233,7 @@
 				i;
 			for(i = 0; i < amt; i++){
 				item = {
+					id: this.bignumber(5),
 					firstName: this.name(),
 					lastName: this.name(),
 					company: this.site(),

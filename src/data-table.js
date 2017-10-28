@@ -117,9 +117,13 @@ class DataTable extends BaseComponent {
 		const editable = this.editable;
 		const selectable = this.selectable;
 
+		if (!items[0].id){
+			console.warn('Items do not have an ID');
+		}
+
 		// TODO: if sort, just reorder - do perf test
 		//console.time('render body');
-		render(items, columns, tbody, () => {
+		render(items, columns, tbody, selectable, () => {
 			// PERF: makes no difference:
 			//this.table.appendChild(this.tbody);
 			//console.timeEnd('render body');
@@ -157,7 +161,7 @@ class DataTable extends BaseComponent {
 	}
 }
 
-function render (items, columns, tbody, callback) {
+function render (items, columns, tbody, selectable, callback) {
 	items.forEach((item, index) => {
 		item.index = index;
 		const itemCss = item.css || item.class || item.className;
@@ -165,6 +169,7 @@ function render (items, columns, tbody, callback) {
 			html, css, key,
 			rowOptions = { 'data-row-id': item.id },
 			tr;
+
 		if (selectable) {
 			rowOptions.tabindex = 1;
 		}
@@ -187,7 +192,7 @@ function render (items, columns, tbody, callback) {
 	callback();
 }
 
-function lazyRender (allItems, columns, tbody, callback) {
+function lazyRender (allItems, columns, tbody, sorts, callback) {
 	let index = 0;
 	function renderRows (items) {
 		items.forEach((item) => {

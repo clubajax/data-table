@@ -3,7 +3,6 @@ const util = require('./util');
 
 const Scrollable = {
 	init () {
-		console.log('SCROLLABLE');
 		this.classList.add('scrollable');
 		this.on('render-body', this.onRender.bind(this));
 		this.on('resize', this.onRender.bind(this));
@@ -27,7 +26,6 @@ const Scrollable = {
 	},
 
 	onRender (event) {
-		console.log('ON RENDER');
 		this.sizeColumns();
 
 		if(this.scrollPos){
@@ -79,8 +77,6 @@ const Scrollable = {
 			firstTR = body.querySelector('tr'),
 			tds,
 			stretchy = getStretchyColumn(this);
-
-		console.log('stretchy', stretchy);
 
 		if(!firstTR){
 			return;
