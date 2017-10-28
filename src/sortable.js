@@ -1,4 +1,5 @@
 const util = require('./util');
+const dom = require('@clubajax/dom');
 
 const Sortable = {
 	init () {
