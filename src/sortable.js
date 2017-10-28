@@ -89,17 +89,17 @@ const Sortable = {
 			return;
 		}
 		if (field === this.current.sort) {
-			if (this.current.dir === 'desc') {
-				dir = 'asc';
+			if (this.current.dir === 'asc') {
+				dir = 'desc';
 			}
-			else if (this.current.dir === 'asc') {
+			else if (this.current.dir === 'desc') {
 				dir = '';
 			}
 			else {
 				dir = 'desc';
 			}
 		} else {
-			dir = 'desc';
+			dir = 'asc';
 		}
 		this.setSort(field, dir);
 	}
