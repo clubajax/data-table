@@ -3,19 +3,20 @@ const dom = require('@clubajax/dom');
 const sortable = require('./sortable');
 const clickable = require('./clickable');
 const selectable = require('./selectable');
-//const scrollable = require('./scrollable');
+const scrollable = require('./scrollable');
 const util = require('./util');
 
-const props = ['data', 'sort', 'selected'];
+const props = ['data', 'sort', 'selected', 'scrollable', 'stretch-column'];
 const bools = ['sortable', 'selectable'];
 
 
 // TODO
-// Handle no data
-// if sort, just reorder - do perf test
-//
-// TESTS - PERF TESTS
-//
+// Sort ASC first
+// widget / function for content (checkbox)
+// automatic virtual scroll after 100+ rows
+// optional column widths
+// filter / search
+// github.io demos
 
 
 class DataTable extends BaseComponent {
@@ -99,7 +100,6 @@ class DataTable extends BaseComponent {
 
 		this.headHasRendered = true;
 		this.fire('render-header', { thead: this.thead });
-
 	}
 
 	renderBody (items, columns) {
@@ -118,11 +118,11 @@ class DataTable extends BaseComponent {
 		const selectable = this.selectable;
 
 		// TODO: if sort, just reorder - do perf test
-		console.time('render body');
+		//console.time('render body');
 		render(items, columns, tbody, () => {
 			// PERF: makes no difference:
 			//this.table.appendChild(this.tbody);
-			console.timeEnd('render body');
+			//console.timeEnd('render body');
 			this.bodyHasRendered = true;
 			this.fire('render-body', { tbody: this.tbody });
 		});
@@ -150,9 +150,9 @@ class DataTable extends BaseComponent {
 			clickable.call(this);
 			selectable.call(this);
 		}
-		// if (this.scrollable) {
-		// 	scrollable.call(this);
-		// }
+		if (this.scrollable) {
+			scrollable.call(this);
+		}
 		this.mixPlugins = noop;
 	}
 }
