@@ -50,7 +50,7 @@
 		body = dom.byId('tests');
 
 	function sort (columns) {
-		return 'index,firstName,lastName,email,company,address1,address2,birthday,city,state,zipcode,phone,ssn'.split(',').map((prop) => {
+		return 'index,initials,firstName,lastName,email,company,address1,address2,birthday,city,state,zipcode,phone,ssn'.split(',').map((prop) => {
 			return columns.find(col => col.key === prop);
 		});
 	}
@@ -64,6 +64,7 @@
 //		delete data.columns.address1;
 //		delete data.columns.address2;
 		data.columns.index = '#';
+		data.columns.initials = 'INT';
 
 
 
@@ -71,11 +72,13 @@
 			return {
 				key,
 				label: data.columns[key],
-				width: key === 'index' ? 15 : 0
+				width: key === 'index' ? 15 : 0,
+				callback: key !== 'initials' ? null : function (item, index) {
+					return item.firstName.substring(0,1) + item.lastName.substring(0,1);
+				}
 			};
 		});
 		data.columns = sort(data.columns);
-		console.log('data.columns', data.columns);
 		return data;
 	}
 

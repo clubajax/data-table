@@ -68,7 +68,6 @@ const Scrollable = {
 		const head = this.thead.parentNode;
 		const body = this.tbody.parentNode;
 		const colSizes = this.colSizes;
-		console.log('colSizes', colSizes);
 		let
 			grid = this,
 			tempNode = dom('div', {style:{position:'absolute', width: '100px', height: '100px', zIndex:-1}}, document.body),

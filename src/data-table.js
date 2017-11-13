@@ -190,6 +190,9 @@ function render (items, columns, colSizes, tbody, selectable, callback) {
 		columns.forEach((col, i) => {
 			key = col.key || col;
 			html = key === 'index' ? index + 1 : item[key];
+			if (col.callback) {
+				html = col.callback(item, index);
+			}
 			css = key;
 			const cellOptions = { html, 'data-field': key, css };
 			if (colSizes[i]) {
