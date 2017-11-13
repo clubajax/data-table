@@ -67,6 +67,8 @@ const Scrollable = {
 	sizeColumns () {
 		const head = this.thead.parentNode;
 		const body = this.tbody.parentNode;
+		const colSizes = this.colSizes;
+		console.log('colSizes', colSizes);
 		let
 			grid = this,
 			tempNode = dom('div', {style:{position:'absolute', width: '100px', height: '100px', zIndex:-1}}, document.body),
@@ -118,7 +120,12 @@ const Scrollable = {
 			for(i = 0; i < ths.length; i++){
 				thw = dom.box(ths[i]).width;
 				tdw = dom.box(tds[i]).width;
-				if(!/fixed\-width/.test(tds[i].className)) {
+				if (colSizes[i]) {
+
+					dom.style(ths[i], { minWidth: colSizes[i], maxWidth: colSizes[i] });
+					dom.style(tds[i], { minWidth: colSizes[i], maxWidth: colSizes[i] });
+
+				} else if(!/fixed\-width/.test(tds[i].className)) {
 					minWidth = Math.max(thw, tdw);
 					dom.style(ths[i], {minWidth: minWidth});
 					dom.style(tds[i], {minWidth: minWidth});

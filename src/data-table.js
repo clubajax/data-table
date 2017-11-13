@@ -87,18 +87,23 @@ class DataTable extends BaseComponent {
 	renderHeader (columns) {
 		dom.clean(this.thead, true);
 		const tr = dom('tr', {}, this.thead);
-
-		columns.forEach((col) => {
+		const colSizes = [];
+		columns.forEach((col, i) => {
 			const key = col.key || col;
 			const label = col.label === undefined ? col : col.label;
 			const css = col.css || col.className || '';
-			dom('th', {
+			const options = {
 				html: '<span>' + label + '</span>',
 				css: css,
 				'data-field': key
-			}, tr);
+			};
+			if (col.width){
+				colSizes[i] = col.width;
+				options.style = { width: col.width };
+			}
+			dom('th', options, tr);
 		});
-
+		this.colSizes = colSizes;
 		this.headHasRendered = true;
 		this.fire('render-header', { thead: this.thead });
 	}
@@ -124,7 +129,7 @@ class DataTable extends BaseComponent {
 
 		// TODO: if sort, just reorder - do perf test
 		//console.time('render body');
-		render(items, columns, tbody, selectable, () => {
+		render(items, columns, this.colSizes, tbody, selectable, () => {
 			// PERF: makes no difference:
 			//this.table.appendChild(this.tbody);
 			//console.timeEnd('render body');
@@ -165,7 +170,7 @@ class DataTable extends BaseComponent {
 	}
 }
 
-function render (items, columns, tbody, selectable, callback) {
+function render (items, columns, colSizes, tbody, selectable, callback) {
 	items.forEach((item, index) => {
 		item.index = index;
 		const itemCss = item.css || item.class || item.className;
@@ -182,11 +187,14 @@ function render (items, columns, tbody, selectable, callback) {
 		}
 
 		tr = dom('tr', rowOptions, tbody);
-		columns.forEach((col) => {
+		columns.forEach((col, i) => {
 			key = col.key || col;
 			html = key === 'index' ? index + 1 : item[key];
 			css = key;
 			const cellOptions = { html, 'data-field': key, css };
+			if (colSizes[i]) {
+				cellOptions.style = { width: colSizes[i] };
+			}
 			// if (editable) {
 			// 	cellOptions.tabindex = 1;
 			// }

@@ -65,10 +65,13 @@
 //		delete data.columns.address2;
 		data.columns.index = '#';
 
+
+
 		data.columns = Object.keys(data.columns).map((key) => {
 			return {
 				key,
-				label: data.columns[key]
+				label: data.columns[key],
+				width: key === 'index' ? 15 : 0
 			};
 		});
 		data.columns = sort(data.columns);
