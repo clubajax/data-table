@@ -244,6 +244,7 @@ function lazyRender (allItems, columns, tbody, sorts, callback) {
 	}
 	next();
 }
+
 function getColumns (data) {
 	if (Array.isArray(data.columns)) {
 		return data.columns;

@@ -49,8 +49,14 @@
 		on = window.on,
 		body = dom.byId('tests');
 
+	function sort (columns) {
+		return 'index,firstName,lastName,email,company,address1,address2,birthday,city,state,zipcode,phone,ssn'.split(',').map((prop) => {
+			return columns.find(col => col.key === prop);
+		});
+	}
+
 	function getData () {
-		var data = getData500();
+		var data = getData20();
 //		delete data.columns.email;
 //		delete data.columns.phone;
 //		delete data.columns.ssn;
@@ -58,6 +64,15 @@
 //		delete data.columns.address1;
 //		delete data.columns.address2;
 		data.columns.index = '#';
+
+		data.columns = Object.keys(data.columns).map((key) => {
+			return {
+				key,
+				label: data.columns[key]
+			};
+		});
+		data.columns = sort(data.columns);
+		console.log('data.columns', data.columns);
 		return data;
 	}
 
