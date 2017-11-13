@@ -7,6 +7,7 @@
 	<script src="./dist/vendor.js"></script>
 	<script src="./dist/output.js"></script>
 	<script src="./src/data-20.js"></script>
+	<script src="./src/data-100.js"></script>
 	<script src="./src/data-500.js"></script>
 
 	<script src="//localhost:35750/livereload.js"></script>
@@ -48,15 +49,15 @@
 		on = window.on,
 		body = dom.byId('tests');
 
-
 	function getData () {
 		var data = getData500();
-		delete data.columns.email;
-		delete data.columns.phone;
-		delete data.columns.ssn;
-		delete data.columns.birthday;
-		delete data.columns.address1;
-		delete data.columns.address2;
+//		delete data.columns.email;
+//		delete data.columns.phone;
+//		delete data.columns.ssn;
+//		delete data.columns.birthday;
+//		delete data.columns.address1;
+//		delete data.columns.address2;
+		data.columns.index = '#';
 		return data;
 	}
 

@@ -6,12 +6,12 @@ const selectable = require('./selectable');
 const scrollable = require('./scrollable');
 const util = require('./util');
 
-const props = ['data', 'sort', 'selected', 'scrollable', 'stretch-column'];
-const bools = ['sortable', 'selectable'];
-
+const props = ['data', 'sort', 'selected', 'stretch-column'];
+const bools = ['sortable', 'selectable', 'scrollable', 'perf'];
+const PERF = true;
+let log;
 
 // TODO
-// Sort ASC first
 // widget / function for content (checkbox)
 // automatic virtual scroll after 100+ rows
 // optional column widths
@@ -54,6 +54,7 @@ class DataTable extends BaseComponent {
 	}
 
 	domReady () {
+		this.perf = this.perf || PERF;
 		this.noDataTimer = setTimeout(() => {
 			this.displayNoData(true);
 		}, 1000);
@@ -69,7 +70,7 @@ class DataTable extends BaseComponent {
 			this.renderHeader(this.columns);
 		}
 		this.renderBody(this.items, this.columns);
-		console.timeEnd('render');
+
 		this.fire('render', { table: this.table || this, thead: this.thead, tbody: this.tbody });
 	}
 
@@ -128,6 +129,9 @@ class DataTable extends BaseComponent {
 			//this.table.appendChild(this.tbody);
 			//console.timeEnd('render body');
 			this.bodyHasRendered = true;
+			requestAnimationFrame(() => {
+				console.timeEnd('render');
+			});
 			this.fire('render-body', { tbody: this.tbody });
 		});
 
@@ -180,7 +184,7 @@ function render (items, columns, tbody, selectable, callback) {
 		tr = dom('tr', rowOptions, tbody);
 		columns.forEach((col) => {
 			key = col.key || col;
-			html = item[key];
+			html = key === 'index' ? index + 1 : item[key];
 			css = key;
 			const cellOptions = { html, 'data-field': key, css };
 			// if (editable) {
