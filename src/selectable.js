@@ -10,7 +10,9 @@ const Selectable = {
 	},
 
 	onSelected (value) {
-		this.selectRow(value);
+		if (value !== this.currentSelection) {
+			this.selectRow(value);
+		}
 	},
 
 	onRowClick (e) {

@@ -68,7 +68,7 @@ module.exports = function (grunt) {
             },
             deploy: {
                 files: {
-                    'dist/date-picker.js': ['tests/src/data-table-tests.js']
+                    'dist/date-table.js': ['tests/src/data-table-tests.js']
                 },
                 options: {
 					transform: babelTransform,
