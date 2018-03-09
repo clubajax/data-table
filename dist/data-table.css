@@ -59,8 +59,6 @@ data-table {
       left: 0;
       right: 0;
       bottom: 0; }
-    data-table.scrollable th, data-table.scrollable td {
-      border: 1px solid red; }
     data-table.scrollable th {
       white-space: nowrap; }
   data-table.no-data {

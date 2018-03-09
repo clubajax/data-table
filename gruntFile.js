@@ -1,9 +1,29 @@
 'use strict';
 
 const path = require('path');
+const register = require('@babel/register');
+
+register({
+	// ignore: [function(filename) {
+	// 	console.log('IGNORE?', filename);
+	// 	return false;
+	// }],
+	ignore: [/node_modules/],
+	only: [/@clubajax\/XXXbase-component|@clubajax\/no-dash/],
+	// extensions: [".es6", ".es", ".jsx", ".js", ".mjs"],
+	cache: true
+});
 
 module.exports = function (grunt) {
-    
+
+	function vendorsToBabelize () {
+		// not all vendors need to be babelized. Most are already ES5.
+		const files = '@clubajax/base-component|@clubajax/no-dash';
+		return new RegExp(`^(?:.*\/node_modules\/(?:${files})\/|(?!.*\/node_modules\/)).*$`);
+	}
+
+
+
     // collect dependencies from node_modules
     let nm = path.resolve(__dirname, 'node_modules'),
         vendorAliases = ['@clubajax/dom', '@clubajax/on', '@clubajax/custom-elements-polyfill', '@clubajax/base-component'],
@@ -12,8 +32,19 @@ module.exports = function (grunt) {
 		sourceMaps = true,
         watch = false,
         watchPort = 35750,
-        babelTransform = [['babelify', { presets: ['latest'] }]],
-        devBabel = true;
+		devBabel = true,
+		deployBabel = true,
+		vTransform = [['babelify', {
+			'presets': ['@babel/preset-env'],
+			global: true,
+			// only: ['@clubajax/base-component', '@clubajax/no-dash'],
+			//only: [/@clubajax\/base-component|@clubajax\/no-dash/],
+			// ignore: ['node_modules']
+		}]],
+		transform = [['babelify', { presets: ['@babel/preset-env'] }]],
+		babelTransform = devBabel ? transform : [],
+		vendorTransform = devBabel ? vTransform : [],
+		deployBabelTransform = deployBabel ? vTransform : [];
     
     grunt.initConfig({
         
@@ -35,7 +66,7 @@ module.exports = function (grunt) {
                     }),
                     // not consuming any modules
                     external: null,
-					transform: devBabel ? babelTransform : [],
+					transform: vendorTransform,
                     browserifyOptions: {
                         debug: sourceMaps
                     }
@@ -59,7 +90,7 @@ module.exports = function (grunt) {
                     // transform not using babel in dev-mode.
                     // if developing in IE or using very new features,
                     // change devBabel to `true`
-                    transform: devBabel ? babelTransform : [],
+                    transform: babelTransform,
                     postBundleCB: function (err, src, next) {
                         console.timeEnd('build');
                         next(err, src);
@@ -68,10 +99,10 @@ module.exports = function (grunt) {
             },
             deploy: {
                 files: {
-                    'dist/date-table.js': ['tests/src/data-table-tests.js']
+                    'dist/data-table.js': ['tests/src/data-table-tests.js']
                 },
                 options: {
-					transform: babelTransform,
+					transform: deployBabelTransform,
                     browserifyOptions: {
 						standalone: 'data-table',
                         debug: false
@@ -161,12 +192,14 @@ module.exports = function (grunt) {
     grunt.registerTask('build-dev', function (which) {
         console.time('build');
 		grunt.task.run('sass:dev');
+		console.log('\nsource');
         grunt.task.run('browserify:dev');
 
     });
 
     // task that builds vendor and dev files during development
     grunt.registerTask('build', function (which) {
+		console.log('\nvendor');
         grunt.task.run('browserify:vendor');
         grunt.task.run('build-dev');
     });
@@ -185,12 +218,6 @@ module.exports = function (grunt) {
 	grunt.registerTask('deploy', function (which) {
 		grunt.task.run('browserify:deploy');
 		grunt.task.run('sass:deploy');
-		// const compile = require('./scripts/compile');
-		// compile('BaseComponent');
-		// compile('properties');
-		// compile('template');
-		// compile('refs');
-		// compile('item-template');
 	});
 
 	grunt.loadNpmTasks('grunt-sass');
