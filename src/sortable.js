@@ -90,16 +90,16 @@ const Sortable = {
 		}
 		if (field === this.current.sort) {
 			if (this.current.dir === 'asc') {
-				dir = 'desc';
+				dir = '';
 			}
 			else if (this.current.dir === 'desc') {
-				dir = '';
+				dir = 'asc';
 			}
 			else {
 				dir = 'desc';
 			}
 		} else {
-			dir = 'asc';
+			dir = 'desc';
 		}
 		this.setSort(field, dir);
 	}

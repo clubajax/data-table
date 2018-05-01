@@ -62,7 +62,6 @@ class DataTable extends BaseComponent {
 
 	render () {
 		this.fire('pre-render');
-		console.time('render');
 		this.renderTemplate();
 		const columns = getColumns(this.data);
 		if (!util.isEqual(columns, this.columns)) {
@@ -134,9 +133,6 @@ class DataTable extends BaseComponent {
 			//this.table.appendChild(this.tbody);
 			//console.timeEnd('render body');
 			this.bodyHasRendered = true;
-			requestAnimationFrame(() => {
-				console.timeEnd('render');
-			});
 			this.fire('render-body', { tbody: this.tbody });
 		});
 

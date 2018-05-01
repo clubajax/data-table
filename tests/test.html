@@ -273,6 +273,7 @@
 					expect(getColData(node, 'weight')).to.equal('220,170,90');
 					clickCol(node, 'weight');
 					expect(getColData(node, 'weight')).to.equal('90,170,220');
+
 					// reset to default sort
 					clickCol(node, 'weight');
 					expect(getColData(node, 'weight')).to.equal('170,90,220');
