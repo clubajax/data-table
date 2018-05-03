@@ -14,7 +14,14 @@ const Scrollable = {
 		this.tableHeadWrapper = dom('div', {className: 'table-header-wrapper'}, this);
 		this.tableHeader = dom('table', {className: 'table-header', tabindex:'1'}, this.tableHeadWrapper);
 		this.thead = dom('thead', {}, this.tableHeader);
-		this.tableBodyWrapper = dom('div', {className: 'table-body-wrapper', style: { 'max-height': this.maxHeight }}, this);
+		this.tableBodyWrapper = dom('div',
+			{
+				className: 'table-body-wrapper',
+				style: {
+					'max-height': this.maxHeight,
+					'position': this.maxHeight ? 'static' : 'absolute'
+				}
+			}, this);
 		this.tableBody = dom('table', {className: 'table-body', tabindex:'1'}, this.tableBodyWrapper);
 		this.tbody = dom('tbody', {}, this.tableBody);
 	},
