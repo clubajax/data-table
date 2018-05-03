@@ -18,8 +18,8 @@ const Scrollable = {
 			{
 				className: 'table-body-wrapper',
 				style: {
-					'max-height': this.maxHeight,
-					'position': this.maxHeight ? 'static' : 'absolute'
+					'max-height': this['max-height'],
+					'position': this['max-height'] ? 'static' : 'absolute'
 				}
 			}, this);
 		this.tableBody = dom('table', {className: 'table-body', tabindex:'1'}, this.tableBodyWrapper);
