@@ -6,7 +6,7 @@ const selectable = require('./selectable');
 const scrollable = require('./scrollable');
 const util = require('./util');
 
-const props = ['data', 'sort', 'selected', 'stretch-column'];
+const props = ['data', 'sort', 'selected', 'stretch-column', 'maxHeight'];
 const bools = ['sortable', 'selectable', 'scrollable', 'perf'];
 const PERF = true;
 let log;
