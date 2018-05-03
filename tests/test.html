@@ -222,6 +222,17 @@
 		}
 
 		suite('data table', function () {
+			test('it should render a table', function (done) {
+				var section = dom('section', { html: dom('label', { html: 'Non Selectable Item' }) }, body);
+				var node = dom('data-table', {
+					data: data3
+				}, section);
+				var events = [];
+				onDomReady(node, function () {
+					done();
+				});
+			});
+
 			test('it should handle "no data"', function (done) {
 				var section = dom('section', { html: dom('label', { html: 'Data is NULL' }) }, body);
 				var node = dom('data-table', {

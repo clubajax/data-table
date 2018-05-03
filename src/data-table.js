@@ -122,7 +122,7 @@ class DataTable extends BaseComponent {
 		const editable = this.editable;
 		const selectable = this.selectable;
 
-		if (!items[0].id){
+		if (items[0].id === undefined){
 			console.warn('Items do not have an ID');
 		}
 
