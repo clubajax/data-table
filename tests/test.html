@@ -255,6 +255,18 @@
 				});
 			});
 
+			test('it should be scrollable with maxHeight set', function (done) {
+				var section = dom('section', {}, body);
+				var node = dom('data-table', {
+					data: getData(),
+					scrollable: true,
+					'max-height': 200
+				}, section);
+				onDomReady(node, function () {
+					done();
+				});
+			});
+
 			test('it should handle "no items"', function (done) {
 				var section = dom('section', { html: dom('label', { html: 'Items are []' }) }, body);
 				var node = dom('data-table', {
@@ -428,6 +440,8 @@
 					done();
 				});
 			});
+
+
 		});
 
 	});
