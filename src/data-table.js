@@ -6,8 +6,6 @@ const selectable = require('./selectable');
 const scrollable = require('./scrollable');
 const util = require('./util');
 
-const props = ['data', 'sort', 'selected', 'stretch-column', 'max-height'];
-const bools = ['sortable', 'selectable', 'scrollable', 'perf'];
 const PERF = true;
 let log;
 
@@ -19,19 +17,8 @@ let log;
 // github.io demos
 
 
+
 class DataTable extends BaseComponent {
-
-	static get observedAttributes () {
-		return [...props, ...bools];
-	}
-
-	get props () {
-		return props;
-	}
-
-	get bools () {
-		return bools;
-	}
 
 	constructor () {
 		super();
@@ -268,6 +255,7 @@ function noop () {
 
 }
 
-customElements.define('data-table', DataTable);
-
-module.exports = DataTable;
+module.exports = BaseComponent.define('data-table', DataTable, {
+	props: ['data', 'sort', 'selected', 'stretch-column', 'max-height'],
+	bools: ['sortable', 'selectable', 'scrollable', 'perf']
+});;
