@@ -447,9 +447,9 @@
     lodash "^4.2.0"
     to-fast-properties "^2.0.0"
 
-"@clubajax/base-component@2.2.1":
-  version "2.2.1"
-  resolved "https://registry.yarnpkg.com/@clubajax/base-component/-/base-component-2.2.1.tgz#694b6251a70344e0b0dae44170a43a273c6848e1"
+"@clubajax/base-component@2.2.2":
+  version "2.2.2"
+  resolved "https://registry.yarnpkg.com/@clubajax/base-component/-/base-component-2.2.2.tgz#c3d0cf091b3e9e430a61fbc5132f0e1f97396628"
   dependencies:
     "@clubajax/on" "^2.1.8"
 
