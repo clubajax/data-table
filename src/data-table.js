@@ -258,4 +258,4 @@ function noop () {
 module.exports = BaseComponent.define('data-table', DataTable, {
 	props: ['data', 'sort', 'selected', 'stretch-column', 'max-height'],
 	bools: ['sortable', 'selectable', 'scrollable', 'perf']
-});;
+});
