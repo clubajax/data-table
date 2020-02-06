@@ -1,5 +1,4 @@
-'use strict';
-
+const sass = require('node-sass');
 const path = require('path');
 const register = require('@babel/register');
 
@@ -21,8 +20,6 @@ module.exports = function (grunt) {
 		const files = '@clubajax/base-component|@clubajax/no-dash';
 		return new RegExp(`^(?:.*\/node_modules\/(?:${files})\/|(?!.*\/node_modules\/)).*$`);
 	}
-
-
 
     // collect dependencies from node_modules
     let nm = path.resolve(__dirname, 'node_modules'),
@@ -113,7 +110,8 @@ module.exports = function (grunt) {
 
 		sass: {
 			deploy: {
-				options: {
+                options: {
+                    implementation: sass,
 					// case sensitive!
 					sourceMap: true
 				},
@@ -123,7 +121,8 @@ module.exports = function (grunt) {
 				}
 			},
 			dev: {
-				options: {
+                options: {
+                    implementation: sass,
 					// case sensitive!
 					sourceMap: true
 				},

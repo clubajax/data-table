@@ -1,454 +1,469 @@
 <!DOCTYPE HTML>
 <html lang="en">
+
 <head>
-	<title>Test Data Table</title>
-	<link rel="stylesheet" href="../node_modules/mocha/mocha.css">
-	<link rel="stylesheet" href="./dist/data-table.css" />
-	<script src="../node_modules/mocha/mocha.js"></script>
-	<script src="../node_modules/chai/chai.js"></script>
-	<script src="./dist/vendor.js"></script>
-	<script src="./dist/output.js"></script>
-	<script src="./src/data-20.js"></script>
+    <title>Test Data Table</title>
+    <link rel="stylesheet" href="../node_modules/mocha/mocha.css">
+    <link rel="stylesheet" href="./dist/data-table.css" />
+    <script src="../node_modules/mocha/mocha.js"></script>
+    <script src="../node_modules/chai/chai.js"></script>
+    <script src="./dist/vendor.js"></script>
+    <script src="./dist/output.js"></script>
+    <script src="./src/data-20.js"></script>
 
-	<script src="//localhost:35750/livereload.js"></script>
+    <script src="//localhost:35750/livereload.js"></script>
 
-	<style>
-		html, body {
-			height: 100%;
-		}
+    <style>
+        html,
+        body {
+            height: 100%;
+        }
 
-		body {
-			padding: 20px;
-			font-family: sans-serif;
-		}
+        body {
+            padding: 20px;
+            font-family: sans-serif;
+        }
 
-		section {
-			border: 1px solid #ccc;
-			padding: 3px;
-			margin: 5px;
-		}
-		section label {
-			display: block;
-			padding: 5px;
-		}
-		.sized{
-			height: 300px;
-		}
-	</style>
+        section {
+            border: 1px solid #ccc;
+            padding: 3px;
+            margin: 5px;
+        }
+
+        section label {
+            display: block;
+            padding: 5px;
+        }
+
+        .sized {
+            height: 300px;
+        }
+    </style>
 </head>
+
 <body>
-<h1>Test Data Table</h1>
+    <h1>Test Data Table</h1>
 
-<div id="mocha"></div>
-<div id="tests"></div>
+    <div id="mocha"></div>
+    <div id="tests"></div>
 
-<script>
-	window.mocha.setup('tdd');
+    <script>
+        window.mocha.setup('tdd');
 
-	suite('DataTable', function () {
-		this.timeout(3000);
-		var suite = window.suite,
-			test = window.test,
-			dom = window.dom,
-			on = window.on,
-			expect = chai.expect,
-			body = dom.byId('tests');
+        suite('DataTable', function () {
+            this.timeout(3000);
+            var suite = window.suite,
+                test = window.test,
+                dom = window.dom,
+                on = window.on,
+                expect = chai.expect,
+                body = dom.byId('tests');
 
-		var data1 = {
-				columns: {
-					name: 'Name',
-					age: 'Age',
-					height: 'Height',
-					weight: 'Weight',
-					bp: 'Bloodpressure'
-				},
-				items: [
-					{
-						id: 1,
-						name: 'Moke',
-						age: 20,
-						height: 6.1,
-						weight: 170,
-						bp: 120
-					}, {
-						id: 2,
-						name: 'Joke',
-						age: 10,
-						height: 4.5,
-						weight: 90,
-						bp: 100
-					}, {
-						id: 3,
-						name: 'Doke',
-						age: 40,
-						height: 5.9,
-						weight: 220,
-						bp: 150
-					}
-				]
-			},
-			data2 = {
-				columns: {
-					name: 'Name',
-					age: 'Age',
-					height: 'Height',
-					weight: 'Weight',
-					bp: 'Bloodpressure'
-				},
-				items: [
-					{
-						id: 3,
-						name: 'Zeke',
-						age: 21,
-						height: 5.6,
-						weight: 220,
-						bp: 140
-					}, {
-						id: 2,
-						name: 'Meek',
-						age: 18,
-						height: 5.9,
-						weight: 98,
-						bp: 180
-					}, {
-						id: 1,
-						name: 'Geek',
-						age: 45,
-						height: 6.2,
-						weight: 150,
-						bp: 120
-					}
-				]
-			},
-			data3 = {
-				columns: {
-					first: 'First Name',
-					middle: 'Middle Name',
-					last: 'Last Name',
-					job: 'Occupation'
-				},
-				items: [
-					{
-						id: 1,
-						first: 'Mike',
-						last: 'Wilcox',
-						middle: 'JavaScript',
-						job: 'UI Guy',
-						css: 'unselectable'
-					}, {
-						id: 2,
-						first: 'Jeziel',
-						last: 'Jones',
-						middle: 'Hello Kitty',
-						job: 'UI Guy'
-					}, {
-						id: 3,
-						first: 'Motti',
-						last: 'Marom',
-						middle: 'Make it Right',
-						job: 'Criticizing'
-					}, {
-						id: 4,
-						first: 'Madhu',
-						last: 'Chebrolu',
-						middle: 'Waiting on Dave',
-						job: 'Rubier'
-					}
-				]
-			},
-			dataNoItems = {
-				columns: {
-					name: 'Name',
-					age: 'Age',
-					height: 'Height',
-					weight: 'Weight',
-					bp: 'Bloodpressure'
-				},
-				items: []
-			};
+            var data1 = {
+                columns: {
+                    name: 'Name',
+                    age: 'Age',
+                    height: 'Height',
+                    weight: 'Weight',
+                    bp: 'Bloodpressure'
+                },
+                items: [
+                    {
+                        id: 1,
+                        name: 'Moke',
+                        age: 20,
+                        height: 6.1,
+                        weight: 170,
+                        bp: 120
+                    }, {
+                        id: 2,
+                        name: 'Joke',
+                        age: 10,
+                        height: 4.5,
+                        weight: 90,
+                        bp: 100
+                    }, {
+                        id: 3,
+                        name: 'Doke',
+                        age: 40,
+                        height: 5.9,
+                        weight: 220,
+                        bp: 150
+                    }
+                ]
+            },
+                data2 = {
+                    columns: {
+                        name: 'Name',
+                        age: 'Age',
+                        height: 'Height',
+                        weight: 'Weight',
+                        bp: 'Bloodpressure'
+                    },
+                    items: [
+                        {
+                            id: 3,
+                            name: 'Zeke',
+                            age: 21,
+                            height: 5.6,
+                            weight: 220,
+                            bp: 140
+                        }, {
+                            id: 2,
+                            name: 'Meek',
+                            age: 18,
+                            height: 5.9,
+                            weight: 98,
+                            bp: 180
+                        }, {
+                            id: 1,
+                            name: 'Geek',
+                            age: 45,
+                            height: 6.2,
+                            weight: 150,
+                            bp: 120
+                        }
+                    ]
+                },
+                data3 = {
+                    columns: {
+                        first: 'First Name',
+                        middle: 'Middle Name',
+                        last: 'Last Name',
+                        job: 'Occupation'
+                    },
+                    items: [
+                        {
+                            id: 1,
+                            first: 'Mike',
+                            last: 'Wilcox',
+                            middle: 'JavaScript',
+                            job: 'UI Guy',
+                            css: 'unselectable'
+                        }, {
+                            id: 2,
+                            first: 'Jeziel',
+                            last: 'Jones',
+                            middle: 'Hello Kitty',
+                            job: 'UI Guy'
+                        }, {
+                            id: 3,
+                            first: 'Motti',
+                            last: 'Marom',
+                            middle: 'Make it Right',
+                            job: 'Criticizing'
+                        }, {
+                            id: 4,
+                            first: 'Madhu',
+                            last: 'Chebrolu',
+                            middle: 'Waiting on Dave',
+                            job: 'Rubier'
+                        }
+                    ]
+                },
+                dataNoItems = {
+                    columns: {
+                        name: 'Name',
+                        age: 'Age',
+                        height: 'Height',
+                        weight: 'Weight',
+                        bp: 'Bloodpressure'
+                    },
+                    items: []
+                };
 
-		function selectedColumn (node) {
-			var th = dom.query(node, '.desc,.asc');
-			if (!th) {
-				return null;
-			}
-			return dom.attr(th, 'data-field');
-		}
+            function selectedColumn(node) {
+                var th = dom.query(node, '.desc,.asc');
+                if (!th) {
+                    return null;
+                }
+                return dom.attr(th, 'data-field');
+            }
 
-		function clickCol (node, field) {
-			var th = dom.query(node, '[data-field="' + field + '"]');
-			if (!th) {
-				console.warn('th not found', field);
-				return null
-			}
-			on.emit(th, 'click');
-		}
+            function clickCol(node, field) {
+                var th = dom.query(node, '[data-field="' + field + '"]');
+                if (!th) {
+                    console.warn('th not found', field);
+                    return null
+                }
+                on.emit(th, 'click');
+            }
 
-		function clickRow (node, index) {
-			var row = node.tbody.rows[index];
-			on.emit(row, 'click');
-		}
+            function clickRow(node, index) {
+                var row = node.tbody.rows[index];
+                on.emit(row, 'click');
+            }
 
-		function selectedRow (node) {
-			var tr = dom.query(node, '.selected');
-			return tr ? dom.attr(tr, 'data-row-id') : null;
-		}
+            function selectedRow(node) {
+                var tr = dom.query(node, '.selected');
+                return tr ? dom.attr(tr, 'data-row-id') : null;
+            }
 
-		function selectedRowIndex (node) {
-			var tr = dom.query(node, '.selected');
-			return (tr || { rowIndex: null }).rowIndex;
-		}
+            function selectedRowIndex(node) {
+                var tr = dom.query(node, '.selected');
+                return (tr || {rowIndex: null}).rowIndex;
+            }
 
-		function getColData (node, field) {
-			var cells = dom.queryAll(node, 'tbody [data-field="' + field + '"]');
-			return cells.map(function (cell) {
-				return cell.textContent;
-			}).join(',');
-		}
+            function getColData(node, field) {
+                var cells = dom.queryAll(node, 'tbody [data-field="' + field + '"]');
+                return cells.map(function (cell) {
+                    return cell.textContent;
+                }).join(',');
+            }
 
-		function getData () {
-			var data = getData20();
-			delete data.columns.email;
-			delete data.columns.phone;
-			delete data.columns.ssn;
-			delete data.columns.birthday;
-			delete data.columns.address1;
-			delete data.columns.address2;
-			return data;
-		}
+            function getData() {
+                var data = getData20();
+                delete data.columns.email;
+                delete data.columns.phone;
+                delete data.columns.ssn;
+                delete data.columns.birthday;
+                delete data.columns.address1;
+                delete data.columns.address2;
+                return data;
+            }
 
-		function destroy (node) {
-			//node.destroy();
-		}
+            function destroy(node) {
+                //node.destroy();
+            }
 
-		suite('data table', function () {
-			test('it should render a table', function (done) {
-				var section = dom('section', { html: dom('label', { html: 'Non Selectable Item' }) }, body);
-				var node = dom('data-table', {
-					data: data3
-				}, section);
-				var events = [];
-				onDomReady(node, function () {
-					done();
-				});
-			});
+            suite('data table', function () {
+                suite('rendering', function () {
+                    test('it should render a table', function (done) {
+                        var section = dom('section', {html: dom('label', {html: 'Non Selectable Item'})}, body);
+                        var node = dom('data-table', {
+                            data: data3
+                        }, section);
+                        var events = [];
+                        onDomReady(node, function () {
+                            done();
+                        });
+                    });
 
-			test('it should handle "no data"', function (done) {
-				var section = dom('section', { html: dom('label', { html: 'Data is NULL' }) }, body);
-				var node = dom('data-table', {
-					data: null
-				}, section);
-				onDomReady(node, function () {
-					expect(node.classList.contains('no-data')).to.equal(true);
-					done();
-				});
-			});
+                    test('it should handle "no data"', function (done) {
+                        var section = dom('section', {html: dom('label', {html: 'Data is NULL'})}, body);
+                        var node = dom('data-table', {
+                            data: null
+                        }, section);
+                        onDomReady(node, function () {
+                            expect(node.classList.contains('no-data')).to.equal(true);
+                            done();
+                        });
+                    });
 
-			test('it should be scrollable', function (done) {
-				var section = dom('section', { class: 'sized' }, body);
-				var node = dom('data-table', {
-					data: getData(),
-					scrollable: true
-				}, section);
-				onDomReady(node, function () {
-					done();
-				});
-			});
+                    test('it should handle "no items"', function (done) {
+                        var section = dom('section', {html: dom('label', {html: 'Items are []'})}, body);
+                        var node = dom('data-table', {
+                            data: dataNoItems
+                        }, section);
+                        onDomReady(node, function () {
+                            expect(node.classList.contains('no-data')).to.equal(true);
+                            done();
+                        });
+                    });
+                });
 
-			test('it should be scrollable with maxHeight set', function (done) {
-				var section = dom('section', {}, body);
-				var node = dom('data-table', {
-					data: getData(),
-					scrollable: true,
-					'max-height': 200
-				}, section);
-				onDomReady(node, function () {
-					done();
-				});
-			});
+                suite('scrolling', function () {
 
-			test('it should handle "no items"', function (done) {
-				var section = dom('section', { html: dom('label', { html: 'Items are []' }) }, body);
-				var node = dom('data-table', {
-					data: dataNoItems
-				}, section);
-				onDomReady(node, function () {
-					expect(node.classList.contains('no-data')).to.equal(true);
-					done();
-				});
-			});
+                    test('it should be scrollable', function (done) {
+                        var section = dom('section', {class: 'sized'}, body);
+                        var node = dom('data-table', {
+                            data: getData(),
+                            scrollable: true
+                        }, section);
+                        onDomReady(node, function () {
+                            done();
+                        });
+                    });
 
-			test('it should sort', function (done) {
-				var section = dom('section', { html: dom('label', { html: 'Sortable' }) }, body);
-				var node = dom('data-table', {
-					data: data1,
-					sortable: true,
-					sort: 'weight, desc'
-				}, section);
-				var events = [];
-				onDomReady(node, function () {
-					node.on('sort', function (e) {
-						//console.log('sort.event', e);
-						events.push(e.detail.value);
-					});
+                    test('it should be scrollable with maxHeight set', function (done) {
+                        var section = dom('section', {}, body);
+                        var node = dom('data-table', {
+                            data: getData(),
+                            scrollable: true,
+                            'max-height': 200
+                        }, section);
+                        onDomReady(node, function () {
+                            done();
+                        });
+                    });
+                });
+                suite('sorting', function () {
+                    test('it should sort', function (done) {
+                        var section = dom('section', {html: dom('label', {html: 'Sortable'})}, body);
+                        var node = dom('data-table', {
+                            data: data1,
+                            sortable: true,
+                            sort: 'weight, desc'
+                        }, section);
+                        var events = [];
+                        onDomReady(node, function () {
+                            node.on('sort', function (e) {
+                                //console.log('sort.event', e);
+                                events.push(e.detail.value);
+                            });
 
-					expect(selectedColumn(node)).to.equal('weight');
-					expect(getColData(node, 'weight')).to.equal('220,170,90');
-					clickCol(node, 'weight');
-					expect(getColData(node, 'weight')).to.equal('90,170,220');
+                            expect(selectedColumn(node)).to.equal('weight');
+                            expect(getColData(node, 'weight')).to.equal('220,170,90');
+                            clickCol(node, 'weight');
+                            expect(getColData(node, 'weight')).to.equal('90,170,220');
 
-					// reset to default sort
-					clickCol(node, 'weight');
-					expect(getColData(node, 'weight')).to.equal('170,90,220');
-					expect(selectedColumn(node)).to.equal(null);
+                            // reset to default sort
+                            clickCol(node, 'weight');
+                            expect(getColData(node, 'weight')).to.equal('170,90,220');
+                            expect(selectedColumn(node)).to.equal(null);
 
-					clickCol(node, 'age');
-					expect(selectedColumn(node)).to.equal('age');
-					expect(getColData(node, 'age')).to.equal('40,20,10');
+                            clickCol(node, 'age');
+                            expect(selectedColumn(node)).to.equal('age');
+                            expect(getColData(node, 'age')).to.equal('40,20,10');
 
-					clickCol(node, 'bp');
-					expect(selectedColumn(node)).to.equal('bp');
-					expect(getColData(node, 'bp')).to.equal('150,120,100');
+                            clickCol(node, 'bp');
+                            expect(selectedColumn(node)).to.equal('bp');
+                            expect(getColData(node, 'bp')).to.equal('150,120,100');
 
-					node.sort = 'height,desc';
-					expect(selectedColumn(node)).to.equal('height');
-					expect(getColData(node, 'height')).to.equal('6.1,5.9,4.5');
-
-
-					node.sort = 'age';
-					expect(selectedColumn(node)).to.equal('age');
-					expect(getColData(node, 'age')).to.equal('40,20,10');
-
-					node.sort = null;
-
-					expect(events.join(';')).to.equal('weight,asc;weight,;age,desc;bp,desc;height,desc;age,desc;');
-
-					destroy(node);
-					done();
-				});
-			});
-
-			test('it should be selectable', function (done) {
-				var section = dom('section', { html: dom('label', { html: 'Selectable' }) }, body);
-				var node = dom('data-table', {
-					data: data1,
-					selectable: true
-				}, section);
-				var events = [];
-				onDomReady(node, function () {
-					node.on('change', function (e) {
-						//console.log('chn', e);
-						events.push(e.value);
-					});
-					clickRow(node, 1);
-					expect(selectedRow(node)).to.equal('2');
-					clickRow(node, 0);
-					expect(selectedRow(node)).to.equal('1');
-					clickRow(node, 2);
-					expect(selectedRow(node)).to.equal('3');
-					// deselect
-					clickRow(node, 2);
-					expect(selectedRow(node)).to.equal(null);
-					expect(events.join(',')).to.equal('2,1,3,'); // last one is blank
-					destroy(node);
-
-					node.selected = 1;
-					expect(selectedRow(node)).to.equal('1');
-
-					// test getter
-					expect(node.selected).to.equal(1);
-
-					node.selected = null;
-					expect(selectedRow(node)).to.equal(null);
-
-					done();
-				});
-			});
-
-			test('it should handle non-selectable items', function (done) {
-				var section = dom('section', { html: dom('label', { html: 'Non Selectable Item' }) }, body);
-				var node = dom('data-table', {
-					data: data3,
-					selectable: true,
-					sortable: true
-				}, section);
-				var events = [];
-				onDomReady(node, function () {
-
-					clickRow(node, 1);
-					expect(selectedRow(node)).to.equal('2');
-
-					clickRow(node, 0);
-					expect(selectedRow(node)).to.equal(null);
-
-					done();
-				});
-			});
-
-			test('it should sort and select', function (done) {
-				var section = dom('section', { html: dom('label', { html: 'Sortable and Selectable' }) }, body);
-				var node = dom('data-table', {
-					data: data1,
-					sortable: true,
-					selectable: true
-				}, section);
-				var events = [];
-				onDomReady(node, function () {
-					clickCol(node, 'weight');
-					expect(getColData(node, 'weight')).to.equal('220,170,90');
-
-					clickRow(node, 1);
-					expect(selectedRow(node)).to.equal('1');
-
-					expect(selectedRowIndex(node)).to.equal(2);
-
-					clickCol(node, 'height');
-					expect(selectedRow(node)).to.equal('1');
-					expect(selectedRowIndex(node)).to.equal(1);
-
-					done();
-				});
-			});
-
-			test('it should maintain sort and select after new items', function (done) {
-				var section = dom('section', { html: dom('label', { html: 'Sortable and Selectable' }) }, body);
-				var node = dom('data-table', {
-					data: data1,
-					sortable: true,
-					selectable: true
-				}, section);
-				var events = [];
-				onDomReady(node, function () {
-					clickCol(node, 'weight');
-					expect(getColData(node, 'weight')).to.equal('220,170,90');
-
-					clickRow(node, 1);
-					expect(selectedRow(node)).to.equal('1');
-
-					expect(selectedRowIndex(node)).to.equal(2);
-
-					clickCol(node, 'height');
-					expect(selectedRow(node)).to.equal('1');
-					expect(selectedRowIndex(node)).to.equal(1);
-
-					node.data = data2;
-
-					expect(selectedColumn(node)).to.equal('height');
-					expect(selectedRow(node)).to.equal('1');
-					expect(selectedRowIndex(node)).to.equal(3);
-
-					done();
-				});
-			});
+                            node.sort = 'height,desc';
+                            expect(selectedColumn(node)).to.equal('height');
+                            expect(getColData(node, 'height')).to.equal('6.1,5.9,4.5');
 
 
-		});
+                            node.sort = 'age';
+                            expect(selectedColumn(node)).to.equal('age');
+                            expect(getColData(node, 'age')).to.equal('40,20,10');
 
-	});
+                            node.sort = null;
 
-	window.mocha.run();
+                            expect(events.join(';')).to.equal('weight,asc;weight,;age,desc;bp,desc;height,desc;age,desc;');
+
+                            destroy(node);
+                            done();
+                        });
+                    });
+                });
+
+                suite('selecting', function () {
+                    test('it should be selectable', function (done) {
+                        var section = dom('section', {html: dom('label', {html: 'Selectable'})}, body);
+                        var node = dom('data-table', {
+                            data: data1,
+                            selectable: true
+                        }, section);
+                        var events = [];
+                        onDomReady(node, function () {
+                            node.on('change', function (e) {
+                                //console.log('chn', e);
+                                events.push(e.value);
+                            });
+                            clickRow(node, 1);
+                            expect(selectedRow(node)).to.equal('2');
+                            clickRow(node, 0);
+                            expect(selectedRow(node)).to.equal('1');
+                            clickRow(node, 2);
+                            expect(selectedRow(node)).to.equal('3');
+                            // deselect
+                            clickRow(node, 2);
+                            expect(selectedRow(node)).to.equal(null);
+                            expect(events.join(',')).to.equal('2,1,3,'); // last one is blank
+                            destroy(node);
+
+                            node.selected = 1;
+                            expect(selectedRow(node)).to.equal('1');
+
+                            // test getter
+                            expect(node.selected).to.equal(1);
+
+                            node.selected = null;
+                            expect(selectedRow(node)).to.equal(null);
+
+                            done();
+                        });
+                    });
+
+                    test('it should handle non-selectable items', function (done) {
+                        var section = dom('section', {html: dom('label', {html: 'Non Selectable Item'})}, body);
+                        var node = dom('data-table', {
+                            data: data3,
+                            selectable: true,
+                            sortable: true
+                        }, section);
+                        var events = [];
+                        onDomReady(node, function () {
+
+                            clickRow(node, 1);
+                            expect(selectedRow(node)).to.equal('2');
+
+                            clickRow(node, 0);
+                            expect(selectedRow(node)).to.equal(null);
+
+                            done();
+                        });
+                    });
+                });
+
+                suite('sort and select', function () {
+                    test('it should sort and select', function (done) {
+                        var section = dom('section', {html: dom('label', {html: 'Sortable and Selectable'})}, body);
+                        var node = dom('data-table', {
+                            data: data1,
+                            sortable: true,
+                            selectable: true
+                        }, section);
+                        var events = [];
+                        onDomReady(node, function () {
+                            clickCol(node, 'weight');
+                            expect(getColData(node, 'weight')).to.equal('220,170,90');
+
+                            clickRow(node, 1);
+                            expect(selectedRow(node)).to.equal('1');
+
+                            expect(selectedRowIndex(node)).to.equal(2);
+
+                            clickCol(node, 'height');
+                            expect(selectedRow(node)).to.equal('1');
+                            expect(selectedRowIndex(node)).to.equal(1);
+
+                            done();
+                        });
+                    });
+
+                    test('it should maintain sort and select after new items', function (done) {
+                        var section = dom('section', {html: dom('label', {html: 'Sortable and Selectable'})}, body);
+                        var node = dom('data-table', {
+                            data: data1,
+                            sortable: true,
+                            selectable: true
+                        }, section);
+                        var events = [];
+                        onDomReady(node, function () {
+                            clickCol(node, 'weight');
+                            expect(getColData(node, 'weight')).to.equal('220,170,90');
+
+                            clickRow(node, 1);
+                            expect(selectedRow(node)).to.equal('1');
+
+                            expect(selectedRowIndex(node)).to.equal(2);
+
+                            clickCol(node, 'height');
+                            expect(selectedRow(node)).to.equal('1');
+                            expect(selectedRowIndex(node)).to.equal(1);
+
+                            node.data = data2;
+
+                            expect(selectedColumn(node)).to.equal('height');
+                            expect(selectedRow(node)).to.equal('1');
+                            expect(selectedRowIndex(node)).to.equal(3);
+
+                            done();
+                        });
+                    });
+                });
+
+            });
+
+        });
+
+        window.mocha.run();
 
 
-</script>
+    </script>
 </body>
+
 </html>
