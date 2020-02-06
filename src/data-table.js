@@ -24,9 +24,10 @@ class DataTable extends BaseComponent {
 		super();
 	}
 
-	onData (value) {
+    onData(value) {
 		const items = value ? value.items || value.data : null;
 		this.orgItems = items;
+        console.log('DATA!', items);
 		if (!items) {
 			this.displayNoData(true);
 			return;
@@ -35,16 +36,18 @@ class DataTable extends BaseComponent {
 		this.items = [...items];
 		this.mixPlugins();
 		clearTimeout(this.noDataTimer);
-		onDomReady(this, () => {
+		this.onDomReady(() => {
 			this.render();
 		});
 	}
 
 	domReady () {
-		this.perf = this.perf || PERF;
-		this.noDataTimer = setTimeout(() => {
-			this.displayNoData(true);
-		}, 1000);
+        this.perf = this.perf || PERF;
+        if (!this.items) {
+            this.noDataTimer = setTimeout(() => {
+                this.displayNoData(true);
+            }, 1000);
+        }
 	}
 
 	render () {

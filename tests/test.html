@@ -48,18 +48,23 @@
     <div id="tests"></div>
 
     <script>
-        window.mocha.setup('tdd');
+        window.mocha.setup('bdd');
 
-        suite('DataTable', function () {
+        describe('DataTable', function () {
             this.timeout(3000);
-            var suite = window.suite,
+            const describe = window.describe,
                 test = window.test,
                 dom = window.dom,
                 on = window.on,
                 expect = chai.expect,
                 body = dom.byId('tests');
 
-            var data1 = {
+            const data1 = {
+                grouping: 'name',
+                components:{
+                    age: 'ui-dropdown',
+                    bp: 'ui-checkbox'
+                },
                 columns: {
                     name: 'Name',
                     age: 'Age',
@@ -226,9 +231,9 @@
                 //node.destroy();
             }
 
-            suite('data table', function () {
-                suite('rendering', function () {
-                    test('it should render a table', function (done) {
+            describe('data table', function () {
+                describe('rendering', function () {
+                    it('should render a table', function (done) {
                         var section = dom('section', {html: dom('label', {html: 'Non Selectable Item'})}, body);
                         var node = dom('data-table', {
                             data: data3
@@ -239,7 +244,7 @@
                         });
                     });
 
-                    test('it should handle "no data"', function (done) {
+                    it('should handle "no data"', function (done) {
                         var section = dom('section', {html: dom('label', {html: 'Data is NULL'})}, body);
                         var node = dom('data-table', {
                             data: null
@@ -250,7 +255,7 @@
                         });
                     });
 
-                    test('it should handle "no items"', function (done) {
+                    it('should handle "no items"', function (done) {
                         var section = dom('section', {html: dom('label', {html: 'Items are []'})}, body);
                         var node = dom('data-table', {
                             data: dataNoItems
@@ -262,9 +267,9 @@
                     });
                 });
 
-                suite('scrolling', function () {
+                describe('scrolling', function () {
 
-                    test('it should be scrollable', function (done) {
+                    it('should be scrollable', function (done) {
                         var section = dom('section', {class: 'sized'}, body);
                         var node = dom('data-table', {
                             data: getData(),
@@ -275,7 +280,7 @@
                         });
                     });
 
-                    test('it should be scrollable with maxHeight set', function (done) {
+                    it.only('should be scrollable with maxHeight set', function (done) {
                         var section = dom('section', {}, body);
                         var node = dom('data-table', {
                             data: getData(),
@@ -287,8 +292,8 @@
                         });
                     });
                 });
-                suite('sorting', function () {
-                    test('it should sort', function (done) {
+                describe('sorting', function () {
+                    it('should sort', function (done) {
                         var section = dom('section', {html: dom('label', {html: 'Sortable'})}, body);
                         var node = dom('data-table', {
                             data: data1,
@@ -339,8 +344,8 @@
                     });
                 });
 
-                suite('selecting', function () {
-                    test('it should be selectable', function (done) {
+                describe('selecting', function () {
+                    it('should be selectable', function (done) {
                         var section = dom('section', {html: dom('label', {html: 'Selectable'})}, body);
                         var node = dom('data-table', {
                             data: data1,
@@ -377,7 +382,7 @@
                         });
                     });
 
-                    test('it should handle non-selectable items', function (done) {
+                    it('should handle non-selectable items', function (done) {
                         var section = dom('section', {html: dom('label', {html: 'Non Selectable Item'})}, body);
                         var node = dom('data-table', {
                             data: data3,
@@ -398,8 +403,8 @@
                     });
                 });
 
-                suite('sort and select', function () {
-                    test('it should sort and select', function (done) {
+                describe('sort and select', function () {
+                    it('should sort and select', function (done) {
                         var section = dom('section', {html: dom('label', {html: 'Sortable and Selectable'})}, body);
                         var node = dom('data-table', {
                             data: data1,
@@ -424,7 +429,7 @@
                         });
                     });
 
-                    test('it should maintain sort and select after new items', function (done) {
+                    it('should maintain sort and select after new items', function (done) {
                         var section = dom('section', {html: dom('label', {html: 'Sortable and Selectable'})}, body);
                         var node = dom('data-table', {
                             data: data1,
