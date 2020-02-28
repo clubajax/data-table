@@ -1,12 +1,26 @@
-$tbl-brd: 2px solid #ccc;
-$td-brd: 1px solid #eee;
-$th-brd: 1px solid #aaa;
-$tr-sel-bk: #4660bf;
-$tr-unsel-bk: #d6e5f0;
-$tr-sel-txt: white;
-$tr-hvr: #d6e5f2;
-$head-bk: #eee;
-$cell-pad: 15px;
+
+
+:root{
+    --tbl-brd: 0px solid #ccc;
+
+    --tbl-head-txt: 11px;
+    --tbl-head-clr: #919191;
+    --tbl-head-bk: transparent;
+    --tbl-th-brd: 0px solid #aaa;
+    --tbl-th-pad: 15px;
+    --tbl-th-align: left;
+
+    --tbl-body-txt: 13px;
+    --tbl-body-clr: ##333;
+    --tbl-tr-sel-bk: #4660bf;
+    --tbl-tr-unsel-bk: #ddd;
+    --tbl-tr-sel-txt: white;
+    --tbl-tr-hvr: #d6e5f2;
+
+    --tbl-td-brd: #eee;
+    --tbl-td-pad: 15px;
+}
+
 data-table{
     * {
         box-sizing: content-box;
@@ -16,22 +30,29 @@ data-table{
     width: 100%;
     height: 100%;
     outline: none;
+    &[clickable], &[selectable]{
+        tbody tr:not(.selected):not(.unselectable):hover{
+            background-color: var(--tbl-tr-hvr);
+            cursor: pointer;
+        }
+    }
     table{
         width: 100%;
         border-collapse: collapse;
-        border: $tbl-brd;
-        font-size: 13px;
+        border: var(--tbl-brd);
         outline: none;
         thead{
-            background-color: $head-bk;
-            border-bottom: $tbl-brd;
+            background-color: var(--tbl-head-bk);
+            border-bottom: var(--tbl-brd);
         }
         th{
             position: relative;
-            border: $th-brd;
+            border: var(--tbl-th-brd);
             font-weight: normal;
-            text-align: center;
-            padding: $cell-pad;
+            text-align: var(--tbl-th-align);
+            padding: var(--tbl-th-pad);
+            font-size: var(--tbl-head-txt);
+            color: var(--tbl-head-clr);
             &.desc, &.asc{
                 &:after{
                     content: '\25BE';
@@ -49,19 +70,33 @@ data-table{
         }
         tbody{
             tr{
+                outline: 0;
                 &.selected{
-                    background-color: $tr-sel-bk;
-                    color: $tr-sel-txt;
+                    background-color: var(--tbl-tr-sel-bk);
+                    color: var(--tbl-tr-sel-txt);
                 }
                 &.unselectable {
                     outline: 0;
-                    background-color: $tr-unsel-bk;
+                    background-color: var(--tbl-tr-unsel-bk);
+                }
+                &:focus{
+                    box-shadow: 0 0 20px cyan inset;
                 }
             }
         }
         td{
-            border: $td-brd;
-            padding: $cell-pad;
+            border: 1px solid var(--tbl-td-brd);
+            padding: var(--tbl-td-pad);
+            font-size: var(--tbl-body-txt);
+            color: var(--tbl-body-clr);
+        }
+    }
+    &[borders="bottom"]{
+        table{
+            td{
+                border: 0;
+                border-bottom: 1px solid var(--tbl-td-brd);
+            }
         }
     }
     &.sortable{
@@ -70,9 +105,7 @@ data-table{
         }
     }
     &.selectable{
-        tbody tr:not(.selected):not(.unselectable):hover{
-            background-color: $tr-hvr;
-        }
+        
     }
     &.scrollable{
         overflow: auto;
@@ -101,7 +134,7 @@ data-table{
         }
     }
     &.no-data{
-        border: $tbl-brd;
+        border: var(--tbl-brd);
         padding-bottom: 25px;
         &:after{
             content: 'No Data';

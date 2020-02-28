@@ -17,17 +17,46 @@ let log;
 // github.io demos
 
 
-
 class DataTable extends BaseComponent {
 
 	constructor () {
-		super();
-	}
+        super();
+        this.editable = false;
+        this.clickable = false;
+        this.sortable = false;
+        this.selectable = false;
+        this.scrollable = false;
+        // this.data = 0;
+        // this.schema = false;
+        // this.rows = false;
+        // this.exclude = [];
+    }
+    
+    onRows(rows) {
+        if (!this.schema) {
+            return;
+        }
+        this.data = {
+            columns: this.schema,
+            items: rows
+        };
+        this.onData(this.data);
+    }
+
+    onSchema(schema) {
+        if (!this.rows) {
+            return;
+        }
+        this.data = {
+            columns: schema,
+            items: this.rows
+        };
+        this.onData(this.data);
+    }
 
     onData(value) {
 		const items = value ? value.items || value.data : null;
 		this.orgItems = items;
-        console.log('DATA!', items);
 		if (!items) {
 			this.displayNoData(true);
 			return;
@@ -98,7 +127,7 @@ class DataTable extends BaseComponent {
 	}
 
 	renderBody (items, columns) {
-		const exclude = this.exclude || [];
+		const exclude = this.exclude;
 		const tbody = this.tbody;
 		dom.clean(tbody, true);
 
@@ -141,7 +170,10 @@ class DataTable extends BaseComponent {
 	}
 
 	mixPlugins () {
-		if (this.sortable) {
+        if (this.clickable) {
+			clickable.call(this);
+		}
+        if (this.sortable) {
 			clickable.call(this);
 			sortable.call(this);
 		}
@@ -259,6 +291,6 @@ function noop () {
 }
 
 module.exports = BaseComponent.define('data-table', DataTable, {
-	props: ['data', 'sort', 'selected', 'stretch-column', 'max-height'],
-	bools: ['sortable', 'selectable', 'scrollable', 'perf']
+	props: ['data', 'schema', 'rows', 'sort', 'selected', 'stretch-column', 'max-height', 'borders'],
+	bools: ['sortable', 'selectable', 'scrollable', 'clickable', 'perf']
 });

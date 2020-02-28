@@ -50,6 +50,16 @@
     <script>
         window.mocha.setup('bdd');
 
+
+        function createSchema (options){
+            return {
+                    name: 'Name',
+                    age: 'Age',
+                    height: 'Height',
+                    weight: 'Weight',
+                    bp: 'Bloodpressure'
+                }
+        }
         describe('DataTable', function () {
             this.timeout(3000);
             const describe = window.describe,
@@ -280,7 +290,7 @@
                         });
                     });
 
-                    it.only('should be scrollable with maxHeight set', function (done) {
+                    it('should be scrollable with maxHeight set', function (done) {
                         var section = dom('section', {}, body);
                         var node = dom('data-table', {
                             data: getData(),
@@ -292,6 +302,7 @@
                         });
                     });
                 });
+
                 describe('sorting', function () {
                     it('should sort', function (done) {
                         var section = dom('section', {html: dom('label', {html: 'Sortable'})}, body);
@@ -343,6 +354,26 @@
                         });
                     });
                 });
+
+                describe('clickable', function(){
+                    it.only('should be clickable', function (done) {
+                        var section = dom('section', {html: dom('label', {html: 'Clickable Rows'})}, body);
+                        var node = dom('data-table', {
+                            schema: data3.columns,
+                            rows: data3.items,
+                            // data: data3,
+                            borders: 'bottom',
+                            clickable: true
+                        }, section);
+                        var events = [];
+                        onDomReady(node, function () {
+                            node.on('row-click', function(e){
+                                console.log('click', e);
+                            })
+                            done();
+                        });
+                    });
+                })
 
                 describe('selecting', function () {
                     it('should be selectable', function (done) {
