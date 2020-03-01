@@ -4,6 +4,7 @@ const sortable = require('./sortable');
 const clickable = require('./clickable');
 const selectable = require('./selectable');
 const scrollable = require('./scrollable');
+const createComponent = require('./component');
 const util = require('./util');
 
 const PERF = true;
@@ -37,17 +38,18 @@ class DataTable extends BaseComponent {
         if (!this.schema) {
             return;
         }
-        this.loadData(rows, this.schema);
+        this.loadData(rows);
     }
 
-    onSchema(schema) {
-        if (!this.rows) {
-            return;
-        }
-        this.loadData(this.rows, schema);
-    }
+    // onSchema(schema) {
+    //     if (!this.rows) {
+    //         return;
+    //     }
+    //     console.log('schema...', this.rows);
+    //     this.loadData(this.rows);
+    // }
 
-    loadData(rows, schema) {
+    loadData(rows) {
         const items = rows || [];
         this.orgItems = items;
         this.legacyCheck(true);
@@ -90,7 +92,7 @@ class DataTable extends BaseComponent {
 		if (!util.isEqual(columns, this.columns)) {
 			this.columns = columns;
 			this.renderHeader(this.columns);
-		}
+        }
 		this.renderBody(this.items, this.columns);
 
 		this.fire('render', { table: this.table || this, thead: this.thead, tbody: this.tbody });
@@ -208,13 +210,18 @@ function render (items, columns, colSizes, tbody, selectable, callback) {
 			rowOptions.class = itemCss;
 		}
 
-		tr = dom('tr', rowOptions, tbody);
+        tr = dom('tr', rowOptions, tbody);
 		columns.forEach((col, i) => {
-			key = col.key || col;
-			html = key === 'index' ? index + 1 : item[key];
-			if (col.callback) {
-				html = col.callback(item, index);
-			}
+            key = col.key || col;
+            if (col.component) {
+                console.log('COMP HERE');
+                html = createComponent(col, item);
+            } else {
+                html = key === 'index' ? index + 1 : item[key];
+                if (col.callback) {
+                    html = col.callback(item, index);
+                }
+            }
 			css = key;
 			const cellOptions = { html, 'data-field': key, css };
 			if (colSizes[i]) {
