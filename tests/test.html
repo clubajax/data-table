@@ -152,7 +152,10 @@
                                 label: 'Last'
                             }, {
                                 key: 'middle',
-                                label: 'Middle Name'
+                                label: 'Middle Name',
+                                component: {
+                                    type: 'editable'
+                                }
                             }, {
                                 key: 'job',
                                 label: 'Occupation',
@@ -268,13 +271,13 @@
             describe('data table', function () {
                 describe('new schema', function () {
                     it.only('should be clickable', function (done) {
-                        var section = dom('section', {html: dom('label', {html: 'Clickable Rows'})}, body);
+                        var section = dom('section', {html: dom('label', {html: 'New Schema'})}, body);
                         var node = dom('data-table', {
                             schema: data3.schema,
                             rows: data3.items,
                             borders: 'bottom',
-                            clickable: true,
-                            sortable: true
+                            // clickable: true,
+                            // sortable: true
                         }, section);
                         var events = [];
                         onDomReady(node, function () {

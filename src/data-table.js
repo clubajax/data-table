@@ -214,7 +214,6 @@ function render (items, columns, colSizes, tbody, selectable, callback) {
 		columns.forEach((col, i) => {
             key = col.key || col;
             if (col.component) {
-                console.log('COMP HERE');
                 html = createComponent(col, item);
             } else {
                 html = key === 'index' ? index + 1 : item[key];
