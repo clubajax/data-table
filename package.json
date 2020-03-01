@@ -35,7 +35,7 @@
   "devDependencies": {
     "@babel/register": "^7.8.3",
     "@clubajax/custom-elements-polyfill": "^0.9.4",
-    "@clubajax/node-file-managment": "^0.1.0",
+    "@clubajax/node-file-managment": "^0.1.1",
     "babelify": "github:ylemkimon/babelify",
     "chai": "^4.2.0",
     "chai-spies": "^1.0.0",

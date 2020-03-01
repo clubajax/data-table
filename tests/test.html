@@ -51,14 +51,14 @@
         window.mocha.setup('bdd');
 
 
-        function createSchema (options){
+        function createSchema(options) {
             return {
-                    name: 'Name',
-                    age: 'Age',
-                    height: 'Height',
-                    weight: 'Weight',
-                    bp: 'Bloodpressure'
-                }
+                name: 'Name',
+                age: 'Age',
+                height: 'Height',
+                weight: 'Weight',
+                bp: 'Bloodpressure'
+            }
         }
         describe('DataTable', function () {
             this.timeout(3000);
@@ -71,7 +71,7 @@
 
             const data1 = {
                 grouping: 'name',
-                components:{
+                components: {
                     age: 'ui-dropdown',
                     bp: 'ui-checkbox'
                 },
@@ -141,11 +141,27 @@
                     ]
                 },
                 data3 = {
-                    columns: {
-                        first: 'First Name',
-                        middle: 'Middle Name',
-                        last: 'Last Name',
-                        job: 'Occupation'
+                    schema: {
+                        sort: 'first',
+                        columns:[
+                            {
+                                key: 'first',
+                                label: 'First'
+                            }, {
+                                key: 'last',
+                                label: 'Last'
+                            }, {
+                                key: 'middle',
+                                label: 'Middle Name'
+                            }, {
+                                key: 'job',
+                                label: 'Occupation',
+                                component: {
+                                    type: 'link',
+                                    url: 'site'
+                                }
+                            },
+                        ]
                     },
                     items: [
                         {
@@ -154,25 +170,32 @@
                             last: 'Wilcox',
                             middle: 'JavaScript',
                             job: 'UI Guy',
-                            css: 'unselectable'
+                            company: 'Intelligencia',
+                            site: 'http://intelligencia.com'
                         }, {
                             id: 2,
                             first: 'Jeziel',
                             last: 'Jones',
                             middle: 'Hello Kitty',
-                            job: 'UI Guy'
+                            job: 'UI Guy',
+                            company: 'Dorkville',
+                            site: 'http://dorkville.us'
                         }, {
                             id: 3,
                             first: 'Motti',
                             last: 'Marom',
                             middle: 'Make it Right',
-                            job: 'Criticizing'
+                            job: 'Criticizing',
+                            company: 'QA R US',
+                            site: 'http://qarus.com'
                         }, {
                             id: 4,
                             first: 'Madhu',
                             last: 'Chebrolu',
                             middle: 'Waiting on Dave',
-                            job: 'Rubier'
+                            job: 'Rubier',
+                            company: 'Backends',
+                            site: 'http://bends.com'
                         }
                     ]
                 },
@@ -241,7 +264,28 @@
                 //node.destroy();
             }
 
+
             describe('data table', function () {
+                describe('new schema', function () {
+                    it.only('should be clickable', function (done) {
+                        var section = dom('section', {html: dom('label', {html: 'Clickable Rows'})}, body);
+                        var node = dom('data-table', {
+                            schema: data3.schema,
+                            rows: data3.items,
+                            borders: 'bottom',
+                            clickable: true,
+                            sortable: true
+                        }, section);
+                        var events = [];
+                        onDomReady(node, function () {
+                            node.on('row-click', function (e) {
+                                console.log('click', e);
+                            })
+                            done();
+                        });
+                    });
+                })
+
                 describe('rendering', function () {
                     it('should render a table', function (done) {
                         var section = dom('section', {html: dom('label', {html: 'Non Selectable Item'})}, body);
@@ -354,26 +398,6 @@
                         });
                     });
                 });
-
-                describe('clickable', function(){
-                    it.only('should be clickable', function (done) {
-                        var section = dom('section', {html: dom('label', {html: 'Clickable Rows'})}, body);
-                        var node = dom('data-table', {
-                            schema: data3.columns,
-                            rows: data3.items,
-                            // data: data3,
-                            borders: 'bottom',
-                            clickable: true
-                        }, section);
-                        var events = [];
-                        onDomReady(node, function () {
-                            node.on('row-click', function(e){
-                                console.log('click', e);
-                            })
-                            done();
-                        });
-                    });
-                })
 
                 describe('selecting', function () {
                     it('should be selectable', function (done) {

@@ -26,6 +26,7 @@ class DataTable extends BaseComponent {
         this.sortable = false;
         this.selectable = false;
         this.scrollable = false;
+        this.legacyCheck();
         // this.data = 0;
         // this.schema = false;
         // this.rows = false;
@@ -36,28 +37,21 @@ class DataTable extends BaseComponent {
         if (!this.schema) {
             return;
         }
-        this.data = {
-            columns: this.schema,
-            items: rows
-        };
-        this.onData(this.data);
+        this.loadData(rows, this.schema);
     }
 
     onSchema(schema) {
         if (!this.rows) {
             return;
         }
-        this.data = {
-            columns: schema,
-            items: this.rows
-        };
-        this.onData(this.data);
+        this.loadData(this.rows, schema);
     }
 
-    onData(value) {
-		const items = value ? value.items || value.data : null;
-		this.orgItems = items;
-		if (!items) {
+    loadData(rows, schema) {
+        const items = rows || [];
+        this.orgItems = items;
+        this.legacyCheck(true);
+		if (!items.length) {
 			this.displayNoData(true);
 			return;
 		}
@@ -69,6 +63,16 @@ class DataTable extends BaseComponent {
 			this.render();
 		});
 	}
+
+    legacyCheck(disable) {
+        if (!disable) {
+            this.legacyTimer = setTimeout(() => {
+                throw new Error('a `rows` and a `schema` is required');
+            }, 1000);
+            return;
+        }
+        clearTimeout(this.legacyTimer);
+    }
 
 	domReady () {
         this.perf = this.perf || PERF;
@@ -82,7 +86,7 @@ class DataTable extends BaseComponent {
 	render () {
 		this.fire('pre-render');
 		this.renderTemplate();
-		const columns = getColumns(this.data);
+		const columns = this.schema.columns;
 		if (!util.isEqual(columns, this.columns)) {
 			this.columns = columns;
 			this.renderHeader(this.columns);
@@ -225,6 +229,7 @@ function render (items, columns, colSizes, tbody, selectable, callback) {
 	callback();
 }
 
+// experimental
 function lazyRender (allItems, columns, tbody, sorts, callback) {
 	let index = 0;
 	function renderRows (items) {
@@ -274,23 +279,11 @@ function lazyRender (allItems, columns, tbody, sorts, callback) {
 	next();
 }
 
-function getColumns (data) {
-	if (Array.isArray(data.columns)) {
-		return data.columns;
-	}
-	return Object.keys(data.columns).map((key) => {
-		return {
-			key,
-			label: data.columns[key]
-		};
-	});
-}
-
 function noop () {
 
 }
 
 module.exports = BaseComponent.define('data-table', DataTable, {
-	props: ['data', 'schema', 'rows', 'sort', 'selected', 'stretch-column', 'max-height', 'borders'],
+	props: ['schema', 'rows', 'sort', 'selected', 'stretch-column', 'max-height', 'borders'],
 	bools: ['sortable', 'selectable', 'scrollable', 'clickable', 'perf']
 });
