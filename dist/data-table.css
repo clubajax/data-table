@@ -1,11 +1,13 @@
 :root {
   --tbl-brd: 0px solid #ccc;
-  --tbl-head-txt: 13px;
+  --tbl-head-txt: 11px;
+  --tbl-head-clr: #919191;
   --tbl-head-bk: transparent;
   --tbl-th-brd: 0px solid #aaa;
   --tbl-th-pad: 15px;
   --tbl-th-align: left;
   --tbl-body-txt: 13px;
+  --tbl-body-clr: ##333;
   --tbl-tr-sel-bk: #4660bf;
   --tbl-tr-unsel-bk: #ddd;
   --tbl-tr-sel-txt: white;
@@ -20,7 +22,7 @@ data-table {
   height: 100%;
   outline: none; }
   data-table * {
-    box-sizing: content-box; }
+    box-sizing: border-box; }
   data-table[clickable] tbody tr:not(.selected):not(.unselectable):hover, data-table[selectable] tbody tr:not(.selected):not(.unselectable):hover {
     background-color: var(--tbl-tr-hvr);
     cursor: pointer; }
@@ -38,9 +40,10 @@ data-table {
       font-weight: normal;
       text-align: var(--tbl-th-align);
       padding: var(--tbl-th-pad);
-      font-size: var(--tbl-head-txt); }
+      font-size: var(--tbl-head-txt);
+      color: var(--tbl-head-clr); }
       data-table table th.desc:after, data-table table th.asc:after {
-        content: '\25BE';
+        content: "\25BE";
         position: absolute;
         top: 50%;
         right: 5px;
@@ -60,7 +63,29 @@ data-table {
     data-table table td {
       border: 1px solid var(--tbl-td-brd);
       padding: var(--tbl-td-pad);
-      font-size: var(--tbl-body-txt); }
+      font-size: var(--tbl-body-txt);
+      color: var(--tbl-body-clr); }
+      data-table table td .td-editable {
+        cursor: pointer; }
+      data-table table td ui-input {
+        display: inline-block; }
+        data-table table td ui-input input {
+          box-sizing: border-box;
+          display: inline-block;
+          padding: 0;
+          font-size: 13px;
+          border: 0;
+          outline: 0; }
+          data-table table td ui-input input:focus {
+            background-color: #e3ffff; }
+        data-table table td ui-input label {
+          display: none; }
+    data-table table ui-dropdown {
+      width: 100%; }
+      data-table table ui-dropdown button {
+        width: 100%; }
+      data-table table ui-dropdown label.ui-label {
+        display: none; }
   data-table[borders="bottom"] table td {
     border: 0;
     border-bottom: 1px solid var(--tbl-td-brd); }
@@ -89,7 +114,7 @@ data-table {
     border: var(--tbl-brd);
     padding-bottom: 25px; }
     data-table.no-data:after {
-      content: 'No Data';
+      content: "No Data";
       display: block;
       margin-top: 15px;
       text-align: center;

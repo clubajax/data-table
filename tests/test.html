@@ -3,8 +3,11 @@
 
 <head>
     <title>Test Data Table</title>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css"
+        integrity="sha384-5sAR7xN1Nv6T6+dT2mhtzEpVJvfS3NScPQTrOxhwjIuvcA67KV2R5Jz6kr4abQsz" crossorigin="anonymous">
     <link rel="stylesheet" href="../node_modules/mocha/mocha.css">
     <link rel="stylesheet" href="./dist/data-table.css" />
+    <link rel="stylesheet" href="../node_modules/@clubajax/form/form.css" />
     <script src="../node_modules/mocha/mocha.js"></script>
     <script src="../node_modules/chai/chai.js"></script>
     <script src="./dist/vendor.js"></script>
@@ -154,7 +157,8 @@
                                 key: 'middle',
                                 label: 'Middle Name',
                                 component: {
-                                    type: 'editable'
+                                    type: 'ui-input',
+                                    subtype: 'text'
                                 }
                             }, {
                                 key: 'job',
@@ -163,7 +167,20 @@
                                     type: 'link',
                                     url: 'site'
                                 }
-                            },
+                            }, {
+                                key: 'edu',
+                                label: 'Education',
+                                component:{
+                                    type: 'ui-dropdown',
+                                    options:[
+                                        {value: 'boot camp', label: 'Boot Camp'},
+                                        {value: 'highschool', label: 'High School'},
+                                        {value: 'associates', label: 'Associates'},
+                                        {value: 'bachelors', label: 'Bachelors'},
+                                        {value: 'masters', label: 'Masters'},
+                                    ]
+                                }
+                            }
                         ]
                     },
                     items: [
@@ -174,7 +191,8 @@
                             middle: 'JavaScript',
                             job: 'UI Guy',
                             company: 'Intelligencia',
-                            site: 'http://intelligencia.com'
+                            site: 'http://intelligencia.com',
+                            edu: 'associates'
                         }, {
                             id: 2,
                             first: 'Jeziel',
@@ -182,7 +200,8 @@
                             middle: 'Hello Kitty',
                             job: 'UI Guy',
                             company: 'Dorkville',
-                            site: 'http://dorkville.us'
+                            site: 'http://dorkville.us',
+                            edu: 'bootcamp'
                         }, {
                             id: 3,
                             first: 'Motti',
@@ -190,7 +209,8 @@
                             middle: 'Make it Right',
                             job: 'Criticizing',
                             company: 'QA R US',
-                            site: 'http://qarus.com'
+                            site: 'http://qarus.com',
+                            edu: 'bachelors'
                         }, {
                             id: 4,
                             first: 'Madhu',
@@ -198,7 +218,8 @@
                             middle: 'Waiting on Dave',
                             job: 'Rubier',
                             company: 'Backends',
-                            site: 'http://bends.com'
+                            site: 'http://bends.com',
+                            edu: 'masters'
                         }
                     ]
                 },
@@ -275,7 +296,7 @@
                         var node = dom('data-table', {
                             schema: data3.schema,
                             rows: data3.items,
-                            borders: 'bottom',
+                            // borders: 'bottom',
                             // clickable: true,
                             // sortable: true
                         }, section);

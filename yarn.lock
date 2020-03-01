@@ -728,15 +728,51 @@
   dependencies:
     "@clubajax/on" "^2.2.0"
 
+"@clubajax/base-component@2.4.1":
+  version "2.4.1"
+  resolved "https://registry.yarnpkg.com/@clubajax/base-component/-/base-component-2.4.1.tgz#eea3b7170abea28a4df19aa8a7fe07bf97fca7a5"
+  integrity sha512-OiPl8tEw33pvVvuDeDz6svTKxgLqD/xBZVIoeurwc2dnc8Cfv6YxgCixLNiJbkwIoYV0s3S6ZJl4UZbLXpWWqg==
+  dependencies:
+    "@clubajax/on" "^2.2.0"
+
 "@clubajax/custom-elements-polyfill@^0.9.4":
   version "0.9.4"
   resolved "https://registry.yarnpkg.com/@clubajax/custom-elements-polyfill/-/custom-elements-polyfill-0.9.4.tgz#5a505f923ab566125ffa368f218dc33c2d914a4b"
   integrity sha512-F73k2fNFvJtcYxXfFTDzOSDhJQs6SO8E3NS80ktGHZVYXQZQe/0D0ZFAUDLhW2ecQwx/GXHXla+9gXhcgiXa1Q==
 
+"@clubajax/dates@^2.3.1":
+  version "2.3.1"
+  resolved "https://registry.yarnpkg.com/@clubajax/dates/-/dates-2.3.1.tgz#bdcfa7bb959e2a2cb0bd472920e8668def700f00"
+  integrity sha512-AEXplWe+VqDYEWP3n4Q++j1germO7jg01dNI/3V7J8cbudL0/f/40BXjYlT6HNn2r1Bu7vElWa3M+al/mKdmlg==
+
 "@clubajax/dom@2.8.5":
   version "2.8.5"
   resolved "https://registry.yarnpkg.com/@clubajax/dom/-/dom-2.8.5.tgz#1d8893d9956f500d5354f248e5e553576cd55a64"
   integrity sha512-uDj2meNcvcrGE/mC1Jfzuq5mDRqydBLseFR9TSlH1529wYFWfqwvAl5lV22uXngIJerBFPcbULwZFDoeqkIU+g==
+
+"@clubajax/form@0.8.0":
+  version "0.8.0"
+  resolved "https://registry.yarnpkg.com/@clubajax/form/-/form-0.8.0.tgz#3a4bb7e0f5f889f5d2c2d5dfe9ee62def370c103"
+  integrity sha512-BAFgvsgSKPU3jTrYGEbk2WaP4FaUib6AUXQyvOR6y/UZqe7GErWQGR4b13abLmddf4zdYqDzzfiVrtV7km9nrA==
+  dependencies:
+    "@clubajax/base-component" "2.4.1"
+    "@clubajax/dates" "^2.3.1"
+    "@clubajax/dom" "2.8.5"
+    "@clubajax/key-nav" "2.6.1"
+    "@clubajax/no-dash" "0.6.1"
+    "@clubajax/on" "2.2.0"
+
+"@clubajax/key-nav@2.6.1":
+  version "2.6.1"
+  resolved "https://registry.yarnpkg.com/@clubajax/key-nav/-/key-nav-2.6.1.tgz#b4494c6c6b4a85c6f680ef0bde8757b3a3ee9dd4"
+  integrity sha512-jrfxnZoDoyZ5BYg6ZVsWXk9sFNCiMzSUrJEA5zBTsfY94Kq4UaqdJKOebGDso+TkKWsXIsGhhDrKFqNYO+IdLg==
+  dependencies:
+    "@clubajax/on" "2.2.0"
+
+"@clubajax/no-dash@0.6.1":
+  version "0.6.1"
+  resolved "https://registry.yarnpkg.com/@clubajax/no-dash/-/no-dash-0.6.1.tgz#da41c723d0a664343203dee6e22571f2b3bd749a"
+  integrity sha512-9hxTHcofdaw0iZ4M3Nx5dW8BSwsbnh4TqmmlGwfMeyvoYReuQ+jBYZL4u4MiWiDT+qHk0wfg6mrl8PBWsOrwmg==
 
 "@clubajax/node-file-managment@^0.1.1":
   version "0.1.1"
