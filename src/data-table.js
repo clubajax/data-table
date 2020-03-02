@@ -87,7 +87,8 @@ class DataTable extends BaseComponent {
 
 	render () {
 		this.fire('pre-render');
-		this.renderTemplate();
+        this.renderTemplate();
+        this.renderFooter();
 		const columns = this.schema.columns;
 		if (!util.isEqual(columns, this.columns)) {
 			this.columns = columns;
@@ -117,7 +118,11 @@ class DataTable extends BaseComponent {
 			const label = col.label === undefined ? col : col.label;
 			const css = col.css || col.className || '';
 			const options = {
-				html: '<span>' + label + '</span>',
+                html: [
+                    dom('span', {html: label, css: 'ui-label'}),
+                    dom('span', {class: 'sort-up', html: '&uarr;'}),
+                    dom('span', {class: 'sort-dn', html: '&darr;'}),
+                ],
 				css: css,
 				'data-field': key
 			};
@@ -161,7 +166,13 @@ class DataTable extends BaseComponent {
 			this.fire('render-body', { tbody: this.tbody });
 		});
 
-	}
+    }
+    
+    renderFooter() {
+        if (this.footer) {
+            this.tfoot = dom('tfoot', {html: this.footer}, this.table); 
+        }
+    }
 
 	getItemById (id) {
 		return this.items.find(item => ''+item.id === ''+id);
@@ -290,6 +301,6 @@ function noop () {
 }
 
 module.exports = BaseComponent.define('data-table', DataTable, {
-	props: ['schema', 'rows', 'sort', 'selected', 'stretch-column', 'max-height', 'borders'],
+	props: ['schema', 'rows', 'sort', 'selected', 'stretch-column', 'max-height', 'borders', 'footer'],
 	bools: ['sortable', 'selectable', 'scrollable', 'clickable', 'perf']
 });

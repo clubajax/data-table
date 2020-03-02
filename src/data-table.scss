@@ -54,27 +54,39 @@ data-table {
             font-size: var(--tbl-head-txt);
             color: var(--tbl-head-clr);
             line-height: 1.2;
-            * {
-                display: inline-block;
-                vertical-align: middle;
+
+            // a bit of cermony... css #ftw.
+            // always keep one item on, and one off, 
+            // in order to take space.
+            // use opacity for actual display.
+            //
+            // This keeps things inline, keeps the arrows from
+            // wrapping to the next line, and keeps teh cell sizes
+            // from jumping
+            .sort-up{
+                opacity: 0;
+                padding-left: 3px;
             }
-            &:after {
-                content: ' ';
-                display: inline-block;
-                width: 20px;
-                position: relative;
-                font-size: 11px;
-                left: 3px;
-                top: 0;
+            .sort-dn{
+                display: none;
+                padding-left: 3px;
             }
             &.desc {
-                &:after {
-                    content: '\2193'; // down arrow
+                .sort-dn{
+                    display: inline;
+                    opacity: 1;
+                }
+                .sort-up{
+                    display: none;
                 }
             }
             &.asc {
-                &:after {
-                    content: '\2191'; // up arrow
+                .sort-up{
+                    display: inline;
+                    opacity: 1;
+                }
+                .sort-dn{
+                    display: none;
                 }
             }
         }

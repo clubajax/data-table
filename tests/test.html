@@ -81,7 +81,7 @@
                         {key: 'age', label: 'Age'},
                         {key: 'height', label: 'Height'},
                         {key: 'weight', label: 'Weight'},
-                        {key: 'bp', label: 'Bloodpressure'},
+                        {key: 'bp', label: 'Blood Pressure'},
                     ],
                 },
                 items: [
@@ -347,6 +347,7 @@
                             schema: data1.schema,
                             rows: data1.items,
                             sortable: true,
+                            footer: dom('div', {html: 'select one of two rows'})
                         }, section);
                         var events = [];
                         onDomReady(node, function () {
