@@ -14,7 +14,8 @@
   --tbl-tr-sel-txt: white;
   --tbl-tr-hvr: #d6e5f2;
   --tbl-td-brd: #eee;
-  --tbl-td-pad: 15px; }
+  --tbl-td-pad: 15px;
+  --tbl-td-focus: #ccc; }
 
 data-table {
   display: block;
@@ -77,12 +78,15 @@ data-table {
       color: var(--tbl-body-clr); }
       data-table table td .td-editable {
         cursor: pointer; }
+        data-table table td .td-editable:focus {
+          outline: none;
+          box-shadow: 0 0 7px rgba(0, 0, 0, 0.2) inset; }
       data-table table td ui-input {
         display: inline-block; }
         data-table table td ui-input input {
           box-sizing: border-box;
           display: inline-block;
-          padding: 0;
+          padding: 5px;
           font-size: 13px;
           border: 0;
           outline: 0; }
@@ -92,8 +96,11 @@ data-table {
           display: none; }
     data-table table ui-dropdown {
       width: 100%; }
-      data-table table ui-dropdown button {
-        width: 100%; }
+      data-table table ui-dropdown button.ui-button {
+        width: 100%;
+        border-width: 0; }
+        data-table table ui-dropdown button.ui-button:focus {
+          border-width: 1px; }
       data-table table ui-dropdown label.ui-label {
         display: none; }
   data-table[borders='bottom'] table td {

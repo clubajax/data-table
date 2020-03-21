@@ -1,19 +1,19 @@
 function getData20 () {
 	return {
-		columns:{
-			"firstName": "First Name",
-			"lastName": "Last Name",
-			"company": "Company",
-			"address1": "Address 1",
-			"address2": "Street",
-			"birthday": "Birthday",
-			"email": "Email",
-			"city": "City",
-			"state": "State",
-			"zipcode": "Zipcode",
-			"phone": "Phone",
-			"ssn": "SSN"
-		},
+        columns: [
+            { key: 'firstName', label: 'First Name'},
+			{ key: 'lastName', label: 'Last Name'},
+			{ key: 'company', label: 'Company'},
+			{ key: 'address1', label: 'Address 1'},
+			{ key: 'address2', label: 'Street'},
+			{ key: 'birthday', label: 'Birthday'},
+			{ key: 'email', label: 'Email'},
+			{ key: 'city', label: 'City'},
+			{ key: 'state', label: 'State'},
+			{ key: 'zipcode', label: 'Zipcode'},
+			{ key: 'phone', label: 'Phone'},
+            {key: 'ssn', label: 'SSN', width: 150}
+        ],
 		items: [
 			{
 				"id": "74662",

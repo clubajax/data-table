@@ -30,7 +30,7 @@ const Selectable = {
 
 		let item = this.getItemById(this.currentSelection);
 
-		const itemCss = item ? item.css || item.class || item.className : null;
+		const itemCss = item ? item.class || item.className : null;
 		if (itemCss === 'unselectable'){
 			this.currentSelection = null;
 			item = null;

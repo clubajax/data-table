@@ -18,6 +18,7 @@
 
     --tbl-td-brd: #eee;
     --tbl-td-pad: 15px;
+    --tbl-td-focus: #ccc;
 }
 
 data-table {
@@ -113,14 +114,17 @@ data-table {
             color: var(--tbl-body-clr);
             .td-editable {
                 cursor: pointer;
+                &:focus{
+                    outline: none;
+                    box-shadow: 0 0 7px rgba(0,0,0,0.2) inset;
+                }
             }
             ui-input {
                 display: inline-block;
-                // width: 100%;
                 input {
                     box-sizing: border-box;
                     display: inline-block;
-                    padding: 0;
+                    padding: 5px;
                     font-size: 13px;
                     border: 0;
                     outline: 0;
@@ -135,8 +139,12 @@ data-table {
         }
         ui-dropdown {
             width: 100%;
-            button {
+            button.ui-button {
                 width: 100%;
+                border-width: 0;
+                &:focus{
+                    border-width: 1px;
+                }
             }
             label.ui-label {
                 display: none;

@@ -62,7 +62,9 @@ const Sortable = {
         if (this.current.dir) {
             this.currentSortField = dom.query(this.thead, `[data-field="${this.current.sort}"]`);
             this.currentSortClass = this.current.dir === 'asc' ? 'asc' : 'desc';
-            this.currentSortField.classList.add(this.currentSortClass);
+            if (this.currentSortField) {
+                this.currentSortField.classList.add(this.currentSortClass);
+            }
         }
 
         const event = this.current.sort ? `${this.current.sort},${this.current.dir}` : null;

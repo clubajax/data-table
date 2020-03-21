@@ -22,7 +22,6 @@ class DataTable extends BaseComponent {
 
 	constructor () {
         super();
-        this.editable = false;
         this.clickable = false;
         this.sortable = false;
         this.selectable = false;
@@ -149,7 +148,6 @@ class DataTable extends BaseComponent {
 			return;
 		}
 
-		const editable = this.editable;
 		const selectable = this.selectable;
 
 		if (items[0].id === undefined){
@@ -190,7 +188,7 @@ class DataTable extends BaseComponent {
         if (this.clickable) {
 			clickable.call(this);
 		}
-        if (this.sortable) {
+        if (this.sortable || this.schema.sort) {
 			clickable.call(this);
 			sortable.call(this);
 		}
@@ -237,9 +235,6 @@ function render (items, columns, colSizes, tbody, selectable, callback) {
 			if (colSizes[i]) {
 				cellOptions.style = { width: colSizes[i] };
 			}
-			// if (editable) {
-			// 	cellOptions.tabindex = 1;
-			// }
 			dom('td', cellOptions, tr);
 		});
 	});
@@ -270,9 +265,6 @@ function lazyRender (allItems, columns, tbody, sorts, callback) {
 				html = item[key];
 				css = key;
 				const cellOptions = { html, 'data-field': key, css };
-				// if (editable) {
-				// 	cellOptions.tabindex = 1;
-				// }
 				dom('td', cellOptions, tr);
 			});
 			index++;
