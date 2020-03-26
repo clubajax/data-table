@@ -336,6 +336,19 @@
                             done();
                         });
                     });
+
+                    // it('should render a footer', function (done) {
+                    //     const section = dom('section', {html: dom('label', {html: 'Non Selectable Item'})}, body);
+                    //     const node = dom('data-table', {
+                    //         schema: data3.schema,
+                    //         rows: data3.items,
+                    //         footer: 'There is text in the footer'
+                    //     }, section);
+                    //     const events = [];
+                    //     onDomReady(node, function () {
+                    //         done();
+                    //     });
+                    // });
                 });
 
                 describe('clickable', function () {
@@ -437,6 +450,37 @@
                             // expect(events.join(';')).to.equal('weight,asc;weight,;age,desc;bp,desc;height,desc;age,desc;');
 
                             // destroy(node);
+                            done();
+                        });
+                    });
+
+                    it.only('should server-based sort', function (done) {
+                        const schema = {
+                            sort: 'weight',
+                            desc: true,
+                            columns:data1.schema.columns 
+                        };
+                        const section = dom('section', {html: dom('label', {html: 'Server Sortable'})}, body);
+                        const node = dom('data-table', {
+                            schema: data1.schema,
+                            rows: data1.items,
+                            serversort: true,
+                        }, section);
+                        const events = [];
+                        onDomReady(node, function () {
+                            node.on('sort', function (e) {
+                                console.log('sort.event', e.detail);
+                                const update = {
+                                    ...schema,
+                                    sort: e.detail.field,
+                                    desc: e.detail.dir === 'desc'
+                                };
+
+                                setTimeout(() => {
+                                    node.schema = update;
+                                }, 400);
+                                events.push(e.detail.value);
+                            });
                             done();
                         });
                     });

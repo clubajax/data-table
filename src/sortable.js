@@ -30,17 +30,19 @@ const Sortable = {
         const lt = dir === 'asc' ? -1 : 1;
         const gt = dir === 'desc' ? -1 : 1;
 
-        this.items.sort((a, b) => {
-            if (a[sort] < b[sort]) {
-                return lt;
-            } else if (a[sort] > b[sort]) {
-                return gt;
-            }
-            return 0;
-        });
+        if (!this.serversort) {
+            this.items.sort((a, b) => {
+                if (a[sort] < b[sort]) {
+                    return lt;
+                } else if (a[sort] > b[sort]) {
+                    return gt;
+                }
+                return 0;
+            });
 
-        if (this.bodyHasRendered) {
-            this.renderBody(this.items, this.columns);
+            if (this.bodyHasRendered) {
+                this.renderBody(this.items, this.columns);
+            }
         }
         if (this.headHasRendered) {
             this.displaySort();
@@ -68,7 +70,10 @@ const Sortable = {
         }
 
         const event = this.current.sort ? `${this.current.sort},${this.current.dir}` : null;
-        this.fire('sort', { value: event });
+        
+        if (!this.serversort) {
+            this.fire('sort', {value: event});
+        }
     },
 
     onHeaderClick(e) {
@@ -85,7 +90,15 @@ const Sortable = {
         } else {
             dir = 'desc';
         }
-        this.setSort(field, dir);
+        
+        if (this.serversort) {
+            this.fire('sort', {
+                field,
+                dir
+            })
+        } else {
+            this.setSort(field, dir);
+        }
     },
 };
 
