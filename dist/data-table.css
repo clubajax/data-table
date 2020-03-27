@@ -45,6 +45,8 @@ data-table {
       font-size: var(--tbl-head-txt);
       color: var(--tbl-head-clr);
       line-height: 1.2; }
+      data-table table th.unsortable {
+        pointer-events: none; }
       data-table table th .sort-up {
         opacity: 0;
         padding-left: 3px; }

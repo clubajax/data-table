@@ -75,7 +75,7 @@
                         {key: 'age', label: 'Age'},
                         {key: 'height', label: 'Height'},
                         {key: 'weight', label: 'Weight'},
-                        {key: 'bp', label: 'Blood Pressure'},
+                        {key: 'bp', label: 'Blood Pressure', unsortable: true},
                     ],
                 },
                 items: [
@@ -455,29 +455,33 @@
                     });
 
                     it.only('should server-based sort', function (done) {
+
+                        const extsort = {
+                            field: 'weight',
+                            dir: 'desc'
+                        };
                         const schema = {
-                            sort: 'weight',
-                            desc: true,
                             columns:data1.schema.columns 
                         };
-                        const section = dom('section', {html: dom('label', {html: 'Server Sortable'})}, body);
+                        const section = dom('section', {html: dom('label', {html: 'Server Sortable onSort'})}, body);
                         const node = dom('data-table', {
-                            schema: data1.schema,
+                            schema,
                             rows: data1.items,
-                            serversort: true,
+                            extsort,
+                            // serversort: true,
                         }, section);
                         const events = [];
                         onDomReady(node, function () {
+                            console.log('ready');
                             node.on('sort', function (e) {
                                 console.log('sort.event', e.detail);
                                 const update = {
-                                    ...schema,
-                                    sort: e.detail.field,
-                                    desc: e.detail.dir === 'desc'
+                                    field: e.detail.field,
+                                    dir: e.detail.dir
                                 };
 
                                 setTimeout(() => {
-                                    node.schema = update;
+                                    node.extsort = update;
                                 }, 400);
                                 events.push(e.detail.value);
                             });

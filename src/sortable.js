@@ -6,14 +6,16 @@ const Sortable = {
         this.classList.add('sortable');
         this.current = {};
         this.on('render-header', this.onHeaderRender.bind(this));
-        this.setSort();
+        const {field, dir} = this.extsort || {};
+        this.setSort(field, dir);
     },
 
-    onSort() {
-        let [sort, dir] = this.sort.split(',').map((w) => w.trim());
-        dir = !!sort ? dir || 'desc' : dir;
-        this.setSort(sort, dir);
+    onExtsort(sort) {
+        // does not fire on init - only on updates
+        // data-table.onExtsort fires on init, but use sortable.init instead
+        this.setSort(sort.field, sort.dir);
     },
+
 
     setSort(sort, dir) {
         if (!sort) {
@@ -30,7 +32,7 @@ const Sortable = {
         const lt = dir === 'asc' ? -1 : 1;
         const gt = dir === 'desc' ? -1 : 1;
 
-        if (!this.serversort) {
+        if (!this.extsort) {
             this.items.sort((a, b) => {
                 if (a[sort] < b[sort]) {
                     return lt;
@@ -71,7 +73,7 @@ const Sortable = {
 
         const event = this.current.sort ? `${this.current.sort},${this.current.dir}` : null;
         
-        if (!this.serversort) {
+        if (!this.extsort) {
             this.fire('sort', {value: event});
         }
     },
@@ -91,7 +93,7 @@ const Sortable = {
             dir = 'desc';
         }
         
-        if (this.serversort) {
+        if (this.extsort) {
             this.fire('sort', {
                 field,
                 dir

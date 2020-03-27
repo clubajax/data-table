@@ -56,6 +56,9 @@ data-table {
             color: var(--tbl-head-clr);
             line-height: 1.2;
 
+            &.unsortable{
+                pointer-events: none;
+            }
             // a bit of cermony... css #ftw.
             // always keep one item on, and one off, 
             // in order to take space.

@@ -39,13 +39,6 @@ class DataTable extends BaseComponent {
         this.loadData(rows);
     }
 
-    onSchema(schema) {
-        // we are only using this method to update sort
-        if (this.serversort && this.isSchemaUpdate) {
-            this.setSort(schema.sort, schema.desc ? 'desc' : 'asc');
-        }
-    }
-
     loadData(rows) {
         const items = rows || [];
         this.orgItems = items;
@@ -113,14 +106,19 @@ class DataTable extends BaseComponent {
         columns.forEach((col, i) => {
             const key = col.key || col;
             const label = col.label === undefined ? col : col.label;
-            const css = col.css || col.className || '';
+                        
+            let css = col.css || col.className || '';
+            if (col.unsortable) {
+                css += ' unsortable';
+            }
+
             const options = {
                 html: [
-                    dom('span', { html: label, css: 'ui-label' }),
+                    dom('span', { html: label, class: 'ui-label' }),
                     dom('span', { class: 'sort-up', html: '&uarr;' }),
                     dom('span', { class: 'sort-dn', html: '&darr;' }),
                 ],
-                css: css,
+                class: css,
                 'data-field': key,
             };
             if (col.width) {
@@ -189,7 +187,7 @@ class DataTable extends BaseComponent {
         if (this.clickable) {
             clickable.call(this);
         }
-        if (this.serversort || this.schema.sort) {
+        if (this.extsort || this.schema.sort) {
             clickable.call(this);
             sortable.call(this);
         }
@@ -294,6 +292,6 @@ function lazyRender(allItems, columns, tbody, sorts, callback) {
 function noop() {}
 
 module.exports = BaseComponent.define('data-table', DataTable, {
-    props: ['schema', 'rows', 'sort', 'selected', 'stretch-column', 'max-height', 'borders', 'footer'],
-    bools: ['sortable', 'serversort', 'selectable', 'scrollable', 'clickable', 'perf'],
+    props: ['schema', 'rows', 'extsort', 'selected', 'stretch-column', 'max-height', 'borders', 'footer'],
+    bools: ['sortable', 'selectable', 'scrollable', 'clickable', 'perf'],
 });

@@ -95,7 +95,15 @@ When using any component (other than `link`), and the component is changed, the 
  * **scrollable**: This attribute will render a static header, while the table body can scroll (both horizontally and vertically). _NOTE: Not yet tested on Windows. While it will work, the scrollbar may cause alignment issues_.
  * **clickable**: When using this attribute, each row and header cell will be clickable, and have a hover state. It will emit custom events, `header-click` and `row-click`. 
  * **selectable**: This attribute allows for a single-selection of rows. If used with `sortable`, the selction is maintained. A `change` event will be emitted, with the value of the item/row id. The item and the row will also be in the event.
-* **serversort**: If true, sorting will not rerender the items, only emit a `sort` event. This data should be sent to the sever for new rows. Then pass in the new `rows` and `schema`. 
+* **extsort**: If true, sorting will not rerender the items, only emit a `sort` event. This data should be sent to the sever for new rows. Then pass in the new `rows` and `extsort`. 
+
+```
+datatable.extsort = {
+    field: 'name',
+    dir: 'asc'
+};
+
+If a column has `unsortable:true`, that column will not be sortable.
 
  ## Styling
 
