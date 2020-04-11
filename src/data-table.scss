@@ -1,9 +1,11 @@
 :root {
+    --primary: #4660bf;
     --tbl-brd: 0px solid #ccc;
 
     --tbl-head-txt: 11px;
     --tbl-head-clr: #919191;
     --tbl-head-bk: transparent;
+    --tbl-head-brd: 2px solid #ccc;
     --tbl-th-hvr: #f4f8fc;
     --tbl-th-brd: 0px solid #aaa;
     --tbl-th-pad: 15px;
@@ -15,6 +17,7 @@
     --tbl-tr-unsel-bk: #ddd;
     --tbl-tr-sel-txt: white;
     --tbl-tr-hvr: #d6e5f2;
+    --tbl-tr-added: rgb(236, 246, 255);
 
     --tbl-td-brd: #eee;
     --tbl-td-pad: 15px;
@@ -45,6 +48,9 @@ data-table {
         thead {
             background-color: var(--tbl-head-bk);
             border-bottom: var(--tbl-brd);
+            tr {
+                border-bottom: var(--tbl-head-brd);
+            }
         }
         th {
             position: relative;
@@ -56,42 +62,52 @@ data-table {
             color: var(--tbl-head-clr);
             line-height: 1.2;
 
-            &.unsortable{
+            &.unsortable {
                 pointer-events: none;
             }
             // a bit of cermony... css #ftw.
-            // always keep one item on, and one off, 
+            // always keep one item on, and one off,
             // in order to take space.
             // use opacity for actual display.
             //
             // This keeps things inline, keeps the arrows from
-            // wrapping to the next line, and keeps teh cell sizes
+            // wrapping to the next line, and keeps the cell sizes
             // from jumping
-            .sort-up{
+            .sort-up {
                 opacity: 0;
                 padding-left: 3px;
             }
-            .sort-dn{
+            .sort-dn {
                 display: none;
                 padding-left: 3px;
             }
             &.desc {
-                .sort-dn{
+                .sort-dn {
                     display: inline;
                     opacity: 1;
                 }
-                .sort-up{
+                .sort-up {
                     display: none;
                 }
             }
             &.asc {
-                .sort-up{
+                .sort-up {
                     display: inline;
                     opacity: 1;
                 }
-                .sort-dn{
+                .sort-dn {
                     display: none;
                 }
+            }
+
+            &[data-field='edit'] {
+                text-align: center;
+                width: 60px;
+            }
+
+            .ui-label {
+                // inline will break before inline-block, which is the sort icons
+                display: inline;
             }
         }
         tbody {
@@ -117,9 +133,9 @@ data-table {
             color: var(--tbl-body-clr);
             .td-editable {
                 cursor: pointer;
-                &:focus{
+                &:focus {
                     outline: none;
-                    box-shadow: 0 0 7px rgba(0,0,0,0.2) inset;
+                    box-shadow: 0 0 7px rgba(0, 0, 0, 0.2) inset;
                 }
             }
             ui-input {
@@ -139,13 +155,35 @@ data-table {
                     display: none;
                 }
             }
+            &.ui-checkbox {
+                text-align: center;
+                ui-checkbox {
+                    margin: 0;
+                    width: 16px;
+                }
+            }
+        }
+        tr {
+            &.added-row {
+                background-color: var(--tbl-tr-added);
+                td {
+                    ui-input {
+                        input {
+                            background-color: white;
+                            &:focus {
+                                background-color: white;
+                            }
+                        }
+                    }
+                }
+            }
         }
         ui-dropdown {
             width: 100%;
             button.ui-button {
                 width: 100%;
                 border-width: 0;
-                &:focus{
+                &:focus {
                     border-width: 1px;
                 }
             }
@@ -209,6 +247,91 @@ data-table {
             text-align: center;
             font-style: italic;
             color: #aaa;
+        }
+    }
+}
+
+// style buttons
+.tbl-icon-button {
+    border: 0;
+    background-color: none;
+    cursor: pointer;
+    font-size: 14px;
+    border-radius: 50%;
+    padding: 4px 6px;
+    // height: 17px;
+    &:hover {
+        background-color: #eee;
+    }
+    &:focus {
+        outline: 0;
+        background-color: var(--primary);
+        color: white;
+    }
+}
+
+// button state
+data-table {
+    ui-actionbutton {
+        label.ui-label {
+            display: none;
+        }
+        button {
+            width: 16px;
+            height: 16px;
+        }
+    }
+    .tbl-icon-button.cancel {
+        display: none;
+    }
+    &[data-rows='1'] {
+        .tbl-icon-button.remove {
+            opacity: 0;
+            pointer-events: none;
+        }
+    }
+    td {
+        &[data-field='edit'] {
+            text-align: center;
+            padding: 0;
+        }
+        .tbl-icon-button {
+            opacity: 0;
+            transition: opacity 150ms ease-in;
+            button:nth-child(1) {
+                margin-right: 0;
+            }
+        }
+    }
+    tr {
+        &.added-row {
+            .tbl-icon-button.cancel {
+                display: inline-block;
+                opacity: 1;
+            }
+        }
+        &:hover {
+            .tbl-icon-button {
+                opacity: 1;
+            }
+        }
+    }
+    &[is-editing] {
+        .add-remove {
+            .tbl-icon-button {
+                opacity: 0;
+                pointer-events: none;
+            }
+        }
+        tr.added-row {
+            .tbl-icon-button{
+                display: none;
+            }
+            .tbl-icon-button.cancel {
+                display: inline-block;
+                opacity: 1;
+                pointer-events: auto;
+            }
         }
     }
 }

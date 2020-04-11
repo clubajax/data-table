@@ -66,6 +66,186 @@
                 expect = chai.expect,
                 body = dom.byId('tests');
 
+
+            const inputSchema = {
+                columns: [
+                    {
+                        key: 'fromAmount',
+                        label: 'Monthly Billing From',
+                        component: {
+                            type: 'ui-input',
+                            format: 'currency',
+                        },
+                    },
+                    {
+                        key: 'toAccount',
+                        label: 'Monthly Billing To',
+                        component: {
+                            type: 'ui-input',
+                            format: 'currency',
+                        },
+                    },
+                    {
+                        key: 'downpaymentPercentage',
+                        label: 'Down Payment',
+                        component: {
+                            type: 'ui-input',
+                            format: 'percentage',
+                        },
+                    },
+                    {
+                        key: 'monthlyPercentage',
+                        label: 'Monthly Payment',
+                        component: {
+                            type: 'ui-input',
+                            format: 'percentage',
+                        },
+                    },
+                    {
+                        key: 'months',
+                        label: 'Months',
+                        component: {
+                            type: 'ui-input',
+                            format: 'integer',
+                        },
+                    },
+                    {
+                        icon: 'edit',
+                        component: {
+                            type: 'edit-rows',
+                        },
+                    },
+                ],
+            };
+
+
+            const inputData = {
+                schema: inputSchema,
+                items: [
+                    {
+                        id: 1,
+                        typeId: 2000,
+                        fromAmount: 5,
+                        toAccount: 1500,
+                        downpaymentPercentage: 60,
+                        monthlyPercentage: 20,
+                        months: 13,
+                        name: 'Monthly Billing To',
+                    },
+                    {
+                        id: 2,
+                        typeId: 2000,
+                        fromAmount: 1500,
+                        toAccount: 3000,
+                        downpaymentPercentage: 40,
+                        monthlyPercentage: 15,
+                        months: 20,
+                        name: 'Monthly Billing To',
+                    },
+                    {
+                        id: 3,
+                        typeId: 2000,
+                        fromAmount: 3000,
+                        toAccount: 6000,
+                        downpaymentPercentage: 30,
+                        monthlyPercentage: 10,
+                        months: 30,
+                        name: 'Monthly Billing To',
+                    },
+                    {
+                        id: 4,
+                        typeId: 2000,
+                        fromAmount: 6000,
+                        toAccount: 10000,
+                        downpaymentPercentage: 15,
+                        monthlyPercentage: 10,
+                        months: 32,
+                        name: 'Monthly Billing To',
+                    },
+                    {
+                        id: 5,
+                        typeId: 2000,
+                        fromAmount: 10000,
+                        toAccount: null,
+                        downpaymentPercentage: 5,
+                        monthlyPercentage: 5,
+                        months: 65,
+                        name: 'Monthly Billing To',
+                    },
+                    {
+                        id: 6,
+                        typeId: 2001,
+                        fromAmount: 50,
+                        toAccount: 3000,
+                        downpaymentPercentage: 30,
+                        monthlyPercentage: 5,
+                        months: 72,
+                        name: 'Monthly Billing From',
+                    },
+                    {
+                        id: 7,
+                        typeId: 2001,
+                        fromAmount: 3000,
+                        toAccount: 6000,
+                        downpaymentPercentage: 15,
+                        monthlyPercentage: 5,
+                        months: 72,
+                        name: 'Monthly Billing From',
+                    },
+                    {
+                        id: 8,
+                        typeId: 2001,
+                        fromAmount: 6000,
+                        toAccount: null,
+                        downpaymentPercentage: 5,
+                        monthlyPercentage: 5,
+                        months: 72,
+                        name: 'Monthly Billing From',
+                    },
+                    {
+                        id: 9,
+                        typeId: 2002,
+                        fromAmount: null,
+                        toAccount: null,
+                        downpaymentPercentage: 20,
+                        monthlyPercentage: 10,
+                        months: null,
+                        name: 'Down Payment',
+                    },
+                    {
+                        id: 10,
+                        typeId: 2003,
+                        fromAmount: null,
+                        toAccount: null,
+                        downpaymentPercentage: 30,
+                        monthlyPercentage: 20,
+                        months: null,
+                        name: 'Monthly Payment',
+                    },
+                    {
+                        id: 11,
+                        typeId: 2004,
+                        fromAmount: 1000,
+                        toAccount: 2000,
+                        downpaymentPercentage: 10,
+                        monthlyPercentage: 10,
+                        months: 12,
+                        name: 'Months',
+                    },
+                    {
+                        id: 12,
+                        typeId: 2004,
+                        fromAmount: 2000,
+                        toAccount: null,
+                        downpaymentPercentage: 15,
+                        monthlyPercentage: 15,
+                        months: 24,
+                        name: 'Months',
+                    },
+                ],
+            };
+
+
             const data1 = {
                 schema: {
                     sort: 'weight',
@@ -106,14 +286,14 @@
                 data2 = {},
                 data3 = {
                     schema: {
-                        sort: 'first',
                         columns: [
                             {
-                                key: 'first',
-                                label: 'First'
-                            }, {
                                 key: 'last',
-                                label: 'Last'
+                                label: 'Last',
+                                callback(item) {
+                                    console.log('format!!');
+                                    return `${item.last}, ${item.first}`;
+                                }
                             }, {
                                 key: 'middle',
                                 label: 'Middle Name',
@@ -141,12 +321,31 @@
                                         {value: 'masters', label: 'Masters'},
                                     ]
                                 }
+                            },{
+                                key: 'school',
+                                label: 'School',
+                                component: {
+                                    key: 'schoolId',
+                                    type: 'ui-dropdown',
+                                    options: [
+                                        {value: 1, label: 'Yale'},
+                                        {value: 2, label: 'Harvard'},
+                                        {value: 3, label: 'Cornell'},
+                                        {value: 4, label: 'Princeton'},
+                                        {value: 5, label: 'Dartmouth'},
+                                    ]
+                                }
                             }, {
                                 key: 'optin',
                                 label: 'Opt In',
-                                width: '70px',
+                                width: '80px',
                                 component: {
                                     type: 'ui-checkbox'
+                                }
+                            }, {
+                                icon: 'edit',
+                                component: {
+                                    type: 'edit-rows'
                                 }
                             }
                         ]
@@ -161,7 +360,9 @@
                             company: 'Intelligencia',
                             site: 'http://intelligencia.com',
                             edu: 'associates',
-                            optin: true
+                            optin: true,
+                            school: 'Yale',
+                            schoolId: 1
                         }, {
                             id: 2,
                             first: 'Jeziel',
@@ -171,7 +372,9 @@
                             company: 'Dorkville',
                             site: 'http://dorkville.us',
                             edu: 'bootcamp',
-                            optin: false
+                            optin: false,
+                            school: 'Harvard',
+                            schoolId: 2
                         }, {
                             id: 3,
                             first: 'Motti',
@@ -181,7 +384,9 @@
                             company: 'QA R US',
                             site: 'http://qarus.com',
                             edu: 'bachelors',
-                            optin: true
+                            optin: true,
+                            school: 'Cornell',
+                            schoolId: 3
                         }, {
                             id: 4,
                             first: 'Madhu',
@@ -191,7 +396,9 @@
                             company: 'Backends',
                             site: 'http://bends.com',
                             edu: 'masters',
-                            optin: false
+                            optin: false,
+                            school: 'Princeton',
+                            schoolId: 4
                         }
                     ]
                 },
@@ -266,14 +473,106 @@
 
             describe('data table', function () {
                 describe('new schema + components', function () {
-                    it('should be editable', function (done) {
+                    it('should add/remove rows', function (done) {
+                        const data = copy(data3);
+                        const section = dom('section', {html: dom('label', {html: 'Add/Remove Rows'})}, body);
+                        const node = dom('data-table', {
+                            schema: data.schema,
+                            rows: data.items,
+                        }, section);
+                        const events = [];
+                        onDomReady(node, function () {
+                            node.on('change', function (e) {
+                                console.log('change', e);
+                            });
+                            node.on('remove-row', function (e) {
+                                console.log('remove-row', e);
+                            });
+                            done();
+                        });
+                    });
+
+                    it.only('should add/remove input rows', function (done) {
+                        const section = dom('section', {html: dom('label', {html: 'Add/Remove Rows'})}, body);
+                        const items = inputData.items.slice(0,1);
+                        const node = dom('data-table', {
+                            schema: inputData.schema,
+                            rows: items,
+                        }, section);
+                        const events = [];
+                        onDomReady(node, function () {
+                            node.on('change', function (e) {
+                                console.log('change', e);
+                            });
+                            node.on('add-row', function (e) {
+                                console.log('change', e);
+                                delete e.value.added;
+                                items.splice(e.value.index, 0, e.value);
+                                node.rows = items;
+                            });
+                            node.on('remove-row', function (e) {
+                                console.log('remove-row', e);
+                                items.splice(e.value.index, 1);
+                                node.rows = items;
+                            });
+                            done();
+                        });
+                    });
+
+                    it.only('should add/remove with an actionbutton', function (done) {
+                        const section = dom('section', {html: dom('label', {html: 'Add/Remove ActionButton'})}, body);
+                        const schema = copy(inputData.schema);
+                        schema.columns[schema.columns.length - 1].component.options = [
+                            {value: 'add', label: 'Add Row'},
+                            {value: 'edit', label: 'Edit Row'},
+                            {value: 'remove', label: 'Remove Row'},
+                        ]
+                        console.log('schema', schema);
+                        const items = inputData.items.slice(0,2);
+                        const node = dom('data-table', {
+                            schema,
+                            rows: items,
+                        }, section);
+                        const events = [];
+                        onDomReady(node, function () {
+                            node.on('change', function (e) {
+                                console.log('change', e);
+                            });
+                            node.on('add-row', function (e) {
+                                console.log('change', e);
+                                delete e.value.added;
+                                items.splice(e.value.index, 0, e.value);
+                                node.rows = items;
+                            });
+                            node.on('remove-row', function (e) {
+                                console.log('remove-row', e);
+                                items.splice(e.value.index, 1);
+                                node.rows = items;
+                            });
+                            done();
+                        });
+                    });
+
+                    it('should format data', function (done) {
                         const section = dom('section', {html: dom('label', {html: 'New Schema + Components'})}, body);
                         const node = dom('data-table', {
                             schema: data3.schema,
                             rows: data3.items,
-                            // borders: 'bottom',
-                            // clickable: true,
-                            // sortable: true
+                        }, section);
+                        const events = [];
+                        onDomReady(node, function () {
+                            node.on('change', function (e) {
+                                console.log('change', e);
+                            });
+                            done();
+                        });
+                    });
+
+                    it('should start from empty', function (done) {
+                        const section = dom('section', {html: dom('label', {html: 'New Schema + Components'})}, body);
+                        const node = dom('data-table', {
+                            schema: data3.schema,
+                            rows: data3.items,
                         }, section);
                         const events = [];
                         onDomReady(node, function () {
@@ -391,7 +690,7 @@
                         const data = getData();
                         const section = dom('section', {html: 'Scrollable, Max Height'}, body);
                         const node = dom('data-table', {
-                            schema: {columns: data.columns },
+                            schema: {columns: data.columns},
                             rows: data.items,
                             scrollable: true,
                             'max-height': 200
@@ -408,7 +707,6 @@
                         const node = dom('data-table', {
                             schema: data1.schema,
                             rows: data1.items,
-                            // sortable: true,
                             footer: dom('div', {html: 'select one of two rows'})
                         }, section);
                         const events = [];
@@ -454,14 +752,14 @@
                         });
                     });
 
-                    it.only('should server-based sort', function (done) {
+                    it('should server-based sort', function (done) {
 
                         const extsort = {
-                            field: 'weight',
+                            field: 'age',
                             dir: 'desc'
                         };
                         const schema = {
-                            columns:data1.schema.columns 
+                            columns: data1.schema.columns
                         };
                         const section = dom('section', {html: dom('label', {html: 'Server Sortable onSort'})}, body);
                         const node = dom('data-table', {
@@ -472,7 +770,6 @@
                         }, section);
                         const events = [];
                         onDomReady(node, function () {
-                            console.log('ready');
                             node.on('sort', function (e) {
                                 console.log('sort.event', e.detail);
                                 const update = {
@@ -653,6 +950,10 @@
             return cells.map(function (cell) {
                 return cell.textContent;
             }).join(',');
+        }
+
+        function copy(data) {
+            return JSON.parse(JSON.stringify(data));
         }
 
         function destroy(node) {
