@@ -251,7 +251,7 @@ data-table {
     }
 }
 
-// style buttons
+// style editable buttons
 .tbl-icon-button {
     border: 0;
     background-color: none;
@@ -270,7 +270,7 @@ data-table {
     }
 }
 
-// button state
+// editable button state
 data-table {
     ui-actionbutton {
         label.ui-label {
@@ -332,6 +332,43 @@ data-table {
                 opacity: 1;
                 pointer-events: auto;
             }
+        }
+    }
+}
+
+// expandable rows
+data-table {
+    td, th{
+        &.expandable{
+            width: 40px;
+        }
+    }
+    td.expandable{
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        .expandable-buttons{
+            .fa-chevron-right,
+            .fa-chevron-down{
+                display: none;
+            }
+        }
+        &[data-expanded="on"]{
+            .fa-chevron-down{
+                display: block;
+            }
+        }
+        &[data-expanded="off"]{
+            .fa-chevron-right{
+                display: block;
+            }
+        }
+
+        &[data-expanded="on"],
+        &[data-expanded="off"]{
+            cursor: pointer;
         }
     }
 }

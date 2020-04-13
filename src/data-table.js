@@ -52,6 +52,11 @@ class DataTable extends BaseComponent {
         this.mixPlugins();
         clearTimeout(this.noDataTimer);
         this.onDomReady(() => {
+            this.grouped = checkGrouped(this.items);
+            dom.classList.toggle(this, 'has-grouped', this.grouped);
+            if (this.grouped) {
+                this.hasExpandable();
+            }
             this.render();
             if (!items.length) {
                 this.displayNoData(true);
@@ -124,7 +129,7 @@ class DataTable extends BaseComponent {
     }
 
     cancelEdit() {
-        const index = this.items.findIndex(item => item.added);
+        const index = this.items.findIndex((item) => item.added);
         this.items.splice(index, 1);
         // plus one, to allow for the header
         this.table.deleteRow(index + 1);
@@ -157,6 +162,21 @@ class DataTable extends BaseComponent {
         this.actionEventsSet = true;
     }
 
+    hasExpandable() {
+        this.on('click', '[data-expanded]', (e) => {
+            console.log('EXPAND', e);
+            const td = e.target.closest('td');
+            const tr = e.target.closest('tr');
+            const id = dom.attr(tr, 'data-row-id');
+            const item = this.getItemById(id);
+            const state = dom.attr(td,'data-expanded')
+            console.log(' - state ', state);
+            console.log('item', item);
+            item.expanded = !(state === 'on');
+            this.render();
+        });
+    }
+
     render() {
         this.fire('pre-render');
         this.renderTemplate();
@@ -184,6 +204,11 @@ class DataTable extends BaseComponent {
     renderHeader(columns) {
         dom.clean(this.thead, true);
         const tr = dom('tr', {}, this.thead);
+        if (this.grouped) {
+            dom('th', {
+                class: 'expandable'
+            }, tr);   
+        }
         const colSizes = [];
         columns.forEach((col, i) => {
             let options;
@@ -224,7 +249,6 @@ class DataTable extends BaseComponent {
     }
 
     renderBody(items, columns) {
-        const exclude = this.exclude;
         const tbody = this.tbody;
         dom.clean(tbody, true);
 
@@ -235,18 +259,11 @@ class DataTable extends BaseComponent {
             return;
         }
 
-        const selectable = this.selectable;
-
         if (items[0].id === undefined) {
             console.warn('Items do not have an ID');
         }
 
-        // TODO: if sort, just reorder - do perf test
-        //console.time('render body');
-        render(items, columns, this.colSizes, tbody, selectable, () => {
-            // PERF: makes no difference:
-            //this.table.appendChild(this.tbody);
-            //console.timeEnd('render body');
+        render(items, columns, this.colSizes, tbody, this.selectable, this.grouped, () => {
             this.bodyHasRendered = true;
             this.fire('render-body', { tbody: this.tbody });
         });
@@ -299,47 +316,81 @@ class DataTable extends BaseComponent {
     }
 }
 
-function render(items, columns, colSizes, tbody, selectable, callback) {
+function renderRow(item, index, columns, colSizes, tbody, selectable, grouped) {
+    item.index = index;
+    let itemCss = item.css || item.class || item.className || '';
+    let html,
+        css,
+        key,
+        rowOptions = { 'data-row-id': item.id },
+        tr;
+
+    if (selectable) {
+        rowOptions.tabindex = 1;
+    }
+    if (item.added) {
+        itemCss += ' added-row';
+    }
+    if (itemCss) {
+        rowOptions.class = itemCss;
+    }
+
+    tr = dom('tr', rowOptions, tbody);
+    columns.forEach((col, i) => {
+        if (grouped && i === 0) {
+            const isExpanded = item.expanded === undefined ? false : item.expanded === false ? 'off' : 'on';
+            dom('td', {
+                html: dom('span', {
+                    class: 'expandable-buttons',
+                    html: [
+                        dom('span', {class: 'fas fa-chevron-right'}),
+                        dom('span', {class: 'fas fa-chevron-down'})
+                    ]
+                }),
+                class: 'expandable',
+                'data-expanded': isExpanded
+            }, tr);   
+        }
+        key = col.key || col.icon || col;
+        css = key;
+        if (col.component) {
+            html = createComponent(col, item, index);
+            css += ' ' + col.component.type;
+        } else {
+            html = key === 'index' ? index + 1 : item[key];
+            if (col.callback) {
+                html = col.callback(item, index);
+            }
+        }
+        const cellOptions = { html, 'data-field': key, class: css };
+        if (colSizes[i]) {
+            cellOptions.style = { width: colSizes[i] };
+        }
+        dom('td', cellOptions, tr);
+    });
+
+    if (item.expanded) {
+        item.subitems.forEach((subitem) => {
+            renderRow(subitem, index, columns, colSizes, tbody, selectable, grouped);
+        })
+    }
+}
+function render(items, columns, colSizes, tbody, selectable, grouped, callback) {
     items.forEach((item, index) => {
-        item.index = index;
-        let itemCss = item.css || item.class || item.className || '';
-        let html,
-            css,
-            key,
-            rowOptions = { 'data-row-id': item.id },
-            tr;
-
-        if (selectable) {
-            rowOptions.tabindex = 1;
-        }
-        if (item.added) {
-            itemCss += ' added-row';
-        }
-        if (itemCss) {
-            rowOptions.class = itemCss;
-        }
-
-        tr = dom('tr', rowOptions, tbody);
-        columns.forEach((col, i) => {
-            key = col.key || col.icon || col;
-            css = key;
-            if (col.component) {
-                html = createComponent(col, item, index);
-                css += ' ' + col.component.type;
-            } else {
-                html = key === 'index' ? index + 1 : item[key];
-                if (col.callback) {
-                    html = col.callback(item, index);
-                }
-            }
-            const cellOptions = { html, 'data-field': key, class: css };
-            if (colSizes[i]) {
-                cellOptions.style = { width: colSizes[i] };
-            }
-            dom('td', cellOptions, tr);
-        });
+        renderRow(item, index, columns, colSizes, tbody, selectable, grouped);
     });
     callback();
+}
+
+function checkGrouped(items) {
+    let grouped;
+    items.forEach((item) => {
+        if ((item.subitems && item.subitems.length) || item.childIds) {
+            item.expanded = false;
+            grouped = true;
+        }
+    });
+    return grouped;
 }
 
 // experimental

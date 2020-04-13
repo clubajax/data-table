@@ -492,7 +492,7 @@
                         });
                     });
 
-                    it.only('should add/remove input rows', function (done) {
+                    it('should add/remove input rows', function (done) {
                         const section = dom('section', {html: dom('label', {html: 'Add/Remove Rows'})}, body);
                         const items = inputData.items.slice(0,1);
                         const node = dom('data-table', {
@@ -519,7 +519,7 @@
                         });
                     });
 
-                    it.only('should add/remove with an actionbutton', function (done) {
+                    it('should add/remove with an actionbutton', function (done) {
                         const section = dom('section', {html: dom('label', {html: 'Add/Remove ActionButton'})}, body);
                         const schema = copy(inputData.schema);
                         schema.columns[schema.columns.length - 1].component.options = [
@@ -597,7 +597,27 @@
                             done();
                         });
                     });
-                })
+                });
+
+                describe('grouping', () => {
+                    it.only('should group inline data', (done) => {
+                        const section = dom('section', {html: dom('label', {html: 'Group Child Data'})}, body);
+                        const node = dom('data-table', {
+                            schema: groupedSchema,
+                            rows: groupedItems,
+                        }, section);
+                        const events = [];
+                        onDomReady(node, function () {
+                            node.on('change', function (e) {
+                                console.log('change', e);
+                            });
+                            node.on('remove-row', function (e) {
+                                console.log('remove-row', e);
+                            });
+                            done();
+                        });
+                    });
+                });
 
                 describe('rendering', function () {
                     it('should render a table', function (done) {
