@@ -5,6 +5,7 @@ const clickable = require('./clickable');
 const selectable = require('./selectable');
 const scrollable = require('./scrollable');
 const createComponent = require('./component');
+const formatters = require('./formatters');
 const util = require('./util');
 
 const PERF = true;
@@ -358,8 +359,12 @@ function renderRow(item, index, columns, colSizes, tbody, selectable, grouped) {
             css += ' ' + col.component.type;
         } else {
             html = key === 'index' ? index + 1 : item[key];
+            const fmt = col.formatter || col.format; 
+            if (fmt) {
+                html = formatters[fmt].toHtml(html);
+            }
             if (col.callback) {
-                html = col.callback(item, index);
+                html = col.callback({value: html, item, index, col, formatters});
             }
         }
         const cellOptions = { html, 'data-field': key, class: css };
@@ -388,6 +393,9 @@ function checkGrouped(items) {
         if ((item.subitems && item.subitems.length) || item.childIds) {
             item.expanded = false;
             grouped = true;
+            item.subitems.forEach((item) => {
+                item.isSubitem = true;
+            })
         }
     });
     return grouped;

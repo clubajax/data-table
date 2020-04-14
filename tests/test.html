@@ -470,6 +470,70 @@
                 return data;
             }
 
+            describe('formatters', () => {
+                it('should format integers', () => {
+                    const toHtml = formatters.integer.toHtml;
+                    const fromHtml = formatters.integer.fromHtml;
+                    expect(toHtml('a1')).to.equal('1');
+                    expect(toHtml('1.1')).to.equal('1');
+                    expect(toHtml('1.0')).to.equal('1');
+                    expect(toHtml('-1.0')).to.equal('-1');
+                    
+                    expect(fromHtml('a1')).to.equal('1');
+                });
+
+                it('should format percentages', () => {
+                    const toHtml = formatters.percentage.toHtml;
+                    const fromHtml = formatters.percentage.fromHtml;
+                    expect(toHtml('1')).to.equal('1%');
+                    expect(toHtml('01')).to.equal('1%');
+                    expect(toHtml('001')).to.equal('1%');
+                    expect(toHtml('a1')).to.equal('1%');
+                    expect(toHtml('1.1')).to.equal('1.1%');
+                    expect(toHtml('1.0')).to.equal('1.0%');
+                    expect(toHtml('1.00')).to.equal('1.00%');
+                    expect(toHtml('1.000')).to.equal('1.000%');
+                    expect(toHtml('-1.0')).to.equal('-1.0%');
+                    
+                    expect(fromHtml('1%')).to.equal('1');
+                    expect(fromHtml('1.1%')).to.equal('1.1');
+                    expect(fromHtml('1.00%')).to.equal('1.00');
+                    expect(fromHtml('-10%')).to.equal('-10');
+                });
+
+                it('should format currency', () => {
+                    const toHtml = formatters.currency.toHtml;
+                    const fromHtml = formatters.currency.fromHtml;
+                    expect(toHtml('1')).to.equal('$1.00');
+                    expect(toHtml('1.001')).to.equal('$1.00');
+                    expect(toHtml('1.01')).to.equal('$1.01');
+                    expect(toHtml('1.009')).to.equal('$1.01');
+                    expect(toHtml('-1')).to.equal('-$1.00');
+                    expect(toHtml('.01')).to.equal('$0.01');
+                    expect(toHtml('0.01')).to.equal('$0.01');
+
+                    expect(fromHtml('$1')).to.equal('1');
+                    expect(fromHtml('$1.00')).to.equal('1.00');
+                    expect(fromHtml('-$1.00')).to.equal('-1.00');
+                });
+
+                it.only('should format accounting', () => {
+                    const toHtml = formatters.accounting.toHtml;
+                    const fromHtml = formatters.accounting.fromHtml;
+                    expect(toHtml('1')).to.equal('$1.00');
+                    expect(toHtml('1.001')).to.equal('$1.00');
+                    expect(toHtml('1.01')).to.equal('$1.01');
+                    expect(toHtml('1.009')).to.equal('$1.01');
+                    expect(toHtml('-1')).to.equal('($1.00)');
+                    expect(toHtml('.01')).to.equal('$0.01');
+                    expect(toHtml('0.01')).to.equal('$0.01');
+
+                    expect(fromHtml('$1')).to.equal('1');
+                    expect(fromHtml('$1.00')).to.equal('1.00');
+                    expect(fromHtml('-$1.00')).to.equal('-1.00');
+                    expect(fromHtml('($1.00)')).to.equal('-1.00');
+                });
+            });
 
             describe('data table', function () {
                 describe('new schema + components', function () {
@@ -600,7 +664,11 @@
                 });
 
                 describe('grouping', () => {
-                    it.only('should group inline data', (done) => {
+
+
+                    // TODO: accordion
+
+                    it('should group inline data', (done) => {
                         const section = dom('section', {html: dom('label', {html: 'Group Child Data'})}, body);
                         const node = dom('data-table', {
                             schema: groupedSchema,

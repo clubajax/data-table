@@ -3,6 +3,9 @@ const groupedItems = [
         id: 1,
         accountId: '001',
         accountName: 'Oskon',
+        debit: 200,
+        credit: 100,
+        amount: 100,
         subitems: [
             {
                 id: 2,
@@ -12,7 +15,7 @@ const groupedItems = [
                 customerId: '1001',
                 debit: 100,
                 credit: 100,
-                amount: 0
+                amount: 0,
             },
             {
                 id: 3,
@@ -22,7 +25,7 @@ const groupedItems = [
                 customerId: '1002',
                 debit: 100,
                 credit: 0,
-                amount: 100
+                amount: 100,
             },
         ],
     },
@@ -39,7 +42,7 @@ const groupedItems = [
                 customerId: '1003',
                 debit: 0,
                 credit: 100,
-                amount: -100
+                amount: -100,
             },
             {
                 id: 6,
@@ -49,7 +52,7 @@ const groupedItems = [
                 customerId: '1004',
                 debit: 50,
                 credit: 200,
-                amount: -150
+                amount: -150,
             },
         ],
     },
@@ -57,14 +60,26 @@ const groupedItems = [
 
 const groupedSchema = {
     columns: [
-        {key: 'accountId', label: 'Acct#'},
-        {key: 'accountName', label: 'Name'},
-        {key: 'franchiseeId', label: 'FRAN#'},
-        {key: 'franchiseeName', label: 'Franchisee Name'},
-        {key: 'customerId', label: 'CUST#'},
-        {key: 'debit', label: 'Debit'},
-        {key: 'credit', label: 'Credit'},
-        {key: 'amount', label: 'Amount'},
-    ]
+        { key: 'accountId', label: 'Acct#' },
+        { key: 'accountName', label: 'Name' },
+        { key: 'franchiseeId', label: 'FRAN#' },
+        { key: 'franchiseeName', label: 'Franchisee' },
+        { key: 'customerId', label: 'CUST#' },
+        { key: 'debit', label: 'Debit', format: 'accounting' },
+        { key: 'credit', label: 'Credit', format: 'accounting' },
+        {
+            key: 'amount',
+            label: 'Amount',
+            format: 'accounting',
+            callback: ({value, item}) => {
+                if (!value) {
+                    return '';
+                }
+                if (item.isSubitem) {
+                    return item.amount;
+                }
+                return `<strong>${value}</strong>`;
+            },
+        },
+    ],
 };
-

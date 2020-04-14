@@ -1,118 +1,119 @@
 require('@clubajax/form');
 const dom = require('@clubajax/dom');
 const on = require('@clubajax/on');
+const formatters = require('./formatters');
 
 //
 // helpers
 //
-const SPACE = '&nbsp;';
+// const SPACE = '&nbsp;';
 
-function split(str, chunkAmount) {
-    // splits a string into segments, based on an amount, not a char
-    // ex: split('123456789', 3) => ['123', '456', '789']
-    const chunks = [];
-    while (str.length) {
-        chunks.unshift(str.substring(str.length - chunkAmount, str.length));
-        str = str.substring(0, str.length - chunkAmount);
-    }
-    return chunks;
-}
+// function split(str, chunkAmount) {
+//     // splits a string into segments, based on an amount, not a char
+//     // ex: split('123456789', 3) => ['123', '456', '789']
+//     const chunks = [];
+//     while (str.length) {
+//         chunks.unshift(str.substring(str.length - chunkAmount, str.length));
+//         str = str.substring(0, str.length - chunkAmount);
+//     }
+//     return chunks;
+// }
 
-function formatMoney(amount) {
-    const str = toDecimal(amount.toString());
-    const cents = /\./.test(str) ? formatCents(str.split('.')[1]) : '00';
-    const dollars = split(str.split('.')[0], 3).join(',');
-    return `$${dollars}.${cents}`;
-}
+// function formatMoney(amount) {
+//     const str = toDecimal(amount.toString());
+//     const cents = /\./.test(str) ? formatCents(str.split('.')[1]) : '00';
+//     const dollars = split(str.split('.')[0], 3).join(',');
+//     return `$${dollars}.${cents}`;
+// }
 
-function formatCents(amount) {
-    let amt = parseFloat(`0.${amount}`);
-    // 0.009
-    amt = Math.round(amt * 100);
-    return amt > 9 ? `${amt}` : `0${amt}`;
-}
+// function formatCents(amount) {
+//     let amt = parseFloat(`0.${amount}`);
+//     // 0.009
+//     amt = Math.round(amt * 100);
+//     return amt > 9 ? `${amt}` : `0${amt}`;
+// }
 
-function formatPhone(number) {
-    const n = number.toString().match(/\d/g).join('');
-    return `(${n.substring(0, 3)}) ${n.substring(3, 6)}-${n.substring(6)}`;
-}
+// function formatPhone(number) {
+//     const n = number.toString().match(/\d/g).join('');
+//     return `(${n.substring(0, 3)}) ${n.substring(3, 6)}-${n.substring(6)}`;
+// }
 
-function toDecimal(value) {
-    const result = toString(value).match(/\d|\./g);
-    if (result) {
-        return result.join('');
-    }
-    return '';
-}
+// function toDecimal(value) {
+//     const result = toString(value).match(/\d|\./g);
+//     if (result) {
+//         return result.join('');
+//     }
+//     return '';
+// }
 
-function toString(value) {
-    if (value === null || value === undefined) {
-        return '';
-    }
-    return value.toString();
-}
-//
-// formatters
-//
-function toHtml(value, formatter) {
-    if (value === null || value === undefined || value === '') {
-        return SPACE;
-    }
-    return formatter.toHtml(value);
-}
+// function toString(value) {
+//     if (value === null || value === undefined) {
+//         return '';
+//     }
+//     return value.toString();
+// }
+// //
+// // formatters
+// //
+// function toHtml(value, formatter) {
+//     if (value === null || value === undefined || value === '') {
+//         return SPACE;
+//     }
+//     return formatter.toHtml(value);
+// }
 
-function fromHtml(value, formatter) {
-    // value = dom.normalize(value);
-    value = value === SPACE ? '' : value;
-    return formatter.fromHtml(value);
-}
+// function fromHtml(value, formatter) {
+//     // value = dom.normalize(value);
+//     value = value === SPACE ? '' : value;
+//     return formatter.fromHtml(value);
+// }
 
-const formatters = {
-    currency: {
-        fromHtml(value) {
-            return toDecimal(value);
-        },
-        toHtml(value) {
-            if (value === 0) {
-                return '$0.00';
-            }
-            if (!value) {
-                return SPACE;
-            }
-            return formatMoney(value);
-        },
-    },
-    percentage: {
-        fromHtml(value) {
-            return toDecimal(value);
-        },
-        toHtml(value) {
-            if (value === 0) {
-                return '0%';
-            }
-            if (!value) {
-                return SPACE;
-            }
-            return toDecimal(value) + '%';
-        },
-    },
-    integer: {
-        fromHtml(value) {
-            return toString(value).replace(/\D/g, '');
-        },
-        toHtml(value) {
-            return toString(value).replace(/\D/g, '');
-        },
-    },
-    default: {
-        fromHtml(value) {
-            return value;
-        },
-        toHtml(value) {
-            return value;
-        },
-    },
-};
+// const formatters = {
+//     currency: {
+//         fromHtml(value) {
+//             return toDecimal(value);
+//         },
+//         toHtml(value) {
+//             if (value === 0) {
+//                 return '$0.00';
+//             }
+//             if (!value) {
+//                 return SPACE;
+//             }
+//             return formatMoney(value);
+//         },
+//     },
+//     percentage: {
+//         fromHtml(value) {
+//             return toDecimal(value);
+//         },
+//         toHtml(value) {
+//             if (value === 0) {
+//                 return '0%';
+//             }
+//             if (!value) {
+//                 return SPACE;
+//             }
+//             return toDecimal(value) + '%';
+//         },
+//     },
+//     integer: {
+//         fromHtml(value) {
+//             return toString(value).replace(/\D/g, '');
+//         },
+//         toHtml(value) {
+//             return toString(value).replace(/\D/g, '');
+//         },
+//     },
+//     default: {
+//         fromHtml(value) {
+//             return value;
+//         },
+//         toHtml(value) {
+//             return value;
+//         },
+//     },
+// };
 
 //
 // components
