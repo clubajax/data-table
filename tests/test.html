@@ -512,12 +512,22 @@
                     expect(toHtml('.01')).to.equal('$0.01');
                     expect(toHtml('0.01')).to.equal('$0.01');
 
+                    expect(toHtml('10')).to.equal('$10.00');
+                    expect(toHtml('100')).to.equal('$100.00');
+                    expect(toHtml('1000')).to.equal('$1,000.00');
+                    expect(toHtml('10000.00')).to.equal('$10,000.00');
+                    
+                    expect(toHtml('-10')).to.equal('-$10.00');
+                    expect(toHtml('-100')).to.equal('-$100.00');
+                    expect(toHtml('-1000')).to.equal('-$1,000.00');
+                    expect(toHtml('-10000.00')).to.equal('-$10,000.00');
+
                     expect(fromHtml('$1')).to.equal('1');
                     expect(fromHtml('$1.00')).to.equal('1.00');
                     expect(fromHtml('-$1.00')).to.equal('-1.00');
                 });
 
-                it.only('should format accounting', () => {
+                it('should format accounting', () => {
                     const toHtml = formatters.accounting.toHtml;
                     const fromHtml = formatters.accounting.fromHtml;
                     expect(toHtml('1')).to.equal('$1.00');
@@ -527,6 +537,14 @@
                     expect(toHtml('-1')).to.equal('($1.00)');
                     expect(toHtml('.01')).to.equal('$0.01');
                     expect(toHtml('0.01')).to.equal('$0.01');
+
+                    expect(toHtml('1000')).to.equal('$1,000.00');
+                    expect(toHtml('10000.00')).to.equal('$10,000.00');
+                    
+                    expect(toHtml('-10')).to.equal('($10.00)');
+                    expect(toHtml('-100')).to.equal('($100.00)');
+                    expect(toHtml('-1000')).to.equal('($1,000.00)');
+                    expect(toHtml('-10000.00')).to.equal('($10,000.00)');
 
                     expect(fromHtml('$1')).to.equal('1');
                     expect(fromHtml('$1.00')).to.equal('1.00');
@@ -668,7 +686,7 @@
 
                     // TODO: accordion
 
-                    it('should group inline data', (done) => {
+                    it.only('should group inline data', (done) => {
                         const section = dom('section', {html: dom('label', {html: 'Group Child Data'})}, body);
                         const node = dom('data-table', {
                             schema: groupedSchema,

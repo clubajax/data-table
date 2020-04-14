@@ -19,10 +19,12 @@ function stripLeadingZeros(value) {
 }
 
 function formatMoney(amount) {
-    const str = toDecimal(amount.toString());
+    let str = toDecimal(amount.toString());
+    const neg = /^-/.test(str) ? '-' : '';
+    str = str.replace('-', '');
     const cents = /\./.test(str) ? formatCents(str.split('.')[1]) : '00';
     const dollars = split(str.split('.')[0], 3).join(',') || '0';
-    return `$${dollars}.${cents}`;
+    return `${neg}$${dollars}.${cents}`;
 }
 
 function formatCents(amount) {
@@ -41,9 +43,6 @@ function toDecimal(value) {
     value = toString(value).replace('$', '');
     const result = value.match(/-*\d|\./g);
     if (result) {
-        if (result.length > 1 && result[0] === '0') {
-            result.shift();
-        }
         return stripLeadingZeros(result.join(''));
     }
     return '';

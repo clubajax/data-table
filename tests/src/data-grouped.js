@@ -76,7 +76,7 @@ const groupedSchema = {
                     return '';
                 }
                 if (item.isSubitem) {
-                    return item.amount;
+                    return value;
                 }
                 return `<strong>${value}</strong>`;
             },
