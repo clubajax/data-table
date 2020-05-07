@@ -35,19 +35,24 @@
   "dependencies": {
     "@clubajax/base-component": "2.3.2",
     "@clubajax/dom": "2.8.5",
+    "@clubajax/format": "^0.5.8",
     "@clubajax/on": "2.2.0"
   },
   "peerDependencies": {
     "@clubajax/form": "0.8.32"
   },
   "devDependencies": {
+    "@babel/core": "^7.8.4",
+    "@babel/preset-env": "^7.8.4",
     "@babel/register": "^7.8.3",
     "@clubajax/custom-elements-polyfill": "^0.9.4",
-    "@clubajax/node-file-managment": "^0.1.3",
     "@clubajax/form": "0.8.32",
+    "@clubajax/node-file-managment": "^0.1.3",
+    "babel-loader": "^8.0.6",
     "babelify": "github:ylemkimon/babelify",
     "chai": "^4.2.0",
     "chai-spies": "^1.0.0",
+    "css-loader": "^3.4.2",
     "eslint": "^6.8.0",
     "grunt": "^1.0.4",
     "grunt-browserify": "^5.3.0",
@@ -56,17 +61,13 @@
     "grunt-contrib-watch": "^1.1.0",
     "grunt-http-server": "^2.1.0",
     "grunt-sass": "^3.1.0",
+    "mini-css-extract-plugin": "^0.9.0",
     "mocha": "^7.0.0",
     "node-sass": "^4.13.1",
-    "serve-index": "^1.9.1",
-    "uglifyify": "^5.0.2",
-    "@babel/core": "^7.8.4",
-    "@babel/preset-env": "^7.8.4",
-    "babel-loader": "^8.0.6",
-    "css-loader": "^3.4.2",
-    "mini-css-extract-plugin": "^0.9.0",
     "sass-loader": "^8.0.2",
+    "serve-index": "^1.9.1",
     "style-loader": "^1.1.3",
+    "uglifyify": "^5.0.2",
     "webpack": "^4.41.6",
     "webpack-cli": "^3.3.11"
   }

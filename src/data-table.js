@@ -5,7 +5,7 @@ const clickable = require('./clickable');
 const selectable = require('./selectable');
 const scrollable = require('./scrollable');
 const createComponent = require('./component');
-const formatters = require('./formatters');
+const formatters = require('@clubajax/format'); 
 const util = require('./util');
 
 const PERF = true;
