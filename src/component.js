@@ -6,7 +6,7 @@ const formatters = require('./formatters');
 //
 // helpers
 //
-// const SPACE = '&nbsp;';
+const SPACE = '&nbsp;';
 
 // function split(str, chunkAmount) {
 //     // splits a string into segments, based on an amount, not a char
@@ -55,18 +55,18 @@ const formatters = require('./formatters');
 // //
 // // formatters
 // //
-// function toHtml(value, formatter) {
-//     if (value === null || value === undefined || value === '') {
-//         return SPACE;
-//     }
-//     return formatter.toHtml(value);
-// }
+function toHtml(value, formatter) {
+    if (value === null || value === undefined || value === '') {
+        return SPACE;
+    }
+    return formatter.toHtml(value);
+}
 
-// function fromHtml(value, formatter) {
-//     // value = dom.normalize(value);
-//     value = value === SPACE ? '' : value;
-//     return formatter.fromHtml(value);
-// }
+function fromHtml(value, formatter) {
+    // value = dom.normalize(value);
+    value = value === SPACE ? '' : value;
+    return formatter.fromHtml(value);
+}
 
 // const formatters = {
 //     currency: {
