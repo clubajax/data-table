@@ -113,7 +113,7 @@ function createInput(col, item) {
 
 function createDropdown(col, item) {
     const input = dom('ui-dropdown', {
-        data: col.component.options,
+        data: () => col.component.options,
         value: item[col.component.key] || item[col.key],
     });
     input.on('change', (e) => {

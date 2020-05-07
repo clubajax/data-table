@@ -472,7 +472,7 @@
 
             describe('data table', function () {
                 describe('new schema + components', function () {
-                    it('should add/remove rows', function (done) {
+                    it.only('should add/remove rows', function (done) {
                         const data = copy(data3);
                         const section = dom('section', {html: dom('label', {html: 'Add/Remove Rows'})}, body);
                         const node = dom('data-table', {
@@ -491,7 +491,7 @@
                         });
                     });
 
-                    it.only('should add/remove input rows', function (done) {
+                    it('should add/remove input rows', function (done) {
                         const section = dom('section', {html: dom('label', {html: 'Add/Remove Rows'})}, body);
                         const items = inputData.items.slice(0,1);
                         const node = dom('data-table', {
@@ -518,7 +518,7 @@
                         });
                     });
 
-                    it.only('should add/remove with an actionbutton', function (done) {
+                    it('should add/remove with an actionbutton', function (done) {
                         const section = dom('section', {html: dom('label', {html: 'Add/Remove ActionButton'})}, body);
                         const schema = copy(inputData.schema);
                         schema.columns[schema.columns.length - 1].component.options = [
