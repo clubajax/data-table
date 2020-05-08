@@ -7,6 +7,7 @@ const files = '<link rel="stylesheet" href="../node_modules/mocha/mocha.css">' +
     '<script src="../node_modules/mocha/mocha.js"></script>' +
     '<script src="../node_modules/chai/chai.js"></script>' +
     '<script src="./src/data-20.js"></script>' +
+    '<script src="./src/data-drops.js"></script>' +
     '<script src="./src/data-grouped.js"></script>' +
     '<script src="./dist/vendor.js"></script>' +
     '<script src="./dist/output.js"></script>';

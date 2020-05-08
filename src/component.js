@@ -1,7 +1,7 @@
 require('@clubajax/form');
 const dom = require('@clubajax/dom');
 const on = require('@clubajax/on');
-const formatters = require('@clubajax/format'); 
+const formatters = require('@clubajax/format');
 
 //
 // helpers
@@ -31,7 +31,7 @@ function createLink(col, item) {
     });
 }
 
-function createInput(col, item) {
+function createInput(col, item, dataTable) {
     const formatter = formatters[col.component.format] || formatters.default;
     function edit(node) {
         const parent = node.parentNode;
@@ -94,15 +94,16 @@ function createInput(col, item) {
         class: 'td-editable',
         html: formatter.toHtml(item[col.key]) || '&nbsp;',
         tabindex: '0',
-        onClick() {
-            edit(this);
-        },
-        onKeyup(e) {
-            if (e.key === 'Enter') {
-                edit(this);
-            }
-        },
     });
+    dataTable.on(node, 'click', () => {
+        edit(node);
+    });
+    dataTable.on(node, 'keyup', (e) => {
+        if (e.key === 'Enter') {
+            edit(node);
+        }
+    });
+
     if (item.added) {
         setTimeout(() => {
             edit(node);
@@ -111,10 +112,12 @@ function createInput(col, item) {
     return node;
 }
 
-function createDropdown(col, item) {
+function createDropdown(col, item, dataTable) {
+    const value = item[col.component.key] || item[col.key];
+    // console.log('   value', value);
     const input = dom('ui-dropdown', {
         data: () => col.component.options,
-        value: item[col.component.key] || item[col.key],
+        value,
     });
     input.on('change', (e) => {
         e.stopPropagation();
@@ -127,7 +130,7 @@ function createDropdown(col, item) {
     return input;
 }
 
-function createCheckbox(col, item) {
+function createCheckbox(col, item, dataTable) {
     const input = dom('ui-checkbox', {
         value: item[col.key],
     });
@@ -149,24 +152,24 @@ function createEditRows(col, item, index) {
         class: 'add-remove',
         html: [
             dom('button', {
-                onClick () {
-                    on.fire(this, 'action-event', {value: 'add'}, true)
+                onClick() {
+                    on.fire(this, 'action-event', { value: 'add' }, true);
                 },
                 class: 'tbl-icon-button add',
                 type: 'button',
                 html: dom('span', { class: 'fas fa-plus' }),
             }),
             dom('button', {
-                onClick () {
-                    on.fire(this, 'action-event', {value: 'remove'}, true)
+                onClick() {
+                    on.fire(this, 'action-event', { value: 'remove' }, true);
                 },
                 class: 'tbl-icon-button remove',
                 type: 'button',
                 html: dom('span', { class: 'fas fa-trash-alt' }),
             }),
             dom('button', {
-                onClick () {
-                    on.fire(this, 'action-event', {value: 'cancel'}, true)
+                onClick() {
+                    on.fire(this, 'action-event', { value: 'cancel' }, true);
                 },
                 class: 'tbl-icon-button cancel',
                 type: 'button',
@@ -187,8 +190,8 @@ function createActionButton(col, item) {
                 class: 'tbl-icon-button icon-only',
             }),
             dom('button', {
-                onClick () {
-                    on.fire(this, 'action-event', {value: 'cancel'}, true)
+                onClick() {
+                    on.fire(this, 'action-event', { value: 'cancel' }, true);
                 },
                 class: 'tbl-icon-button cancel',
                 type: 'button',
@@ -198,16 +201,17 @@ function createActionButton(col, item) {
     });
 }
 
-function createComponent(col, item, index) {
+function createComponent(col, item, index, dataTable) {
+    // console.log('createComponent');
     switch (col.component.type) {
         case 'link':
             return createLink(col, item);
         case 'ui-input':
-            return createInput(col, item);
+            return createInput(col, item, dataTable);
         case 'ui-dropdown':
-            return createDropdown(col, item);
+            return createDropdown(col, item, dataTable);
         case 'ui-checkbox':
-            return createCheckbox(col, item);
+            return createCheckbox(col, item, dataTable);
         case 'edit-rows':
             if (col.component.options) {
                 return createActionButton(col, item);

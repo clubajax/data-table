@@ -47,6 +47,7 @@ class DataTable extends BaseComponent {
     loadData(rows) {
         const items = rows || [];
         this.orgItems = items;
+    
         this.legacyCheck(true);
         this.displayNoData(false);
         this.items = [...items];
@@ -83,8 +84,9 @@ class DataTable extends BaseComponent {
                 throw new Error('a `rows` and a `schema` is required');
             }, 1000);
             return;
+        } else {
+            clearTimeout(this.legacyTimer);
         }
-        clearTimeout(this.legacyTimer);
     }
 
     domReady() {
@@ -264,7 +266,7 @@ class DataTable extends BaseComponent {
             console.warn('Items do not have an ID');
         }
 
-        render(items, columns, this.colSizes, tbody, this.selectable, this.grouped, () => {
+        render(items, columns, this.colSizes, tbody, this.selectable, this.grouped, this, () => {
             this.bodyHasRendered = true;
             this.fire('render-body', { tbody: this.tbody });
         });
@@ -314,10 +316,19 @@ class DataTable extends BaseComponent {
         if (this.addRemoveHandle) {
             this.addRemoveHandle.remove();
         }
+        clearTimeout(this.legacyTimer);
+        this.items = null;
+        this.orgItems = null;
+        this.schema = null;
+        this.table = null;
+        this.thead = null;
+        this.tbody = null;
+        this.tfoot = null;
+        super.destroy();
     }
 }
 
-function renderRow(item, index, columns, colSizes, tbody, selectable, grouped) {
+function renderRow(item, index, columns, colSizes, tbody, selectable, grouped, dataTable) {
     item.index = index;
     let itemCss = item.css || item.class || item.className || '';
     let html,
@@ -337,6 +348,7 @@ function renderRow(item, index, columns, colSizes, tbody, selectable, grouped) {
     }
 
     tr = dom('tr', rowOptions, tbody);
+    
     columns.forEach((col, i) => {
         if (grouped && i === 0) {
             const isExpanded = item.expanded === undefined ? false : item.expanded === false ? 'off' : 'on';
@@ -355,7 +367,7 @@ function renderRow(item, index, columns, colSizes, tbody, selectable, grouped) {
         key = col.key || col.icon || col;
         css = key;
         if (col.component) {
-            html = createComponent(col, item, index);
+            html = createComponent(col, item, index, dataTable);
             css += ' ' + col.component.type;
         } else {
             html = key === 'index' ? index + 1 : item[key];
@@ -376,13 +388,13 @@ function renderRow(item, index, columns, colSizes, tbody, selectable, grouped) {
 
     if (item.expanded) {
         item.subitems.forEach((subitem) => {
-            renderRow(subitem, index, columns, colSizes, tbody, selectable, grouped);
+            renderRow(subitem, index, columns, colSizes, tbody, selectable, grouped, this);
         })
     }
 }
-function render(items, columns, colSizes, tbody, selectable, grouped, callback) {
+function render(items, columns, colSizes, tbody, selectable, grouped, dataTable, callback) {
     items.forEach((item, index) => {
-        renderRow(item, index, columns, colSizes, tbody, selectable, grouped);
+        renderRow(item, index, columns, colSizes, tbody, selectable, grouped, dataTable);
     });
     callback();
 }

@@ -321,7 +321,7 @@
                                         {value: 'masters', label: 'Masters'},
                                     ]
                                 }
-                            },{
+                            }, {
                                 key: 'school',
                                 label: 'School',
                                 component: {
@@ -470,9 +470,63 @@
                 return data;
             }
 
+            function getDataForDrops() {
+                getDropData();
+            }
+
+            let renderNode;
+            async function renderDropTable() {
+                return new Promise((resolve) => {
+                    const data = copy(getDropData());
+                    const section = dom('section', {html: dom('label', {html: 'Dropdown Mania'})}, body);
+                    renderNode = dom('data-table', {
+                        schema: data.schema,
+                        rows: data.rows,
+                    }, section);
+                    onDomReady(renderNode, function () {
+                        console.log('done');
+                        resolve();
+                    });
+                })
+            }
+
+            function destroyRenderNode(){
+                renderNode.destroy();
+            }
+
             describe('data table', function () {
                 describe('new schema + components', function () {
-                    it.only('should add/remove rows', function (done) {
+                    it.only('should render many dropdowns', function (done) {
+
+                        }}, 'tests');
+                        async function render() {
+                            await renderDropTable();
+                            destroyRenderNode();
+                            await renderDropTable();
+                            destroyRenderNode();
+                            await renderDropTable();
+                            destroyRenderNode();
+                            await renderDropTable();
+                            destroyRenderNode();
+
+                            await renderDropTable();
+                            destroyRenderNode();
+                            await renderDropTable();
+                            destroyRenderNode();
+                            await renderDropTable();
+                            destroyRenderNode();
+                            await renderDropTable();
+                            destroyRenderNode();
+
+                            await renderDropTable();
+
+                            done();
+                        }
+
+                        render();
+                    });
+
+                    it('should add/remove rows', function (done) {
                         const data = copy(data3);
                         const section = dom('section', {html: dom('label', {html: 'Add/Remove Rows'})}, body);
                         const node = dom('data-table', {
@@ -493,7 +547,7 @@
 
                     it('should add/remove input rows', function (done) {
                         const section = dom('section', {html: dom('label', {html: 'Add/Remove Rows'})}, body);
-                        const items = inputData.items.slice(0,1);
+                        const items = inputData.items.slice(0, 1);
                         const node = dom('data-table', {
                             schema: inputData.schema,
                             rows: items,
@@ -527,7 +581,7 @@
                             {value: 'remove', label: 'Remove Row'},
                         ]
                         console.log('schema', schema);
-                        const items = inputData.items.slice(0,2);
+                        const items = inputData.items.slice(0, 2);
                         const node = dom('data-table', {
                             schema,
                             rows: items,
@@ -603,7 +657,7 @@
 
                     // TODO: accordion
 
-                    it.only('should group inline data', (done) => {
+                    it('should group inline data', (done) => {
                         const section = dom('section', {html: dom('label', {html: 'Group Child Data'})}, body);
                         const node = dom('data-table', {
                             schema: groupedSchema,
