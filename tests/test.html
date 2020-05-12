@@ -60,12 +60,14 @@
         describe('DataTable', function () {
             this.timeout(3000);
             const describe = window.describe,
+                util = window.util,
                 test = window.test,
                 dom = window.dom,
                 on = window.on,
                 expect = chai.expect,
                 body = dom.byId('tests');
 
+                console.log('util', util);
 
             const inputSchema = {
                 columns: [
@@ -135,7 +137,7 @@
                     {
                         id: 2,
                         typeId: 2000,
-                        fromAmount: 1500,
+                        fromAmount: -1500,
                         toAccount: 3000,
                         downpaymentPercentage: 40,
                         monthlyPercentage: 15,
@@ -145,7 +147,7 @@
                     {
                         id: 3,
                         typeId: 2000,
-                        fromAmount: 3000,
+                        fromAmount: -3000,
                         toAccount: 6000,
                         downpaymentPercentage: 30,
                         monthlyPercentage: 10,
@@ -156,7 +158,7 @@
                         id: 4,
                         typeId: 2000,
                         fromAmount: 6000,
-                        toAccount: 10000,
+                        toAccount: -10000,
                         downpaymentPercentage: 15,
                         monthlyPercentage: 10,
                         months: 32,
@@ -290,9 +292,9 @@
                             {
                                 key: 'last',
                                 label: 'Last',
-                                callback(item) {
-                                    console.log('format!!');
-                                    return `${item.last}, ${item.first}`;
+                                callback(event) {
+                                    // console.log('callback', event.item);
+                                    return `${event.item.last}, ${event.item.first}`;
                                 }
                             }, {
                                 key: 'middle',
@@ -494,11 +496,27 @@
                 renderNode.destroy();
             }
 
+            describe('util', function(){
+                it('should create a classname string', () => {
+                    const {classnames} = util;
+                    let cls;
+                    
+                    cls = classnames('mike');
+                    cls('was');
+                    cls('here');
+                    expect(cls()).to.equal('mike was here');
+
+                    cls = classnames('');
+                    cls('one');
+                    cls();
+                    cls('two');
+                    expect(cls()).to.equal('one two');
+                })
+            });
+
             describe('data table', function () {
                 describe('new schema + components', function () {
-                    it.only('should render many dropdowns', function (done) {
-
-                        }}, 'tests');
+                    it('should render many dropdowns', function (done) {
                         async function render() {
                             await renderDropTable();
                             destroyRenderNode();
@@ -524,6 +542,26 @@
                         }
 
                         render();
+                    });
+
+                    it.only('should search', function (done) {
+                        const data = getSearchData();
+                        console.log('data', data);
+                        const section = dom('section', {html: dom('label', {html: 'Search Columns'})}, body);
+                        const node = dom('data-table', {
+                            schema: data.schema,
+                            rows: data.rows,
+                        }, section);
+                        const events = [];
+                        onDomReady(node, function () {
+                            node.on('change', function (e) {
+                                console.log('change', e);
+                            });
+                            node.on('remove-row', function (e) {
+                                console.log('remove-row', e);
+                            });
+                            done();
+                        });
                     });
 
                     it('should add/remove rows', function (done) {
@@ -555,7 +593,7 @@
                         const events = [];
                         onDomReady(node, function () {
                             node.on('change', function (e) {
-                                console.log('change', e);
+                                console.log('change', e.value);
                             });
                             node.on('add-row', function (e) {
                                 console.log('change', e);
@@ -568,6 +606,23 @@
                                 items.splice(e.value.index, 1);
                                 node.rows = items;
                             });
+                            done();
+                        });
+                    });
+
+                    it('should format data', function (done) {
+                        const section = dom('section', {html: dom('label', {html: 'Add/Remove Rows'})}, body);
+                        const items = inputData.items;
+                        const schema = copy(inputData.schema);
+                        schema.columns[0].component.format = 'accounting';
+                        schema.columns[1].component.format = 'accounting';
+                        console.log('sch', schema);
+                        const node = dom('data-table', {
+                            schema: schema,
+                            rows: items,
+                        }, section);
+                        const events = [];
+                        onDomReady(node, function () {
                             done();
                         });
                     });
@@ -636,7 +691,7 @@
                         });
                     });
 
-                    it('should be formatable', function (done) {
+                    it('should be format-able', function (done) {
                         const section = dom('section', {html: dom('label', {html: 'Formatable Inputs'})}, body);
                         const node = dom('data-table', {
                             schema: data4.schema,

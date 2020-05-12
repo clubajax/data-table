@@ -22,7 +22,24 @@ function isEqual (a, b) {
 	return JSON.stringify(a) === JSON.stringify(b);
 }
 
+function classnames (firstClass) {
+    const css = [];
+    if (firstClass) {
+        css.push(firstClass);
+    }
+    const push = (cls) => {
+        if (cls === undefined) {
+            return css.join(' ');
+        }
+        if (cls) {
+            css.push(cls);
+        }
+    }
+    return push;
+}
+
 module.exports = {
 	bindMethods,
-	isEqual
+    isEqual,
+    classnames
 };

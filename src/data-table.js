@@ -225,9 +225,10 @@ class DataTable extends BaseComponent {
                 const key = col.key || col;
                 const label = col.label === undefined ? col : col.label;
 
-                let css = col.css || col.className || '';
+                const css = util.classnames(col.css || col.className);
+                css(col.format || (col.component ? col.component.format : ''));
                 if (col.unsortable) {
-                    css += ' unsortable';
+                    css('unsortable');
                 }
 
                 options = {
@@ -236,7 +237,7 @@ class DataTable extends BaseComponent {
                         dom('span', { class: 'sort-up', html: '&uarr;' }),
                         dom('span', { class: 'sort-dn', html: '&darr;' }),
                     ],
-                    class: css,
+                    class: css(),
                     'data-field': key,
                 };
             }
@@ -330,7 +331,7 @@ class DataTable extends BaseComponent {
 
 function renderRow(item, index, columns, colSizes, tbody, selectable, grouped, dataTable) {
     item.index = index;
-    let itemCss = item.css || item.class || item.className || '';
+    let itemCss = util.classnames(item.css || item.class || item.className);
     let html,
         css,
         key,
@@ -341,11 +342,10 @@ function renderRow(item, index, columns, colSizes, tbody, selectable, grouped, d
         rowOptions.tabindex = 1;
     }
     if (item.added) {
-        itemCss += ' added-row';
+        itemCss('added-row');
     }
-    if (itemCss) {
-        rowOptions.class = itemCss;
-    }
+    
+    rowOptions.class = itemCss();
 
     tr = dom('tr', rowOptions, tbody);
     
@@ -365,13 +365,15 @@ function renderRow(item, index, columns, colSizes, tbody, selectable, grouped, d
             }, tr);   
         }
         key = col.key || col.icon || col;
-        css = key;
+        css = util.classnames(key);
         if (col.component) {
             html = createComponent(col, item, index, dataTable);
-            css += ' ' + col.component.type;
+            css(col.component.type);
+            css(col.component.format);
         } else {
             html = key === 'index' ? index + 1 : item[key];
-            const fmt = col.formatter || col.format; 
+            const fmt = col.formatter || col.format;
+            css(fmt);
             if (fmt) {
                 html = formatters[fmt].toHtml(html);
             }
@@ -379,7 +381,7 @@ function renderRow(item, index, columns, colSizes, tbody, selectable, grouped, d
                 html = col.callback({value: html, item, index, col, formatters});
             }
         }
-        const cellOptions = { html, 'data-field': key, class: css };
+        const cellOptions = { html, 'data-field': key, class: css() };
         if (colSizes[i]) {
             cellOptions.style = { width: colSizes[i] };
         }
