@@ -1,4 +1,5 @@
 function getSearchData() {
+    loadNames();
     return {
         schema: searchSchema,
         rows: [
@@ -6,11 +7,52 @@ function getSearchData() {
                 id: 1,
                 label: 'Search',
                 typeId: 38,
-                rateTypeId: 273
-            }
-        ]
-    }
+                rateTypeId: 273,
+            },
+        ],
+    };
 }
+
+let nameData;
+function loadNames() {
+    fetch('./src/names.json')
+        .then((data) => data.json())
+        .then((data) => {
+            nameData = data;
+            window.on.fire(document, 'data-ready');
+        });
+}
+function search(value) {
+    return new Promise((resolve) => {
+        if (!value) {
+            resolve([]);
+        }
+        function label(item) {
+            return `${item.firstName} ${item.lastName}`;
+        }
+        function val(item) {
+            return `${item.firstName.toLowerCase()}-${item.lastName.toLowerCase()}`;
+        }
+        value = value.toLowerCase();
+        const data = nameData
+            .filter((item) => {
+                return (
+                    item.firstName.toLowerCase().indexOf(value) === 0 || item.lastName.toLowerCase().indexOf(value) === 0
+                );
+            })
+            .map((item) => {
+                return {
+                    value: val(item),
+                    label: label(item),
+                    // alias: item.firstName,
+                    display: item.firstName,
+                };
+            });
+        
+        resolve(data);
+    });
+}
+
 const searchSchema = {
     columns: [
         {
@@ -24,27 +66,8 @@ const searchSchema = {
             key: 'typeId',
             label: 'Type',
             component: {
-                type: 'ui-dropdown',
-                options: [
-                    {
-                        type: 'FeeType',
-                        typeId: 10,
-                        name: 'Royalty',
-                        id: 38,
-                        secondary: '',
-                        value: 38,
-                        label: 'Royalty',
-                    },
-                    {
-                        type: 'FeeType',
-                        typeId: 10,
-                        name: 'Accounting',
-                        id: 39,
-                        secondary: '',
-                        value: 39,
-                        label: 'Accounting',
-                    }
-                ],
+                type: 'ui-search',
+                search
             },
         },
         {
@@ -73,6 +96,6 @@ const searchSchema = {
                     },
                 ],
             },
-        }
-    ]
+        },
+    ],
 };

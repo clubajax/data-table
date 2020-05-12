@@ -130,6 +130,33 @@ function createDropdown(col, item, dataTable) {
     return input;
 }
 
+function createSearch(col, item, dataTable) {
+    const value = item[col.component.key] || item[col.key];
+    // console.log('   value', value);
+    const input = dom('ui-search', {
+        value,
+        data: []
+    });
+    input.on('change', (e) => {
+        e.stopPropagation();
+        if (!e || e.value == undefined) {
+            return;
+        }
+        item[col.key] = e.value;
+        on.emit(input.parentNode, 'cell-change', { value: item });
+    });
+    input.on('search', (e) => {
+        e.stopPropagation();
+        if (!e || e.detail.value == undefined) {
+            return;
+        }
+        col.component.search(e.detail.value).then((data) => {
+            input.data = data;
+        });
+    });
+    return input;
+}
+
 function createCheckbox(col, item, dataTable) {
     const input = dom('ui-checkbox', {
         value: item[col.key],
@@ -210,6 +237,8 @@ function createComponent(col, item, index, dataTable) {
             return createInput(col, item, dataTable);
         case 'ui-dropdown':
             return createDropdown(col, item, dataTable);
+        case 'ui-search':
+            return createSearch(col, item, dataTable);
         case 'ui-checkbox':
             return createCheckbox(col, item, dataTable);
         case 'edit-rows':

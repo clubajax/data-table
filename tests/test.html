@@ -67,8 +67,6 @@
                 expect = chai.expect,
                 body = dom.byId('tests');
 
-                console.log('util', util);
-
             const inputSchema = {
                 columns: [
                     {
@@ -492,15 +490,15 @@
                 })
             }
 
-            function destroyRenderNode(){
+            function destroyRenderNode() {
                 renderNode.destroy();
             }
 
-            describe('util', function(){
+            describe('util', function () {
                 it('should create a classname string', () => {
                     const {classnames} = util;
                     let cls;
-                    
+
                     cls = classnames('mike');
                     cls('was');
                     cls('here');
