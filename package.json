@@ -1,6 +1,6 @@
 {
   "name": "@clubajax/data-table",
-  "version": "0.8.41",
+  "version": "0.8.46",
   "description": "Data Table Web Component",
   "main": "src/data-table.js",
   "directories": {
@@ -10,7 +10,7 @@
     "start": "grunt dev",
     "old-build": "grunt deploy",
     "build": "webpack --mode production --config ./webpack.config.js && node ./scripts/deploy.js",
-    "quick-build": "webpack --mode production --config ./webpack.config.js"
+    "quick-build": "webpack --mode production --config ./webpack.config.js && node ./scripts/clean.js"
   },
   "repository": {
     "type": "git",
@@ -36,18 +36,18 @@
   "dependencies": {
     "@clubajax/base-component": "2.3.2",
     "@clubajax/dom": "2.8.5",
-    "@clubajax/format": "^0.5.9",
+    "@clubajax/format": "^0.5.13",
     "@clubajax/on": "2.2.0"
   },
   "peerDependencies": {
-    "@clubajax/form": "0.8.38"
+    "@clubajax/form": "0.8.42"
   },
   "devDependencies": {
     "@babel/core": "^7.8.4",
     "@babel/preset-env": "^7.8.4",
     "@babel/register": "^7.8.3",
     "@clubajax/custom-elements-polyfill": "^0.9.4",
-    "@clubajax/form": "0.8.38",
+    "@clubajax/form": "0.8.42",
     "@clubajax/node-file-managment": "^0.1.3",
     "babel-loader": "^8.0.6",
     "babelify": "github:ylemkimon/babelify",
@@ -55,6 +55,7 @@
     "chai-spies": "^1.0.0",
     "css-loader": "^3.4.2",
     "eslint": "^6.8.0",
+    "fs-extra": "^9.0.0",
     "grunt": "^1.0.4",
     "grunt-browserify": "^5.3.0",
     "grunt-concurrent": "^3.0.0",

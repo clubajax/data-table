@@ -98,7 +98,7 @@ class DataTable extends BaseComponent {
         }
         this.on('cell-change', (e) => {
             if (!dom.query(this, 'input')) {
-                this.emit(e.value.added ? 'add-row' : 'change', { value: e.value });
+                this.emit(e.value.added ? 'add-row' : 'change', { value: e.value, column: e.column });
                 this.updateStatus();
             }
         });
@@ -110,14 +110,13 @@ class DataTable extends BaseComponent {
     getBlankItem() {
         return this.schema.columns.reduce((acc, col) => {
             if (col.key) {
-                acc[col.key] = null;
+                acc[col.key] = '';
             }
             return acc;
         }, {});
     }
 
     addRow(index = 0, item) {
-        console.log('ADD ROW');
         if (!item) {
             // create a blank item, for when adding a row
             item = this.getBlankItem();
@@ -167,17 +166,27 @@ class DataTable extends BaseComponent {
 
     hasExpandable() {
         this.on('click', '[data-expanded]', (e) => {
-            console.log('EXPAND', e);
+            // forst close all rows
+            this.items.forEach((item) => {
+                item.expanded = false;
+            });
+
             const td = e.target.closest('td');
             const tr = e.target.closest('tr');
             const id = dom.attr(tr, 'data-row-id');
             const item = this.getItemById(id);
             const state = dom.attr(td,'data-expanded')
-            console.log(' - state ', state);
-            console.log('item', item);
             item.expanded = !(state === 'on');
             this.render();
         });
+    }
+
+    refresh(all) {
+        if (all) {
+            this.render();
+        } else {
+            this.renderBody(this.items, this.columns);
+        }
     }
 
     render() {
@@ -375,7 +384,15 @@ function renderRow(item, index, columns, colSizes, tbody, selectable, grouped, d
             const fmt = col.formatter || col.format;
             css(fmt);
             if (fmt) {
-                html = formatters[fmt].toHtml(html);
+                if (/property:/.test(fmt)) {
+                    const prop = (fmt.split(':')[1] || '').trim();
+                    if (prop) {
+                        const f = item[prop];
+                        html = formatters[fmt].toHtml(html);
+                    } 
+                } else {
+                    html = formatters[fmt].toHtml(html);
+                }
             }
             if (col.callback) {
                 html = col.callback({value: html, item, index, col, formatters});

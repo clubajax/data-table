@@ -1,6 +1,6 @@
 {
   "name": "@clubajax/data-table",
-  "version": "0.8.41",
+  "version": "0.8.46",
   "description": "Data Table Web Component",
   "main": "index.js",
   "repository": {
@@ -27,7 +27,7 @@
   "dependencies": {
     "@clubajax/base-component": "2.3.2",
     "@clubajax/dom": "2.8.5",
-    "@clubajax/format": "^0.5.9",
+    "@clubajax/format": "^0.5.11",
     "@clubajax/on": "2.2.0"
   }
 }

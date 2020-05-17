@@ -9,6 +9,7 @@ const formatters = require('@clubajax/format');
 const SPACE = '&nbsp;';
 
 function toHtml(value, formatter) {
+    value = typeof value === 'string' ? value.trim() : value;
     if (value === null || value === undefined || value === '') {
         return SPACE;
     }
@@ -16,9 +17,20 @@ function toHtml(value, formatter) {
 }
 
 function fromHtml(value, formatter) {
-    // value = dom.normalize(value);
+    value = typeof value === 'string' ? value.trim() : value;
     value = value === SPACE ? '' : value;
     return formatter.from(value);
+}
+
+function getFormatter(col, item){
+    let fmt = col.format || col.component.format;
+    if (/property:/.test(fmt)) {
+        const prop = (fmt.split(':')[1] || '').trim();
+        if (prop) {
+            fmt = item[prop];
+        } 
+    }
+    return formatters[fmt] || formatters.default;
 }
 
 //
@@ -32,7 +44,7 @@ function createLink(col, item) {
 }
 
 function createInput(col, item, dataTable) {
-    const formatter = formatters[col.component.format] || formatters.default;
+    const formatter = getFormatter(col, item);
     function edit(node) {
         const parent = node.parentNode;
         on.emit(parent, 'cell-edit');
@@ -114,7 +126,6 @@ function createInput(col, item, dataTable) {
 
 function createDropdown(col, item, dataTable) {
     const value = item[col.component.key] || item[col.key];
-    // console.log('   value', value);
     const input = dom('ui-dropdown', {
         data: () => col.component.options,
         value,
@@ -125,14 +136,21 @@ function createDropdown(col, item, dataTable) {
             return;
         }
         item[col.key] = e.value;
-        on.emit(input.parentNode, 'cell-change', { value: item });
+        if (col.component.onChange) {
+            col.component.onChange({ value: item, column: col });
+        }
+        if (col.component.renders) {
+            setTimeout(() => {
+                dataTable.refresh();
+            }, 1);
+        }
+        on.emit(input.parentNode, 'cell-change', { value: item, column: col });
     });
     return input;
 }
 
 function createSearch(col, item, dataTable) {
     const value = item[col.component.key] || item[col.key];
-    // console.log('   value', value);
     const input = dom('ui-search', {
         value,
         data: []
@@ -143,7 +161,7 @@ function createSearch(col, item, dataTable) {
             return;
         }
         item[col.key] = e.value;
-        on.emit(input.parentNode, 'cell-change', { value: item });
+        on.emit(input.parentNode, 'cell-change', { value: item, column: col });
     });
     input.on('search', (e) => {
         e.stopPropagation();
@@ -167,7 +185,7 @@ function createCheckbox(col, item, dataTable) {
             return;
         }
         item[col.key] = e.value;
-        on.emit(input.parentNode, 'cell-change', { value: item });
+        on.emit(input.parentNode, 'cell-change', { value: item, column: col });
     });
     return input;
 }
@@ -229,7 +247,6 @@ function createActionButton(col, item) {
 }
 
 function createComponent(col, item, index, dataTable) {
-    // console.log('createComponent');
     switch (col.component.type) {
         case 'link':
             return createLink(col, item);
