@@ -98,7 +98,14 @@ class DataTable extends BaseComponent {
         }
         this.on('cell-change', (e) => {
             if (!dom.query(this, 'input')) {
-                this.emit(e.value.added ? 'add-row' : 'change', { value: e.value, column: e.column });
+                this.emit(e.value.added ? 'add-row' : 'change', {value: e.value, column: e.column});
+                if (e.value.added) {
+                    e.value.added = false;
+                    const row = dom.query(this, 'tr.added-row');
+                    if (row) {
+                        row.classList.remove('added-row');
+                    }
+                }
                 this.updateStatus();
             }
         });
@@ -276,7 +283,7 @@ class DataTable extends BaseComponent {
         }
 
         if (items[0].id === undefined) {
-            console.warn('Items do not have an ID');
+            console.warn('Items do not have an id');
         }
 
         render(items, columns, this.colSizes, tbody, this.selectable, this.grouped, this, () => {

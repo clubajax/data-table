@@ -108,7 +108,7 @@ function createInput(col, item, dataTable) {
         html: formatter.toHtml(item[col.key]) || '&nbsp;',
         tabindex: '0',
     });
-    dataTable.on(node, 'click', () => {
+    dataTable.on(node, 'focus', () => {
         edit(node);
     });
     dataTable.on(node, 'keyup', (e) => {

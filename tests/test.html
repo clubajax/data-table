@@ -41,7 +41,9 @@
     <h1>Test Data Table</h1>
 
     <div id="mocha"></div>
-    <div id="tests"></div>
+    <div id="tests">
+        <input autofocus/>
+    </div>
 
     <script>
         window.mocha.setup('bdd');
@@ -444,7 +446,7 @@
                         });
                     });
 
-                    it('should add/remove rows', function (done) {
+                    it.only('should add/remove rows', function (done) {
                         const data = copy(getData3());
                         const section = dom('section', {html: dom('label', {html: 'Add/Remove Rows'})}, body);
                         const node = dom('data-table', {

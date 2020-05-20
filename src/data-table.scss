@@ -275,6 +275,7 @@ data-table {
         outline: 0;
         background-color: var(--primary);
         color: white;
+        opacity: 1;
     }
 }
 
@@ -308,6 +309,9 @@ data-table {
             transition: opacity 150ms ease-in;
             button:nth-child(1) {
                 margin-right: 0;
+            }
+            &:focus{
+                opacity: 1;
             }
         }
     }
