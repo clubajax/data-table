@@ -81,6 +81,7 @@ function createInput(col, item, dataTable) {
             if (!input.value && item.added) {
                 return;
             }
+            on.emit(dataTable, 'cell-blur');
             destroy();
         });
 

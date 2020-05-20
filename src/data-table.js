@@ -105,6 +105,9 @@ class DataTable extends BaseComponent {
         this.on('cell-edit', () => {
             dom.attr(this, 'is-editing', true);
         });
+        this.on('cell-blur', () => {
+            this.updateStatus();
+        });
     }
 
     getBlankItem() {

@@ -463,7 +463,7 @@
                         });
                     });
 
-                    it('should add/remove input rows', function (done) {
+                    it.only('should add/remove input rows', function (done) {
                         const section = dom('section', {html: dom('label', {html: 'Add/Remove Rows'})}, body);
                         const items = inputData.items.slice(0, 1);
                         const node = dom('data-table', {
@@ -588,7 +588,7 @@
                         });
                     });
                 
-                    it.only('should be dynamically formatable', function (done) {
+                    it('should be dynamically formatable', function (done) {
                         const data = getDataDyn();
                         const section = dom('section', {html: dom('label', {html: 'Dynamic Format'})}, body);
                         const node = dom('data-table', {
