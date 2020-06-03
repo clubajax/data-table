@@ -7,6 +7,7 @@ const formatters = require('@clubajax/format');
 // helpers
 //
 const SPACE = '&nbsp;';
+const PERF = localStorage.getItem('data-table-perf');
 
 function toHtml(value, formatter) {
     value = typeof value === 'string' ? value.trim() : value;
@@ -151,6 +152,7 @@ function createDropdown(col, item, dataTable) {
 }
 
 function createSearch(col, item, dataTable) {
+    let items;
     const value = item[col.component.key] || item[col.key];
     const input = dom('ui-search', {
         value,
@@ -162,15 +164,18 @@ function createSearch(col, item, dataTable) {
             return;
         }
         item[col.key] = e.value;
-        on.emit(input.parentNode, 'cell-change', { value: item, column: col });
+        const searchItem = items.find(m => m.value === e.value)
+        on.emit(input.parentNode, 'cell-change', { value: item, column: col, searchItem });
     });
     input.on('search', (e) => {
+        
         e.stopPropagation();
         if (!e || e.detail.value == undefined) {
             return;
         }
         col.component.search(e.detail.value).then((data) => {
             input.data = data;
+            items = data;
         });
     });
     return input;

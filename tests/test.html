@@ -34,6 +34,11 @@
         .sized {
             height: 300px;
         }
+
+        .drop-data {
+            width: 500px;
+            height: 500px;
+        }
     </style>
 </head>
 
@@ -42,7 +47,7 @@
 
     <div id="mocha"></div>
     <div id="tests">
-        <input autofocus/>
+        <input autofocus />
     </div>
 
     <script>
@@ -99,16 +104,26 @@
                         key: 'monthlyPercentage',
                         label: 'Monthly Payment',
                         component: {
-                            type: 'ui-input',
-                            format: 'percentage',
+                            type: 'ui-checkbox',
                         },
                     },
                     {
                         key: 'months',
                         label: 'Months',
                         component: {
-                            type: 'ui-input',
-                            format: 'integer',
+                            type: 'ui-dropdown',
+                            options: [
+                                {
+                                    label: 'one',
+                                    value: 1
+                                },{
+                                    label: 'dos',
+                                    value: 2
+                                },{
+                                    label: 'tre',
+                                    value: 3
+                                }
+                            ]
                         },
                     },
                     {
@@ -260,6 +275,24 @@
                         {key: 'bp', label: 'Blood Pressure', unsortable: true},
                     ],
                 },
+                schemaDualSort: {
+                    // sort: 'weight',
+                    // desc: true,
+                    columns: [
+                        {
+                            key: 'name',
+                            label: 'Name / Age',
+                            sortKeys: ['name', 'age'],
+                            callback({item}) {
+                                console.log(' --- ', item);
+                                return `${item.name} / ${item.age}`
+                            }
+                        },
+                        {key: 'height', label: 'Height'},
+                        {key: 'weight', label: 'Weight'},
+                        {key: 'bp', label: 'Blood Pressure', unsortable: true},
+                    ],
+                },
                 items: [
                     {
                         id: 1,
@@ -363,12 +396,13 @@
                 return new Promise((resolve) => {
                     const data = copy(getDropData());
                     const section = dom('section', {html: dom('label', {html: 'Dropdown Mania'})}, body);
+                    console.time('done');
                     renderNode = dom('data-table', {
                         schema: data.schema,
-                        rows: data.rows,
+                        rows: data.rows50,
                     }, section);
                     onDomReady(renderNode, function () {
-                        console.log('done');
+                        console.timeEnd('done');
                         resolve();
                     });
                 })
@@ -397,7 +431,20 @@
             });
 
             describe('data table', function () {
-                describe('new schema + components', function () {
+                describe('performance', function () {
+                    it('shuld generate data', function () {
+                        let data = getDropData().rows;
+                        data = [...data, ...data, ...data, ...data, ...data];
+                        data = data.map(({label, typeId, appliedTypeId, rateTypeId, statusId}, i) => {
+                            return {
+                                id: i + 1,
+                                label, typeId, appliedTypeId, rateTypeId, statusId: 48
+                            }
+                        })
+                        const ta = dom('textarea', {class: 'drop-data'}, body);
+                        console.log('data', data);
+                        ta.textContent = JSON.stringify(data, null, 4)
+                    });
                     it('should render many dropdowns', function (done) {
                         async function render() {
                             await renderDropTable();
@@ -425,10 +472,11 @@
 
                         render();
                     });
+                });
 
+                describe('new schema + components', function () {
                     it('should search', function (done) {
                         const data = getSearchData();
-                        console.log('data', data);
                         const section = dom('section', {html: dom('label', {html: 'Search Columns'})}, body);
                         const node = dom('data-table', {
                             schema: data.schema,
@@ -439,14 +487,14 @@
                             node.on('change', function (e) {
                                 console.log('change', e);
                             });
-                            node.on('remove-row', function (e) {
-                                console.log('remove-row', e);
+                            node.on('cell-change', function (e) {
+                                console.log('cell-change', e);
                             });
                             done();
                         });
                     });
 
-                    it.only('should add/remove rows', function (done) {
+                    it('should add/remove rows', function (done) {
                         const data = copy(getData3());
                         const section = dom('section', {html: dom('label', {html: 'Add/Remove Rows'})}, body);
                         const node = dom('data-table', {
@@ -465,7 +513,7 @@
                         });
                     });
 
-                    it.only('should add/remove input rows', function (done) {
+                    it('should add/remove input rows', function (done) {
                         const section = dom('section', {html: dom('label', {html: 'Add/Remove Rows'})}, body);
                         const items = inputData.items.slice(0, 1);
                         const node = dom('data-table', {
@@ -589,7 +637,7 @@
                             done();
                         });
                     });
-                
+
                     it('should be dynamically formatable', function (done) {
                         const data = getDataDyn();
                         const section = dom('section', {html: dom('label', {html: 'Dynamic Format'})}, body);
@@ -802,6 +850,40 @@
                             done();
                         });
                     });
+
+                    it('should dual-sort (server-based)', function (done) {
+                        const extsort = {
+                            field: ['name', 'age'],
+                            dir: 'desc'
+                        };
+                        const schema = {
+                            columns: data1.schemaDualSort.columns
+                        };
+                        const section = dom('section', {html: dom('label', {html: 'Server Sortable onSort'})}, body);
+                        const node = dom('data-table', {
+                            schema,
+                            rows: data1.items,
+                            extsort,
+                            // serversort: true,
+                        }, section);
+                        const events = [];
+                        onDomReady(node, function () {
+                            node.on('sort', function (e) {
+                                console.log('sort.event', e.detail);
+                                const update = {
+                                    field: e.detail.field,
+                                    dir: e.detail.dir
+                                };
+
+                                setTimeout(() => {
+                                    console.log('update', update);
+                                    node.extsort = update;
+                                }, 400);
+                                events.push(e.detail.value);
+                            });
+                            done();
+                        });
+                    });
                 });
 
                 describe('selecting', function () {
@@ -843,7 +925,24 @@
                         });
                     });
 
-                    // it.only('should handle non-selectable items', function (done) {
+                    it.only('should select first row', function (done) {
+                        const section = dom('section', {html: dom('label', {html: 'Selectable'})}, body);
+                        const node = dom('data-table', {
+                            schema: data1.schema,
+                            rows: data1.items,
+                            selectable: true,
+                            autoselect: true
+                        }, section);
+                        onDomReady(node, function () {
+                            node.on('change', function (e) {
+                                console.log('chn', e);
+                            });
+                            console.log('ready');
+                            done();
+                        });
+                    });
+
+                    // it('should handle non-selectable items', function (done) {
 
                     // currently broken - looking to set unselectable to the css of a row
 

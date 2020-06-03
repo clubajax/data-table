@@ -24,6 +24,11 @@ const Sortable = {
             this.current.dir = sort;
         }
 
+        if (Array.isArray(sort)) {
+            const col = this.schema.columns.find(col => sort.includes(col.key));
+            sort = col.key;
+        }
+
         this.current = {
             sort,
             dir,
@@ -84,7 +89,6 @@ const Sortable = {
             target = e.detail.cell;
 
         if (!target || target.className.indexOf('no-sort') > -1) {
-            console.log('NOTARGET');
             return;
         }
         if (field === this.current.sort) {
@@ -94,6 +98,10 @@ const Sortable = {
         }
         
         if (this.extsort) {
+            const col = this.schema.columns.find(col => field === col.key);
+            if (col.sortKeys) {
+                field = col.sortKeys;
+            }
             this.fire('sort', {
                 field,
                 dir

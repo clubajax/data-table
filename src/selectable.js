@@ -6,7 +6,16 @@ const Selectable = {
 	init () {
 		this.classList.add('selectable');
 		this.on('row-click', this.onRowClick.bind(this));
-		this.on('render-body', this.displaySelection.bind(this));
+        this.on('render-body', this.displaySelection.bind(this));
+        if (this.autoselect) {
+            // need to not fire too early
+            this.onDomReady(() => {
+                setTimeout(() => {
+                    this.selectRow(this.items[0].id);
+                }, 1);    
+            });
+            
+        }
 	},
 
 	onSelected (value) {
@@ -39,14 +48,16 @@ const Selectable = {
 
 		this.displaySelection();
 
-		if (this.currentSelection) {
+        if (this.currentSelection) {
+            console.log('1');
 			const event = {
 				row: this.currentRow,
 				item: item,
 				value: id
 			};
 			this.emit('change', event);
-		} else {
+        } else {
+            console.log('2');
 			this.emit('change');
 		}
 	},

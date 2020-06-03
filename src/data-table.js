@@ -8,8 +8,8 @@ const createComponent = require('./component');
 const formatters = require('@clubajax/format'); 
 const util = require('./util');
 
-const PERF = true;
-let log;
+const perf = localStorage.getItem('data-table-perf');
+const PERF = perf === 'true' || perf === '1';
 
 // TODO
 // widget / function for content (checkbox)
@@ -90,15 +90,18 @@ class DataTable extends BaseComponent {
     }
 
     domReady() {
-        this.perf = this.perf || PERF;
         if (!this.items) {
             this.noDataTimer = setTimeout(() => {
                 this.displayNoData(true);
             }, 1000);
         }
         this.on('cell-change', (e) => {
-            if (!dom.query(this, 'input')) {
-                this.emit(e.value.added ? 'add-row' : 'change', {value: e.value, column: e.column});
+            const event = {value: e.value, column: e.column};
+            if (e.searchItem) {
+                event.searchItem = e.searchItem;
+            }
+            if (!e.value.added || !dom.query(this, 'input')) {
+                this.emit(e.value.added ? 'add-row' : 'change', event);
                 if (e.value.added) {
                     e.value.added = false;
                     const row = dom.query(this, 'tr.added-row');
@@ -107,6 +110,9 @@ class DataTable extends BaseComponent {
                     }
                 }
                 this.updateStatus();
+            }
+            if (e.value.added) {
+                this.emit('change', event);
             }
         });
         this.on('cell-edit', () => {
@@ -208,8 +214,9 @@ class DataTable extends BaseComponent {
             this.columns = columns;
             this.renderHeader(this.columns);
         }
+        PERF && console.time('render.table.body')
         this.renderBody(this.items, this.columns);
-
+        PERF && console.timeEnd('render.table.body')
         this.fire('render', { table: this.table || this, thead: this.thead, tbody: this.tbody });
     }
 
@@ -372,7 +379,7 @@ function renderRow(item, index, columns, colSizes, tbody, selectable, grouped, d
         if (grouped && i === 0) {
             const isExpanded = item.expanded === undefined ? false : item.expanded === false ? 'off' : 'on';
             dom('td', {
-                html: dom('span', {
+                html: item.isSubitem ? null : dom('span', {
                     class: 'expandable-buttons',
                     html: [
                         dom('span', {class: 'fas fa-chevron-right'}),
@@ -416,29 +423,40 @@ function renderRow(item, index, columns, colSizes, tbody, selectable, grouped, d
     });
 
     if (item.expanded) {
-        item.subitems.forEach((subitem) => {
-            renderRow(subitem, index, columns, colSizes, tbody, selectable, grouped, this);
-        })
+        item.subItemIds.forEach((subItemId) => {
+            const subitem = dataTable.getItemById(subItemId);
+            renderRow(subitem, index, columns, colSizes, tbody, selectable, grouped, dataTable);
+        });
     }
 }
 function render(items, columns, colSizes, tbody, selectable, grouped, dataTable, callback) {
     items.forEach((item, index) => {
-        renderRow(item, index, columns, colSizes, tbody, selectable, grouped, dataTable);
+        if (!item.isSubitem) {
+            renderRow(item, index, columns, colSizes, tbody, selectable, grouped, dataTable);
+        }
     });
     callback();
 }
 
 function checkGrouped(items) {
-    let grouped;
-    items.forEach((item) => {
-        if ((item.subitems && item.subitems.length) || item.childIds) {
-            item.expanded = false;
-            grouped = true;
-            item.subitems.forEach((item) => {
+    const grouped = items.some(m => !!m.parentId);
+    if (grouped) {
+        const parentMap = items.reduce((acc, item) => {
+            if (!item.parentId) {
+                item.subItemIds = [];
+                item.expanded = false;
+                acc[item.id] = item;
+            }
+            return acc;
+        }, {});
+
+        items.forEach((item) => {
+            if (item.parentId) {
+                parentMap[item.parentId].subItemIds.push(item.id);
                 item.isSubitem = true;
-            })
-        }
-    });
+            }
+        });
+    }
     return grouped;
 }
 
@@ -494,5 +512,5 @@ function noop() {}
 
 module.exports = BaseComponent.define('data-table', DataTable, {
     props: ['schema', 'rows', 'extsort', 'selected', 'stretch-column', 'max-height', 'borders', 'footer'],
-    bools: ['sortable', 'selectable', 'scrollable', 'clickable', 'perf'],
+    bools: ['sortable', 'selectable', 'scrollable', 'clickable', 'perf', 'autoselect'],
 });

@@ -6,7 +6,7 @@ function getSearchData() {
             {
                 id: 1,
                 label: 'Search',
-                typeId: 38,
+                nameId: 'Mike',
                 rateTypeId: 273,
             },
         ],
@@ -31,7 +31,8 @@ function search(value) {
             return `${item.firstName} ${item.lastName}`;
         }
         function val(item) {
-            return `${item.firstName.toLowerCase()}-${item.lastName.toLowerCase()}`;
+            return item.id;
+            //return `${item.firstName.toLowerCase()}-${item.lastName.toLowerCase()}`;
         }
         value = value.toLowerCase();
         const data = nameData
@@ -63,8 +64,8 @@ const searchSchema = {
             },
         },
         {
-            key: 'typeId',
-            label: 'Type',
+            key: 'nameId',
+            label: 'Name',
             component: {
                 type: 'ui-search',
                 search

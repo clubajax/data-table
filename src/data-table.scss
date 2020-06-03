@@ -13,7 +13,7 @@
 
     --tbl-body-txt: 13px;
     --tbl-body-clr: ##333;
-    --tbl-tr-sel-bk: #4660bf;
+    --tbl-tr-sel-bk: #6a7394;
     --tbl-tr-unsel-bk: #ddd;
     --tbl-tr-sel-txt: white;
     --tbl-tr-hvr: #d6e5f2;
@@ -199,6 +199,19 @@ data-table {
                 display: none;
             }
         }
+        ui-search{
+            ui-input{
+                border: 0;
+            }
+            &:hover{
+                ui-input{
+                    background-color: #ddd;
+                }   
+            }
+            label.ui-label {
+                display: none;
+            }
+        }
     }
     &[borders='bottom'] {
         table {
@@ -255,6 +268,11 @@ data-table {
             text-align: center;
             font-style: italic;
             color: #aaa;
+        }
+        &.scrollable{
+            &:after {
+                margin-top: 55px;
+            }
         }
     }
 }
@@ -356,6 +374,7 @@ data-table {
         }
     }
     td.expandable{
+        border: 0;
         position: relative;
         display: flex;
         flex-direction: column;
