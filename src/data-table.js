@@ -14,9 +14,12 @@ const PERF = perf === 'true' || perf === '1';
 // TODO
 // widget / function for content (checkbox)
 // automatic virtual scroll after 100+ rows
-// optional column widths
+// optional stetchy column for scrollable
 // filter / search
 // github.io demos
+// sticky column:
+// https://codepen.io/SimplyPhy/pen/oEZKZo
+// https://codepen.io/bjonesAlloy/pen/yLeydLL
 
 class DataTable extends BaseComponent {
     constructor() {
@@ -34,6 +37,22 @@ class DataTable extends BaseComponent {
 
     get editable() {
         return this.schema && this.schema.columns.find((col) => col.component && col.component.type === 'edit-rows');
+    }
+
+    onUpdate(item = {}) {
+        const rowItem = this.getItemById(item.id);
+        if (!rowItem) {
+            return;
+        }
+        Object.keys(item).forEach((key) => {
+            if (rowItem[key] !== item[key]) {
+                rowItem[key] = item[key];
+                const formatter = util.getFormatter(this.schema.columns.find(c => c.key === key), rowItem);
+                const td = dom.query(this, `td[data-field="${key}"]`);
+                console.log('td', td);
+                td.innerHTML = formatter.toHtml(rowItem[key]);
+            }
+        });
     }
 
     onRows(rows) {
@@ -371,6 +390,10 @@ function renderRow(item, index, columns, colSizes, tbody, selectable, grouped, d
         itemCss('added-row');
     }
     
+    if (grouped && item.subItemIds) {
+        itemCss('parent-row');
+    }
+
     rowOptions.class = itemCss();
 
     tr = dom('tr', rowOptions, tbody);
@@ -423,7 +446,7 @@ function renderRow(item, index, columns, colSizes, tbody, selectable, grouped, d
     });
 
     if (item.expanded) {
-        item.subItemIds.forEach((subItemId) => {
+        (item.subItemIds || []).forEach((subItemId) => {
             const subitem = dataTable.getItemById(subItemId);
             renderRow(subitem, index, columns, colSizes, tbody, selectable, grouped, dataTable);
         });
@@ -511,6 +534,6 @@ function lazyRender(allItems, columns, tbody, sorts, callback) {
 function noop() {}
 
 module.exports = BaseComponent.define('data-table', DataTable, {
-    props: ['schema', 'rows', 'extsort', 'selected', 'stretch-column', 'max-height', 'borders', 'footer'],
+    props: ['schema', 'rows', 'extsort', 'selected', 'update', 'stretch-column', 'max-height', 'borders', 'footer'],
     bools: ['sortable', 'selectable', 'scrollable', 'clickable', 'perf', 'autoselect'],
 });

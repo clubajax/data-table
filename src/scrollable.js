@@ -127,22 +127,25 @@ const Scrollable = {
 				thw = dom.box(ths[i]).width;
 				tdw = dom.box(tds[i]).width;
 				if (colSizes[i]) {
-
+                    console.log('col size');
 					dom.style(ths[i], { minWidth: colSizes[i], maxWidth: colSizes[i] });
 					dom.style(tds[i], { minWidth: colSizes[i], maxWidth: colSizes[i] });
 
-				} else if(!/fixed\-width/.test(tds[i].className)) {
+                } else if (!/fixed\-width/.test(tds[i].className)) {
+                    console.log('fixed');
 					minWidth = Math.max(thw, tdw);
 					dom.style(ths[i], {minWidth: minWidth});
 					dom.style(tds[i], {minWidth: minWidth});
 				}
 
-				if (stretchy === 'all') {
+                if (stretchy === 'all') {
+                    console.log('stretchy all');
 					dom.style(tds[i], {width: colPercent});
 					dom.style(ths[i], {width: colPercent});
-				} else if (stretchy === i) {
-					dom.style(tds[i], {width: '100%'});
-					dom.style(ths[i], {width: '100%'});
+                } else if (stretchy === i) {
+                    console.log('STRETCHY', tds[i]);
+					dom.style(tds[i], {width: '100%', minWidth: '100%'});
+					dom.style(ths[i], {width: '100%', minWidth: '100%'});
 				}
 			}
 
@@ -179,7 +182,7 @@ function getStretchyColumn (self) {
 	}
 	if (!sCol || sCol === 'last') {
 		return cols.length - 1;
-	}
+    }
 	return cols.findIndex(col => col.key === sCol);
 }
 

@@ -368,9 +368,25 @@ data-table {
 
 // expandable rows
 data-table {
+    tr.parent-row{
+        background-color: #eee;
+        // td:not(.expandable){
+        //     border-bottom: 1px solid #ccc;
+        // }
+        // td{
+        //     border-bottom: 1px solid #ccc;
+        // }
+    }
     td, th{
         &.expandable{
             width: 40px;
+        }
+    }
+    &[borders='bottom'] {
+        table {
+            td.expandable {
+                border: 0;
+            }
         }
     }
     td.expandable{
