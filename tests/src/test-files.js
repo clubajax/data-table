@@ -13,6 +13,8 @@ const files = '<link rel="stylesheet" href="../node_modules/mocha/mocha.css">' +
     '<script src="./src/data-3.js"></script>' +
     '<script src="./src/data-dynamic.js"></script>' +
     '<script src="./src/data-input.js"></script>' +
+    '<script src="./src/data-format.js"></script>' +
+    '<script src="./src/data-general.js"></script>' +
     '<script src="./dist/vendor.js"></script>' +
     '<script src="./dist/output.js"></script>';
     

@@ -368,6 +368,10 @@ data-table {
 
 // expandable rows
 data-table {
+    tr .expanded-row{
+        height: 100px;
+        background-color: cyan;
+    }
     tr.parent-row{
         background-color: #eee;
         // td:not(.expandable){
@@ -382,7 +386,7 @@ data-table {
             width: 40px;
         }
     }
-    &[borders='bottom'] {
+    &[borders="bottom"] {
         table {
             td.expandable {
                 border: 0;

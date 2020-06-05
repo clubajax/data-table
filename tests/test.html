@@ -74,112 +74,6 @@
                 expect = chai.expect,
                 body = dom.byId('tests');
 
-            
-
-
-            
-
-
-            const data1 = {
-                schema: {
-                    sort: 'weight',
-                    desc: true,
-                    columns: [
-                        {key: 'name', label: 'Name'},
-                        {key: 'age', label: 'Age'},
-                        {key: 'height', label: 'Height'},
-                        {key: 'weight', label: 'Weight'},
-                        {key: 'bp', label: 'Blood Pressure', unsortable: true, format: 'percentage'},
-                    ],
-                },
-                schemaDualSort: {
-                    // sort: 'weight',
-                    // desc: true,
-                    columns: [
-                        {
-                            key: 'name',
-                            label: 'Name / Age',
-                            sortKeys: ['name', 'age'],
-                            callback({item}) {
-                                console.log(' --- ', item);
-                                return `${item.name} / ${item.age}`
-                            }
-                        },
-                        {key: 'height', label: 'Height'},
-                        {key: 'weight', label: 'Weight'},
-                        {key: 'bp', label: 'Blood Pressure', unsortable: true},
-                    ],
-                },
-                items: [
-                    {
-                        id: 1,
-                        name: 'Moke',
-                        age: 20,
-                        height: 6.1,
-                        weight: 170,
-                        bp: 120
-                    }, {
-                        id: 2,
-                        name: 'Joke',
-                        age: 10,
-                        height: 4.5,
-                        weight: 90,
-                        bp: 100
-                    }, {
-                        id: 3,
-                        name: 'Doke',
-                        age: 40,
-                        height: 5.9,
-                        weight: 220,
-                        bp: 150
-                    }
-                ]
-            },
-                data4 = {
-                    schema: {
-                        columns: [{
-                            key: 'money',
-                            label: 'USD',
-                            component: {
-                                type: 'ui-input',
-                                format: 'currency'
-                            }
-                        }, {
-                            key: 'percentage',
-                            label: '%',
-                            component: {
-                                type: 'ui-input',
-                                format: 'percentage'
-                            }
-                        }, {
-                            key: 'months',
-                            label: 'Months',
-                            component: {
-                                type: 'ui-input',
-                                format: 'integer'
-                            }
-                        }]
-                    },
-                    items: [
-                        {
-                            id: 1,
-                            money: 6,
-                            percentage: 50,
-                            months: 6
-                        }, {
-                            id: 2,
-                            money: 1.20,
-                            percentage: 5,
-                            months: 1
-                        }, {
-                            id: 3,
-                            money: 0,
-                            percentage: 99,
-                            months: 0
-                        }
-                    ]
-                };
-
             function getData() {
                 const data = getData20();
                 delete data.columns.email;
@@ -235,7 +129,7 @@
             });
 
             describe('data table', function () {
-                describe('performance', function () {
+                describe.skip('performance', function () {
                     it('shuld generate data', function () {
                         let data = getDropData().rows;
                         data = [...data, ...data, ...data, ...data, ...data];
@@ -352,7 +246,6 @@
                         const schema = data.schema;
                         schema.columns[0].component.format = 'accounting';
                         schema.columns[1].component.format = 'accounting';
-                        console.log('sch', schema);
                         const node = dom('data-table', {
                             schema: schema,
                             rows: items,
@@ -363,7 +256,7 @@
                         });
                     });
 
-                    it.only('should add/remove with an actionbutton', function (done) {
+                    it('should add/remove with an actionbutton', function (done) {
                         const section = dom('section', {html: dom('label', {html: 'Add/Remove ActionButton'})}, body);
                         const data = getInputData();
                         const schema = data.schema;
@@ -432,9 +325,10 @@
 
                     it('should be format-able', function (done) {
                         const section = dom('section', {html: dom('label', {html: 'Formatable Inputs'})}, body);
+                        const data = getFormatData();
                         const node = dom('data-table', {
-                            schema: data4.schema,
-                            rows: data4.items,
+                            schema: data.schema,
+                            rows: data.items,
                         }, section);
                         const events = [];
                         onDomReady(node, function () {
@@ -459,12 +353,29 @@
                     });
                 });
 
+                describe('expandable', () => {
+                    it.only('should expand rows', (done) => {
+                        const data = getGeneralData();
+                        const section = dom('section', {html: dom('label', {html: 'Expandable Rows'})}, body);
+                        const node = dom('data-table', {
+                            schema: data.schemaExpandable,
+                            rows: data.items,
+                        }, section);
+                        const events = [];
+                        onDomReady(node, function () {
+                            node.on('change', function (e) {
+                                console.log('change', e);
+                            });
+                            node.on('remove-row', function (e) {
+                                console.log('remove-row', e);
+                            });
+                            done();
+                        });
+                    });
+                });
+
                 describe('grouping', () => {
-
-
-                    // TODO: accordion
-
-                    it('should group inline data', (done) => {
+                    it.only('should group inline data', (done) => {
                         const section = dom('section', {html: dom('label', {html: 'Group Child Data'})}, body);
                         const node = dom('data-table', {
                             schema: groupedSchema,
@@ -525,9 +436,10 @@
                 describe('clickable', function () {
                     it('should have clickable rows', function (done) {
                         const section = dom('section', {html: dom('label', {html: 'Clickable Rows'})}, body);
+                        const data = getGeneralData();
                         const node = dom('data-table', {
-                            schema: data1.schema,
-                            rows: data1.items,
+                            schema: data.schema,
+                            rows: data.items,
                             clickable: true
                         }, section);
                         const events = [];
@@ -592,9 +504,10 @@
                 describe('sorting', function () {
                     it('should sort', function (done) {
                         const section = dom('section', {html: dom('label', {html: 'Sortable 1'})}, body);
+                        const data = getGeneralData();
                         const node = dom('data-table', {
-                            schema: data1.schema,
-                            rows: data1.items,
+                            schema: data.schema,
+                            rows: data.items,
                             footer: dom('div', {html: 'select one of two rows'})
                         }, section);
                         const events = [];
@@ -646,13 +559,11 @@
                             field: 'age',
                             dir: 'desc'
                         };
-                        const schema = {
-                            columns: data1.schema.columns
-                        };
+                        const data = getGeneralData();
                         const section = dom('section', {html: dom('label', {html: 'Server Sortable onSort'})}, body);
                         const node = dom('data-table', {
-                            schema,
-                            rows: data1.items,
+                            schema: data.schema,
+                            rows: data.items,
                             extsort,
                             // serversort: true,
                         }, section);
@@ -679,13 +590,14 @@
                             field: ['name', 'age'],
                             dir: 'desc'
                         };
+                        const data = getGeneralData();
                         const schema = {
-                            columns: data1.schemaDualSort.columns
+                            columns: data.schemaDualSort.columns
                         };
                         const section = dom('section', {html: dom('label', {html: 'Server Sortable onSort'})}, body);
                         const node = dom('data-table', {
                             schema,
-                            rows: data1.items,
+                            rows: data.items,
                             extsort,
                             // serversort: true,
                         }, section);
@@ -711,10 +623,11 @@
 
                 describe('selecting', function () {
                     it('should be selectable', function (done) {
+                        const data = getGeneralData();
                         const section = dom('section', {html: dom('label', {html: 'Selectable'})}, body);
                         const node = dom('data-table', {
-                            schema: data1.schema,
-                            rows: data1.items,
+                            schema: data.schema,
+                            rows: data.items,
                             selectable: true
                         }, section);
                         const events = [];
@@ -749,10 +662,11 @@
                     });
 
                     it('should select first row and update', function (done) {
+                        const data = getGeneralData();
                         const section = dom('section', {html: dom('label', {html: 'Selectable'})}, body);
                         const node = dom('data-table', {
-                            schema: data1.schema,
-                            rows: data1.items,
+                            schema: data.schema,
+                            rows: data.items,
                             selectable: true,
                             autoselect: true
                         }, section);
@@ -803,10 +717,11 @@
 
                 describe('sort and select', function () {
                     it('should sort and select', function (done) {
+                        const data = getGeneralData();
                         const section = dom('section', {html: dom('label', {html: 'Sortable and Selectable'})}, body);
                         const node = dom('data-table', {
-                            schema: data1.schema,
-                            rows: data1.items,
+                            schema: data.schema,
+                            rows: data.items,
                             selectable: true
                         }, section);
                         const events = [];
@@ -828,10 +743,11 @@
                     });
 
                     it('should maintain sort and select after new items', function (done) {
+                        const data = getGeneralData();
                         const section = dom('section', {html: dom('label', {html: 'Sortable and Selectable'})}, body);
                         const node = dom('data-table', {
-                            schema: data1.schema,
-                            rows: data1.items,
+                            schema: data.schema,
+                            rows: data.items,
                             sortable: true,
                             selectable: true
                         }, section);
@@ -866,13 +782,13 @@
 
         dataNoItems = {
             schema: {
-                columns: {
-                    name: 'Name',
-                    age: 'Age',
-                    height: 'Height',
-                    weight: 'Weight',
-                    bp: 'Bloodpressure'
-                }
+                columns: [
+                    {key: 'name', label: 'Name'},
+                    {key: 'age', label: 'Age'},
+                    {key: 'height', label: 'Height'},
+                    {key: 'weight', label: 'Weight'},
+                    {key: 'bp', label: 'Blood Pressure', unsortable: true, format: 'percentage'},
+                ],
             },
             items: []
         };
