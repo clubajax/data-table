@@ -74,193 +74,10 @@
                 expect = chai.expect,
                 body = dom.byId('tests');
 
-            const inputSchema = {
-                columns: [
-                    {
-                        key: 'fromAmount',
-                        label: 'Monthly Billing From',
-                        component: {
-                            type: 'ui-input',
-                            format: 'currency',
-                        },
-                    },
-                    {
-                        key: 'toAccount',
-                        label: 'Monthly Billing To',
-                        component: {
-                            type: 'ui-input',
-                            format: 'currency',
-                        },
-                    },
-                    {
-                        key: 'downpaymentPercentage',
-                        label: 'Down Payment',
-                        component: {
-                            type: 'ui-input',
-                            format: 'percentage',
-                        },
-                    },
-                    {
-                        key: 'monthlyPercentage',
-                        label: 'Monthly Payment',
-                        component: {
-                            type: 'ui-checkbox',
-                        },
-                    },
-                    {
-                        key: 'months',
-                        label: 'Months',
-                        component: {
-                            type: 'ui-dropdown',
-                            options: [
-                                {
-                                    label: 'one',
-                                    value: 1
-                                },{
-                                    label: 'dos',
-                                    value: 2
-                                },{
-                                    label: 'tre',
-                                    value: 3
-                                }
-                            ]
-                        },
-                    },
-                    {
-                        icon: 'edit',
-                        component: {
-                            type: 'edit-rows',
-                        },
-                    },
-                ],
-            };
+            
 
 
-            const inputData = {
-                schema: inputSchema,
-                items: [
-                    {
-                        id: 1,
-                        typeId: 2000,
-                        fromAmount: 5,
-                        toAccount: 1500,
-                        downpaymentPercentage: 60,
-                        monthlyPercentage: 20,
-                        months: 13,
-                        name: 'Monthly Billing To',
-                    },
-                    {
-                        id: 2,
-                        typeId: 2000,
-                        fromAmount: -1500,
-                        toAccount: 3000,
-                        downpaymentPercentage: 40,
-                        monthlyPercentage: 15,
-                        months: 20,
-                        name: 'Monthly Billing To',
-                    },
-                    {
-                        id: 3,
-                        typeId: 2000,
-                        fromAmount: -3000,
-                        toAccount: 6000,
-                        downpaymentPercentage: 30,
-                        monthlyPercentage: 10,
-                        months: 30,
-                        name: 'Monthly Billing To',
-                    },
-                    {
-                        id: 4,
-                        typeId: 2000,
-                        fromAmount: 6000,
-                        toAccount: -10000,
-                        downpaymentPercentage: 15,
-                        monthlyPercentage: 10,
-                        months: 32,
-                        name: 'Monthly Billing To',
-                    },
-                    {
-                        id: 5,
-                        typeId: 2000,
-                        fromAmount: 10000,
-                        toAccount: null,
-                        downpaymentPercentage: 5,
-                        monthlyPercentage: 5,
-                        months: 65,
-                        name: 'Monthly Billing To',
-                    },
-                    {
-                        id: 6,
-                        typeId: 2001,
-                        fromAmount: 50,
-                        toAccount: 3000,
-                        downpaymentPercentage: 30,
-                        monthlyPercentage: 5,
-                        months: 72,
-                        name: 'Monthly Billing From',
-                    },
-                    {
-                        id: 7,
-                        typeId: 2001,
-                        fromAmount: 3000,
-                        toAccount: 6000,
-                        downpaymentPercentage: 15,
-                        monthlyPercentage: 5,
-                        months: 72,
-                        name: 'Monthly Billing From',
-                    },
-                    {
-                        id: 8,
-                        typeId: 2001,
-                        fromAmount: 6000,
-                        toAccount: null,
-                        downpaymentPercentage: 5,
-                        monthlyPercentage: 5,
-                        months: 72,
-                        name: 'Monthly Billing From',
-                    },
-                    {
-                        id: 9,
-                        typeId: 2002,
-                        fromAmount: null,
-                        toAccount: null,
-                        downpaymentPercentage: 20,
-                        monthlyPercentage: 10,
-                        months: null,
-                        name: 'Down Payment',
-                    },
-                    {
-                        id: 10,
-                        typeId: 2003,
-                        fromAmount: null,
-                        toAccount: null,
-                        downpaymentPercentage: 30,
-                        monthlyPercentage: 20,
-                        months: null,
-                        name: 'Monthly Payment',
-                    },
-                    {
-                        id: 11,
-                        typeId: 2004,
-                        fromAmount: 1000,
-                        toAccount: 2000,
-                        downpaymentPercentage: 10,
-                        monthlyPercentage: 10,
-                        months: 12,
-                        name: 'Months',
-                    },
-                    {
-                        id: 12,
-                        typeId: 2004,
-                        fromAmount: 2000,
-                        toAccount: null,
-                        downpaymentPercentage: 15,
-                        monthlyPercentage: 15,
-                        months: 24,
-                        name: 'Months',
-                    },
-                ],
-            };
+            
 
 
             const data1 = {
@@ -272,7 +89,7 @@
                         {key: 'age', label: 'Age'},
                         {key: 'height', label: 'Height'},
                         {key: 'weight', label: 'Weight'},
-                        {key: 'bp', label: 'Blood Pressure', unsortable: true},
+                        {key: 'bp', label: 'Blood Pressure', unsortable: true, format: 'percentage'},
                     ],
                 },
                 schemaDualSort: {
@@ -318,7 +135,6 @@
                     }
                 ]
             },
-                data2 = {},
                 data4 = {
                     schema: {
                         columns: [{
@@ -362,18 +178,6 @@
                             months: 0
                         }
                     ]
-                },
-                dataNoItems = {
-                    schema: {
-                        columns: {
-                            name: 'Name',
-                            age: 'Age',
-                            height: 'Height',
-                            weight: 'Weight',
-                            bp: 'Bloodpressure'
-                        }
-                    },
-                    items: []
                 };
 
             function getData() {
@@ -515,9 +319,10 @@
 
                     it('should add/remove input rows', function (done) {
                         const section = dom('section', {html: dom('label', {html: 'Add/Remove Rows'})}, body);
-                        const items = inputData.items.slice(0, 1);
+                        const data = getInputData();
+                        const items = data.items.slice(0, 1);
                         const node = dom('data-table', {
-                            schema: inputData.schema,
+                            schema: data.schema,
                             rows: items,
                         }, section);
                         const events = [];
@@ -542,8 +347,9 @@
 
                     it('should format data', function (done) {
                         const section = dom('section', {html: dom('label', {html: 'Add/Remove Rows'})}, body);
-                        const items = inputData.items;
-                        const schema = copy(inputData.schema);
+                        const data = getInputData();
+                        const items = data.items;
+                        const schema = data.schema;
                         schema.columns[0].component.format = 'accounting';
                         schema.columns[1].component.format = 'accounting';
                         console.log('sch', schema);
@@ -557,16 +363,17 @@
                         });
                     });
 
-                    it('should add/remove with an actionbutton', function (done) {
+                    it.only('should add/remove with an actionbutton', function (done) {
                         const section = dom('section', {html: dom('label', {html: 'Add/Remove ActionButton'})}, body);
-                        const schema = copy(inputData.schema);
+                        const data = getInputData();
+                        const schema = data.schema;
                         schema.columns[schema.columns.length - 1].component.options = [
                             {value: 'add', label: 'Add Row'},
                             {value: 'edit', label: 'Edit Row'},
                             {value: 'remove', label: 'Remove Row'},
                         ]
                         console.log('schema', schema);
-                        const items = inputData.items.slice(0, 2);
+                        const items = data.items.slice(0, 2);
                         const node = dom('data-table', {
                             schema,
                             rows: items,
@@ -738,6 +545,22 @@
 
                 describe('scrolling', function () {
 
+                    it('should be scrollable with minimal columns', function (done) {
+                        const data = copy(getData());
+                        data.columns = data.columns.slice(0, 4);
+                        console.log('data.columns', data.columns);
+                        const section = dom('section', {class: 'sized', html: 'Scrollable', }, body);
+                        const node = dom('data-table', {
+                            schema: {columns: data.columns},
+                            rows: data.items,
+                            scrollable: true,
+                            'stretch-column': 'company'
+                        }, section);
+                        onDomReady(node, function () {
+                            done();
+                        });
+                    });
+
                     it('should be scrollable', function (done) {
                         const data = getData();
                         const section = dom('section', {class: 'sized', html: 'Scrollable'}, body);
@@ -751,7 +574,7 @@
                         });
                     });
 
-                    it('should be scrollable with maxHeight set', function (done) {
+                    it('should be scrollable with maxHeight set FIXME', function (done) {
                         const data = getData();
                         const section = dom('section', {html: 'Scrollable, Max Height'}, body);
                         const node = dom('data-table', {
@@ -925,7 +748,7 @@
                         });
                     });
 
-                    it.only('should select first row', function (done) {
+                    it('should select first row and update', function (done) {
                         const section = dom('section', {html: dom('label', {html: 'Selectable'})}, body);
                         const node = dom('data-table', {
                             schema: data1.schema,
@@ -938,6 +761,18 @@
                                 console.log('chn', e);
                             });
                             console.log('ready');
+
+                            setTimeout(() => {
+                                // node.selected = null;
+                                node.update = {
+                                    id: 3,
+                                    name: 'Monkey',
+                                    age: 40,
+                                    height: 5.9,
+                                    weight: 220,
+                                    bp: 30
+                                }
+                            }, 500);
                             done();
                         });
                     });
@@ -1014,7 +849,7 @@
                             expect(getSelectedRowId(node)).to.equal('1');
                             expect(getSelectedRowIdIndex(node)).to.equal(1);
 
-                            node.data = data2;
+                            node.data = {};
 
                             expect(selectedColumn(node)).to.equal('height');
                             expect(getSelectedRowId(node)).to.equal('1');
@@ -1028,6 +863,19 @@
             });
 
         });
+
+        dataNoItems = {
+            schema: {
+                columns: {
+                    name: 'Name',
+                    age: 'Age',
+                    height: 'Height',
+                    weight: 'Weight',
+                    bp: 'Bloodpressure'
+                }
+            },
+            items: []
+        };
 
         function selectedColumn(node) {
             const th = dom.query(node, '.desc,.asc');
