@@ -1,38 +1,14 @@
 require('@clubajax/form');
 const dom = require('@clubajax/dom');
 const on = require('@clubajax/on');
-const formatters = require('@clubajax/format');
-
+const {getFormatter, toHtml, fromHtml} = require('./util');
 //
 // helpers
 //
 const SPACE = '&nbsp;';
 const PERF = localStorage.getItem('data-table-perf');
 
-function toHtml(value, formatter) {
-    value = typeof value === 'string' ? value.trim() : value;
-    if (value === null || value === undefined || value === '') {
-        return SPACE;
-    }
-    return formatter.toHtml(value);
-}
 
-function fromHtml(value, formatter) {
-    value = typeof value === 'string' ? value.trim() : value;
-    value = value === SPACE ? '' : value;
-    return formatter.from(value);
-}
-
-function getFormatter(col, item){
-    let fmt = col.format || col.component.format;
-    if (/property:/.test(fmt)) {
-        const prop = (fmt.split(':')[1] || '').trim();
-        if (prop) {
-            fmt = item[prop];
-        } 
-    }
-    return formatters[fmt] || formatters.default;
-}
 
 //
 // components

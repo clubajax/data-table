@@ -7,7 +7,7 @@ const Selectable = {
 		this.classList.add('selectable');
 		this.on('row-click', this.onRowClick.bind(this));
         this.on('render-body', this.displaySelection.bind(this));
-        if (this.autoselect) {
+        if (this.autoselect && this.items && this.items.length) {
             // need to not fire too early
             this.onDomReady(() => {
                 setTimeout(() => {
@@ -49,7 +49,6 @@ const Selectable = {
 		this.displaySelection();
 
         if (this.currentSelection) {
-            console.log('1');
 			const event = {
 				row: this.currentRow,
 				item: item,
@@ -57,7 +56,6 @@ const Selectable = {
 			};
 			this.emit('change', event);
         } else {
-            console.log('2');
 			this.emit('change');
 		}
 	},

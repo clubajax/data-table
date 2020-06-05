@@ -1,4 +1,6 @@
-function bindMethods (object, context) {
+const formatters = require('@clubajax/format');
+
+function bindMethods(object, context) {
 	Object.keys(object).forEach((key) => {
 		if (typeof object[key] === 'function') {
 			// console.log('bind', key);
@@ -38,8 +40,37 @@ function classnames (firstClass) {
     return push;
 }
 
+const SPACE = '&nbsp;';
+function toHtml(value, formatter) {
+    value = typeof value === 'string' ? value.trim() : value;
+    if (value === null || value === undefined || value === '') {
+        return SPACE;
+    }
+    return formatter.toHtml(value);
+}
+
+function fromHtml(value, formatter) {
+    value = typeof value === 'string' ? value.trim() : value;
+    value = value === SPACE ? '' : value;
+    return formatter.from(value);
+}
+
+function getFormatter(col, item){
+    let fmt = col.format || (col.component ? (col.component.format || '') : '');
+    if (/property:/.test(fmt)) {
+        const prop = (fmt.split(':')[1] || '').trim();
+        if (prop) {
+            fmt = item[prop];
+        } 
+    }
+    return formatters[fmt] || formatters.default;
+}
+
 module.exports = {
 	bindMethods,
     isEqual,
-    classnames
+    classnames,
+    getFormatter,
+    fromHtml,
+    toHtml
 };
