@@ -368,9 +368,13 @@ data-table {
 
 // expandable rows
 data-table {
-    tr .expanded-row{
-        height: 100px;
-        background-color: cyan;
+    tr.expanded-row {
+        td{
+            padding: 0;
+        }
+        .expanded-container{
+            min-height: 50px;
+        }
     }
     tr.parent-row{
         background-color: #eee;

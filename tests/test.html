@@ -363,11 +363,8 @@
                         }, section);
                         const events = [];
                         onDomReady(node, function () {
-                            node.on('change', function (e) {
-                                console.log('change', e);
-                            });
-                            node.on('remove-row', function (e) {
-                                console.log('remove-row', e);
+                            node.on('expanded', function (e) {
+                                console.log('expanded', e.detail);
                             });
                             done();
                         });
@@ -375,7 +372,7 @@
                 });
 
                 describe('grouping', () => {
-                    it.only('should group inline data', (done) => {
+                    it('should group inline data', (done) => {
                         const section = dom('section', {html: dom('label', {html: 'Group Child Data'})}, body);
                         const node = dom('data-table', {
                             schema: groupedSchema,

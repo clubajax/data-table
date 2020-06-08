@@ -39,23 +39,34 @@ class DataTable extends BaseComponent {
         return ((this.schema || {}).columns || []).find((col) => col.component && col.component.type === 'edit-rows');
     }
 
-    onUpdate(item = {}) {
+    onUpdate(item) {
+        if (!item) {
+            return;
+        }
         const rowItem = this.getItemById(item.id);
         if (!rowItem) {
             return;
         }
+        let changed = '';
+        let column;
         Object.keys(item).forEach((key) => {
             if (rowItem[key] !== item[key]) {
                 rowItem[key] = item[key];
-                const formatter = util.getFormatter(
-                    this.schema.columns.find((c) => c.key === key),
-                    rowItem,
-                );
-                const td = dom.query(this, `td[data-field="${key}"]`);
-                console.log('td', td);
+                column = this.getColumn(key);
+                const formatter = util.getFormatter(column, rowItem);
+                const td = dom.query(this, `tr[data-row-id="${item.id}"] td[data-field="${key}"]`);
                 td.innerHTML = formatter.toHtml(rowItem[key]);
+                rowItem[key] = formatter.from(td.innerHTML);
+                changed = key;
             }
         });
+        if (changed) {
+            clearTimeout(this.updateTimer);
+            this.updateTimer = setTimeout(() => {
+                const event = {value: rowItem, column};
+                this.emit('change', event);
+            }, 400);
+        }
     }
 
     onRows(rows) {
@@ -341,6 +352,10 @@ class DataTable extends BaseComponent {
         return this.items.find((item) => '' + item.id === '' + id);
     }
 
+    getColumn(key) {
+        return this.schema.columns.find((c) => c.key === key);
+    }
+
     displayNoData(show) {
         if (show) {
             this.classList.add('no-data');
@@ -418,7 +433,6 @@ function renderRow(item, index, columns, colSizes, tbody, selectable, grouped, d
                 isExpanded = item.expanded === undefined ? false : item.expanded === false ? 'off' : 'on';
             }
 
-            console.log('isExpanded', isExpanded);
             dom(
                 'td',
                 {
@@ -484,13 +498,20 @@ function renderRow(item, index, columns, colSizes, tbody, selectable, grouped, d
 
 function renderExpandedRow(item, index, columns, tbody, dataTable) {
     const colAmount = columns.length + 1;
+    const node = dom('div', { class: 'expanded-container' });
     const rowOptions = {
+        class: 'expanded-row',
         html: dom('td', {
             colspan: colAmount,
-            html: dom('div', { class: 'expanded-row' }),
+            html: node,
         }),
     };
     dom('tr', rowOptions, tbody);
+    dataTable.fire('expanded', {
+        node,
+        rowIndex: index,
+        item,
+    });
 }
 
 function render(items, columns, colSizes, tbody, selectable, grouped, dataTable, callback) {
