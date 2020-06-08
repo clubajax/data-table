@@ -14,7 +14,9 @@
         body {
             height: 100%;
         }
-
+        * {
+            box-sizing: border-box;
+        }
         body {
             padding: 20px;
             font-family: sans-serif;
@@ -33,6 +35,7 @@
 
         .sized {
             height: 300px;
+            padding: 30px;
         }
 
         .drop-data {
@@ -354,7 +357,7 @@
                 });
 
                 describe('expandable', () => {
-                    it.only('should expand rows', (done) => {
+                    it('should expand rows', (done) => {
                         const data = getGeneralData();
                         const section = dom('section', {html: dom('label', {html: 'Expandable Rows'})}, body);
                         const node = dom('data-table', {
@@ -372,11 +375,12 @@
                 });
 
                 describe('grouping', () => {
-                    it('should group inline data', (done) => {
+                    it.only('should group inline data', (done) => {
                         const section = dom('section', {html: dom('label', {html: 'Group Child Data'})}, body);
                         const node = dom('data-table', {
                             schema: groupedSchema,
                             rows: groupedItems,
+                            zebra: true
                         }, section);
                         const events = [];
                         onDomReady(node, function () {
@@ -458,12 +462,12 @@
                         const data = copy(getData());
                         data.columns = data.columns.slice(0, 4);
                         console.log('data.columns', data.columns);
-                        const section = dom('section', {class: 'sized', html: 'Scrollable', }, body);
+                        const section = dom('section', {class: 'sized', html: 'Scrollable Stretchy'}, body);
                         const node = dom('data-table', {
                             schema: {columns: data.columns},
                             rows: data.items,
                             scrollable: true,
-                            'stretch-column': 'company'
+                            zebra: true,
                         }, section);
                         onDomReady(node, function () {
                             done();

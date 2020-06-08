@@ -3,8 +3,8 @@ function getData20() {
         columns: [
             { key: 'firstName', label: 'First Name' },
             { key: 'lastName', label: 'Last Name' },
-            { key: 'company', label: 'Company' },
-            { key: 'address1', label: 'Address 1' },
+            { key: 'company', label: 'Company', width: '100%' },
+            { key: 'address1', label: 'Address' },
             { key: 'address2', label: 'Street' },
             { key: 'birthday', label: 'Birthday' },
             { key: 'email', label: 'Email' },

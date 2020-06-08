@@ -241,6 +241,9 @@ class DataTable extends BaseComponent {
 
     render() {
         this.fire('pre-render');
+        if (this.zebra) {
+            this.classList.add('zebra');
+        }
         this.renderTemplate();
         this.renderFooter();
         const columns = this.schema.columns;
@@ -404,7 +407,7 @@ function renderRow(item, index, columns, colSizes, tbody, selectable, grouped, d
     let html,
         css,
         key,
-        rowOptions = { 'data-row-id': item.id },
+        rowOptions = {'data-row-id': item.id},
         tr;
 
     const expandable = dataTable.expandable;
@@ -416,8 +419,16 @@ function renderRow(item, index, columns, colSizes, tbody, selectable, grouped, d
         itemCss('added-row');
     }
 
-    if (grouped && item.subItemIds) {
-        itemCss('parent-row');
+    if (grouped) {
+        // FIXME!!
+        // This assumes there are only parents and children
+        // does not allow for parents without children
+        // maybe if they have an empty array it will work
+        if(item.subItemIds) {
+            itemCss('parent-row');
+        } else {
+            itemCss('child-row');
+        } 
     }
 
     rowOptions.class = itemCss();
@@ -596,6 +607,6 @@ function lazyRender(allItems, columns, tbody, sorts, callback) {
 function noop() {}
 
 module.exports = BaseComponent.define('data-table', DataTable, {
-    props: ['schema', 'rows', 'extsort', 'selected', 'update', 'stretch-column', 'max-height', 'borders', 'footer'],
-    bools: ['sortable', 'selectable', 'scrollable', 'clickable', 'perf', 'autoselect'],
+    props: ['schema', 'rows', 'extsort', 'selected', 'update', 'max-height', 'borders', 'footer'],
+    bools: ['sortable', 'selectable', 'scrollable', 'clickable', 'perf', 'autoselect', 'zebra'],
 });

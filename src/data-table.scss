@@ -1,10 +1,11 @@
 :root {
     --primary: #4660bf;
     --tbl-brd: 0px solid #ccc;
+    --tbl-nodata-clr: #aaa;
 
     --tbl-head-txt: 11px;
     --tbl-head-clr: #919191;
-    --tbl-head-bk: transparent;
+    --tbl-head-bk: #ddd;
     --tbl-head-brd: 2px solid #ccc;
     --tbl-th-hvr: #f4f8fc;
     --tbl-th-brd: 0px solid #aaa;
@@ -13,15 +14,25 @@
 
     --tbl-body-txt: 13px;
     --tbl-body-clr: ##333;
+    --tbl-tr-odd: #eee;
+    --tbl-tr-even: #fff;
     --tbl-tr-sel-bk: #6a7394;
     --tbl-tr-unsel-bk: #ddd;
     --tbl-tr-sel-txt: white;
     --tbl-tr-hvr: #d6e5f2;
+    --tbl-tr-focus: cyan;
     --tbl-tr-added: rgb(236, 246, 255);
 
     --tbl-td-brd: #eee;
     --tbl-td-pad: 15px;
     --tbl-td-focus: #ccc;
+
+    --tbl-cmp-input-hvr: #ddd;
+    --tbl-cmp-input-focus: #e3ffff;
+
+    --tbl-edit-btn-hvr: #eee;
+
+    --tbl-grp-parent: #eee;
 }
 
 data-table {
@@ -126,7 +137,7 @@ data-table {
                     background-color: var(--tbl-tr-unsel-bk);
                 }
                 &:focus {
-                    box-shadow: 0 0 20px cyan inset;
+                    box-shadow: 0 0 20px var(--tbl-tr-focus) inset;
                 }
             }
         }
@@ -152,7 +163,7 @@ data-table {
                     border: 0;
                     outline: 0;
                     &:focus {
-                        background-color: #e3ffff;
+                        background-color: var(--tbl-cmp-input-focus);
                     }
                 }
                 label {
@@ -205,7 +216,7 @@ data-table {
             }
             &:hover{
                 ui-input{
-                    background-color: #ddd;
+                    background-color: var(--tbl-cmp-input-hvr);
                 }   
             }
             label.ui-label {
@@ -267,7 +278,7 @@ data-table {
             margin-top: 15px;
             text-align: center;
             font-style: italic;
-            color: #aaa;
+            color: var(--tbl-nodata-clr);
         }
         &.scrollable{
             &:after {
@@ -277,6 +288,17 @@ data-table {
     }
 }
 
+// zebra striping
+data-table.zebra{
+    tbody{
+        tr:not(.child-row):nth-child(odd){
+            background-color: var(--tbl-tr-odd);
+        }
+        tr:not(.child-row):nth-child(even){
+            background-color: var(--tbl-tr-even);
+        }
+    }
+}
 // style editable buttons
 .tbl-icon-button {
     border: 0;
@@ -287,7 +309,7 @@ data-table {
     padding: 4px 6px;
     // height: 17px;
     &:hover {
-        background-color: #eee;
+        background-color: var(--tbl-edit-btn-hvr);
     }
     &:focus {
         outline: 0;
@@ -377,13 +399,7 @@ data-table {
         }
     }
     tr.parent-row{
-        background-color: #eee;
-        // td:not(.expandable){
-        //     border-bottom: 1px solid #ccc;
-        // }
-        // td{
-        //     border-bottom: 1px solid #ccc;
-        // }
+        background-color: var(--tbl-grp-parent);
     }
     td, th{
         &.expandable{

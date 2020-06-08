@@ -75,16 +75,15 @@ const Scrollable = {
 		const head = this.thead.parentNode;
 		const body = this.tbody.parentNode;
 		const colSizes = this.colSizes;
-		let
-			grid = this,
-			tempNode = dom('div', {style:{position:'absolute', width: '100px', height: '100px', zIndex:-1}}, document.body),
-			gridParent = grid.parentNode,
-			i, minWidth, thw, tdw,
-			ths = head.querySelectorAll('th'),
-			colPercent = (100 / ths.length) + '%',
-			firstTR = body.querySelector('tr'),
-			tds,
-			stretchy = getStretchyColumn(this);
+        let
+            grid = this,
+            tempNode = dom('div', {style: {position: 'absolute', width: '100px', height: '100px', zIndex: -1}}, document.body),
+            gridParent = grid.parentNode,
+            i, minWidth, thw, tdw,
+            ths = head.querySelectorAll('th'),
+            colPercent = (100 / ths.length) + '%',
+            firstTR = body.querySelector('tr'),
+            tds;
 
 		if(!firstTR){
 			return;
@@ -125,23 +124,21 @@ const Scrollable = {
 			// after the next
 			for(i = 0; i < ths.length; i++){
 				thw = dom.box(ths[i]).width;
-				tdw = dom.box(tds[i]).width;
-				if (colSizes[i]) {
-					dom.style(ths[i], { minWidth: colSizes[i], maxWidth: colSizes[i] });
-					dom.style(tds[i], { minWidth: colSizes[i], maxWidth: colSizes[i] });
-
+                tdw = dom.box(tds[i]).width;
+                const cs = colSizes[i];
+                if (cs) {
+                    if (typeof cs === 'string' && /%/.test(colSizes[i])) {
+                        dom.style(ths[i], { width: cs });
+                        dom.style(tds[i], { width: cs });
+                    } else {
+                        dom.style(ths[i], { minWidth: colSizes[i], maxWidth: colSizes[i] });
+                        dom.style(tds[i], { minWidth: colSizes[i], maxWidth: colSizes[i] });
+                    }
+					
                 } else if (!/fixed\-width/.test(tds[i].className)) {
 					minWidth = Math.max(thw, tdw);
-					dom.style(ths[i], {minWidth: minWidth});
-					dom.style(tds[i], {minWidth: minWidth});
-				}
-
-                if (stretchy === 'all') {
-					dom.style(tds[i], {width: colPercent});
-					dom.style(ths[i], {width: colPercent});
-                } else if (stretchy === i) {
-					dom.style(tds[i], {width: '100%', minWidth: '100%'});
-					dom.style(ths[i], {width: '100%', minWidth: '100%'});
+					dom.style(ths[i], {minWidth: minWidth, maxWidth: minWidth});
+                    dom.style(tds[i], {minWidth: minWidth, maxWidth: minWidth});
 				}
 			}
 
@@ -166,21 +163,6 @@ const Scrollable = {
 
 	}
 };
-
-function getStretchyColumn (self) {
-	const sCol = self['stretch-column'];
-	const cols = self.columns;
-	if (sCol === 'all') {
-		return 'all';
-	}
-	if (sCol === 'none') {
-		return -1;
-	}
-	if (!sCol || sCol === 'last') {
-		return cols.length - 1;
-    }
-	return cols.findIndex(col => col.key === sCol);
-}
 
 module.exports = function () {
 	if (!this.hasScrollable) {
