@@ -1,10 +1,13 @@
+// @ts-ignore
 const BaseComponent = require('@clubajax/base-component');
+// @ts-ignore
 const dom = require('@clubajax/dom');
 const sortable = require('./sortable');
 const clickable = require('./clickable');
 const selectable = require('./selectable');
 const scrollable = require('./scrollable');
 const createComponent = require('./component');
+// @ts-ignore
 const formatters = require('@clubajax/format');
 const util = require('./util');
 
@@ -33,6 +36,8 @@ class DataTable extends BaseComponent {
         // this.schema = false;
         // this.rows = false;
         // this.exclude = [];
+
+        this.nodeHolder = dom('div', {class: 'data-table-node-holder'}, document.body);
     }
 
     get editable() {
@@ -63,7 +68,7 @@ class DataTable extends BaseComponent {
         if (changed) {
             clearTimeout(this.updateTimer);
             this.updateTimer = setTimeout(() => {
-                const event = {value: rowItem, column};
+                const event = { value: rowItem, column };
                 this.emit('change', event);
             }, 400);
         }
@@ -129,6 +134,7 @@ class DataTable extends BaseComponent {
                 this.displayNoData(true);
             }, 1000);
         }
+        // @ts-ignore
         this.on('cell-change', (e) => {
             const event = { value: e.value, column: e.column };
             if (e.searchItem) {
@@ -149,9 +155,11 @@ class DataTable extends BaseComponent {
                 this.emit('change', event);
             }
         });
+        // @ts-ignore
         this.on('cell-edit', () => {
             dom.attr(this, 'is-editing', true);
         });
+        // @ts-ignore
         this.on('cell-blur', () => {
             this.updateStatus();
         });
@@ -207,6 +215,7 @@ class DataTable extends BaseComponent {
             }
         };
 
+        // @ts-ignore
         this.on('action-event', (e) => {
             action(e, e.detail.value);
         });
@@ -215,11 +224,15 @@ class DataTable extends BaseComponent {
     }
 
     hasExpandable() {
+        // @ts-ignore
         this.on('click', '[data-expanded]', (e) => {
-            // forst close all rows
-            this.items.forEach((item) => {
-                item.expanded = false;
-            });
+            // @ts-ignore
+            if (!this.expandable === 'multiple') {
+                // first close all rows
+                this.items.forEach((item) => {
+                    item.expanded = false;
+                });
+            }
 
             const td = e.target.closest('td');
             const tr = e.target.closest('tr');
@@ -227,7 +240,28 @@ class DataTable extends BaseComponent {
             const item = this.getItemById(id);
             const state = dom.attr(td, 'data-expanded');
             item.expanded = !(state === 'on');
+            if (!item.expanded) {
+                const container = dom.query(tr.nextElementSibling, '.expanded-container');
+                this.fire('collapse', {
+                    node: container,
+                    rowIndex: tr.rowIndex,
+                    item,
+                }, true);
+                setTimeout(() => {
+                    dom.destroy(container.closest('.expanded-row'));
+                }, 30)
+            }
+            
             this.render();
+
+            const afterTR = dom.query(this, `[data-row-id="${id}"]`)
+            if (item.expanded) {
+                this.fire('expand', {
+                    node: dom.query(afterTR.nextElementSibling, '.expanded-container'),
+                    rowIndex: afterTR.rowIndex,
+                    item,
+                }, true);
+            }
         });
     }
 
@@ -240,7 +274,9 @@ class DataTable extends BaseComponent {
     }
 
     render() {
+        // @ts-ignore
         this.fire('pre-render');
+        // @ts-ignore
         if (this.zebra) {
             this.classList.add('zebra');
         }
@@ -254,6 +290,7 @@ class DataTable extends BaseComponent {
         PERF && console.time('render.table.body');
         this.renderBody(this.items, this.columns);
         PERF && console.timeEnd('render.table.body');
+        // @ts-ignore
         this.fire('render', { table: this.table || this, thead: this.thead, tbody: this.tbody });
     }
 
@@ -293,38 +330,56 @@ class DataTable extends BaseComponent {
                 const label = col.label === undefined ? col : col.label;
 
                 const css = util.classnames(col.css || col.className);
+                css(col.align);
                 css(col.format || (col.component ? col.component.format : ''));
                 if (col.unsortable) {
                     css('unsortable');
                 }
 
                 options = {
-                    html: [
-                        dom('span', { html: label, class: 'ui-label' }),
-                        dom('span', { class: 'sort-up', html: '&uarr;' }),
-                        dom('span', { class: 'sort-dn', html: '&darr;' }),
-                    ],
+                    html: dom('span', {
+                        class: 'th-content',
+                        html: [
+                            dom('span', { html: label, class: 'ui-label' }),
+                            dom('span', {
+                                class: 'sort',
+                                html: [
+                                    dom('span', { class: 'sort-up fas fa-sort-up' }),
+                                    dom('span', { class: 'sort-dn fas fa-sort-down' }),
+                                ],
+                            }),
+                            dom('span', { class: 'filter fas fa-filter' }),
+                        ],
+                    }),
                     class: css(),
                     'data-field': key,
                 };
             }
             if (col.width) {
                 colSizes[i] = col.width;
+                // @ts-ignore
                 options.style = { width: col.width };
             }
             dom('th', options, tr);
         });
         this.colSizes = colSizes;
         this.headHasRendered = true;
+        // @ts-ignore
         this.fire('render-header', { thead: this.thead });
     }
 
     renderBody(items, columns) {
         const tbody = this.tbody;
+
+        dom.queryAll(this, '.expanded-row').forEach((container) => {
+            this.nodeHolder.appendChild(container);
+        });
+
         dom.clean(tbody, true);
 
         if (!items || !items.length) {
             this.bodyHasRendered = true;
+            // @ts-ignore
             this.fire('render-body', { tbody: this.tbody });
             this.displayNoData(true);
             return;
@@ -336,15 +391,18 @@ class DataTable extends BaseComponent {
 
         render(items, columns, this.colSizes, tbody, this.selectable, this.grouped, this, () => {
             this.bodyHasRendered = true;
+            // @ts-ignore
             this.fire('render-body', { tbody: this.tbody });
         });
     }
 
     renderFooter() {
+        // @ts-ignore
         if (this.footer) {
             const colAmount = ((this.schema || {}).columns || []).length;
             this.tfoot = dom(
                 'tfoot',
+                // @ts-ignore
                 { html: dom('tr', { html: dom('td', { html: this.footer, colspan: colAmount }) }) },
                 this.table,
             );
@@ -371,6 +429,7 @@ class DataTable extends BaseComponent {
         if (this.clickable) {
             clickable.call(this);
         }
+        // @ts-ignore
         if (this.extsort || this.schema.sort) {
             clickable.call(this);
             sortable.call(this);
@@ -386,7 +445,9 @@ class DataTable extends BaseComponent {
     }
 
     destroy() {
+        // @ts-ignore
         if (this.addRemoveHandle) {
+            // @ts-ignore
             this.addRemoveHandle.remove();
         }
         clearTimeout(this.legacyTimer);
@@ -397,6 +458,7 @@ class DataTable extends BaseComponent {
         this.thead = null;
         this.tbody = null;
         this.tfoot = null;
+        dom.destroy(this.nodeHolder);
         super.destroy();
     }
 }
@@ -407,7 +469,7 @@ function renderRow(item, index, columns, colSizes, tbody, selectable, grouped, d
     let html,
         css,
         key,
-        rowOptions = {'data-row-id': item.id},
+        rowOptions = { 'data-row-id': item.id },
         tr;
 
     const expandable = dataTable.expandable;
@@ -424,11 +486,11 @@ function renderRow(item, index, columns, colSizes, tbody, selectable, grouped, d
         // This assumes there are only parents and children
         // does not allow for parents without children
         // maybe if they have an empty array it will work
-        if(item.subItemIds) {
+        if (item.subItemIds) {
             itemCss('parent-row');
         } else {
             itemCss('child-row');
-        } 
+        }
     }
 
     rowOptions.class = itemCss();
@@ -465,6 +527,7 @@ function renderRow(item, index, columns, colSizes, tbody, selectable, grouped, d
 
         key = col.key || col.icon || col;
         css = util.classnames(key);
+        css(col.align);
         if (col.component) {
             html = createComponent(col, item, index, dataTable);
             css(col.component.type);
@@ -477,6 +540,7 @@ function renderRow(item, index, columns, colSizes, tbody, selectable, grouped, d
                 if (/property:/.test(fmt)) {
                     const prop = (fmt.split(':')[1] || '').trim();
                     if (prop) {
+                        // @ts-ignore
                         const f = item[prop];
                         html = formatters[fmt].toHtml(html);
                     }
@@ -508,21 +572,20 @@ function renderRow(item, index, columns, colSizes, tbody, selectable, grouped, d
 }
 
 function renderExpandedRow(item, index, columns, tbody, dataTable) {
-    const colAmount = columns.length + 1;
-    const node = dom('div', { class: 'expanded-container' });
+    const node = dom.query(dataTable.nodeHolder, `[data-row-id="ex-${item.id}"]`);
+    if (node) {
+        tbody.appendChild(node);
+        return;
+    }
     const rowOptions = {
         class: 'expanded-row',
+        'data-row-id': `ex-${item.id}`,
         html: dom('td', {
-            colspan: colAmount,
-            html: node,
+            colspan: columns.length + 1,
+            html: dom('div', { class: 'expanded-container' }),
         }),
     };
     dom('tr', rowOptions, tbody);
-    dataTable.fire('expanded', {
-        node,
-        rowIndex: index,
-        item,
-    });
 }
 
 function render(items, columns, colSizes, tbody, selectable, grouped, dataTable, callback) {
@@ -557,6 +620,7 @@ function checkGrouped(items) {
 }
 
 // experimental
+// @ts-ignore
 function lazyRender(allItems, columns, tbody, sorts, callback) {
     let index = 0;
     function renderRows(items) {

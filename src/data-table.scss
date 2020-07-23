@@ -5,7 +5,7 @@
 
     --tbl-head-txt: 11px;
     --tbl-head-clr: #919191;
-    --tbl-head-bk: #ddd;
+    --tbl-head-bk: #d5dee2;
     --tbl-head-brd: 2px solid #ccc;
     --tbl-th-hvr: #f4f8fc;
     --tbl-th-brd: 0px solid #aaa;
@@ -73,56 +73,76 @@ data-table {
             color: var(--tbl-head-clr);
             line-height: 1.2;
 
+            &.center{
+                text-align: center;
+            }
+            &.right,
+            &.percentage,
             &.currency,
-            &.accounting{
+            &.accounting {
                 text-align: right;
             }
             &.unsortable {
                 pointer-events: none;
             }
-            // a bit of cermony... css #ftw.
-            // always keep one item on, and one off,
-            // in order to take space.
-            // use opacity for actual display.
-            //
-            // This keeps things inline, keeps the arrows from
-            // wrapping to the next line, and keeps the cell sizes
-            // from jumping
-            .sort-up {
-                opacity: 0;
-                padding-left: 3px;
-            }
-            .sort-dn {
-                display: none;
-                padding-left: 3px;
+
+            .th-content {
+                white-space: nowrap;
+                display: block;
+
+                .ui-label {
+                    display: inline-block;
+                    vertical-align: text-top;
+                    white-space: normal;
+                }
+                .sort {
+                    vertical-align: text-top;
+                    position: relative;
+                    margin-left: 5px;
+                    width: 9px; // used to line up with td text
+                    display: none;
+                    .sort-up,
+                    .sort-dn {
+                        position: absolute;
+                        top: 1px;
+                        left: 0;
+                        font-size: 15px;
+                    }
+                }
+                .filter {
+                    // TODO: filter not yet enabled
+                    display: none;
+                    position: relative;
+                    top: 2px;
+                    left: 2px;
+                }
             }
             &.desc {
-                .sort-dn {
-                    display: inline;
-                    opacity: 1;
-                }
-                .sort-up {
-                    display: none;
+                .sort {
+                    display: inline-block;
+                    .sort-dn {
+                        opacity: 1;
+                    }
+                    .sort-up {
+                        opacity: 0.4;
+                    }
                 }
             }
             &.asc {
-                .sort-up {
-                    display: inline;
-                    opacity: 1;
-                }
-                .sort-dn {
-                    display: none;
+                .sort {
+                    display: inline-block;
+                    .sort-dn {
+                        opacity: 0.4;
+                    }
+                    .sort-up {
+                        opacity: 1;
+                    }
                 }
             }
 
             &[data-field='edit'] {
                 text-align: center;
                 width: 60px;
-            }
-
-            .ui-label {
-                // inline will break before inline-block, which is the sort icons
-                display: inline;
             }
         }
         tbody {
@@ -177,8 +197,13 @@ data-table {
                     width: 16px;
                 }
             }
+            &.center{
+                text-align: center;
+            }
+            &.right,
+            &.percentage,
             &.currency,
-            &.accounting{
+            &.accounting {
                 text-align: right;
             }
         }
@@ -197,7 +222,7 @@ data-table {
                 }
             }
         }
-        ui-dropdown {
+        ui-dropdown.data-table-field.select {
             width: 100%;
             button.ui-button {
                 width: 100%;
@@ -210,14 +235,14 @@ data-table {
                 display: none;
             }
         }
-        ui-search{
-            ui-input{
+        ui-search.data-table-field.search {
+            ui-input {
                 border: 0;
             }
-            &:hover{
-                ui-input{
+            &:hover {
+                ui-input {
                     background-color: var(--tbl-cmp-input-hvr);
-                }   
+                }
             }
             label.ui-label {
                 display: none;
@@ -275,12 +300,13 @@ data-table {
         &:after {
             content: 'No Data';
             display: block;
-            margin-top: 15px;
+            position: relative;
+            top: 50px;
             text-align: center;
             font-style: italic;
             color: var(--tbl-nodata-clr);
         }
-        &.scrollable{
+        &.scrollable {
             &:after {
                 margin-top: 55px;
             }
@@ -289,12 +315,12 @@ data-table {
 }
 
 // zebra striping
-data-table.zebra{
-    tbody{
-        tr:not(.child-row):nth-child(odd){
+data-table.zebra {
+    tbody {
+        tr:not(.child-row):nth-child(odd) {
             background-color: var(--tbl-tr-odd);
         }
-        tr:not(.child-row):nth-child(even){
+        tr:not(.child-row):nth-child(even) {
             background-color: var(--tbl-tr-even);
         }
     }
@@ -350,7 +376,7 @@ data-table {
             button:nth-child(1) {
                 margin-right: 0;
             }
-            &:focus{
+            &:focus {
                 opacity: 1;
             }
         }
@@ -376,7 +402,7 @@ data-table {
             }
         }
         tr.added-row {
-            .tbl-icon-button{
+            .tbl-icon-button {
                 display: none;
             }
             .tbl-icon-button.cancel {
@@ -391,55 +417,63 @@ data-table {
 // expandable rows
 data-table {
     tr.expanded-row {
-        td{
+        td {
             padding: 0;
         }
-        .expanded-container{
+        .expanded-container {
             min-height: 50px;
         }
     }
-    tr.parent-row{
+    tr.parent-row {
         background-color: var(--tbl-grp-parent);
     }
-    td, th{
-        &.expandable{
+    td,
+    th {
+        &.expandable {
             width: 40px;
         }
     }
-    &[borders="bottom"] {
+    &[borders='bottom'] {
         table {
             td.expandable {
                 border: 0;
             }
         }
     }
-    td.expandable{
+    td.expandable {
         border: 0;
         position: relative;
         display: flex;
         flex-direction: column;
         justify-content: center;
         align-items: center;
-        .expandable-buttons{
+        .expandable-buttons {
             .fa-chevron-right,
-            .fa-chevron-down{
+            .fa-chevron-down {
                 display: none;
             }
         }
-        &[data-expanded="on"]{
-            .fa-chevron-down{
+        &[data-expanded='on'] {
+            .fa-chevron-down {
                 display: block;
             }
         }
-        &[data-expanded="off"]{
-            .fa-chevron-right{
+        &[data-expanded='off'] {
+            .fa-chevron-right {
                 display: block;
             }
         }
 
-        &[data-expanded="on"],
-        &[data-expanded="off"]{
+        &[data-expanded='on'],
+        &[data-expanded='off'] {
             cursor: pointer;
         }
     }
+}
+
+.data-table-node-holder{
+    position: absolute;
+    top: 0;
+    left: -10000;
+    display: none;
 }

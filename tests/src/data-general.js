@@ -5,10 +5,10 @@ function getGeneralData() {
             desc: true,
             columns: [
                 { key: 'name', label: 'Name' },
-                { key: 'age', label: 'Age' },
-                { key: 'height', label: 'Height' },
-                { key: 'weight', label: 'Weight' },
-                { key: 'bp', label: 'Blood Pressure', unsortable: true, format: 'percentage' },
+                { key: 'age', label: 'Age', align: 'center' },
+                { key: 'height', label: 'Height', unsortable: true, align: 'center' },
+                { key: 'weight', label: 'Weight', align: 'center'},
+                { key: 'bp', label: 'Blood Pressure', format: 'percentage' },
             ],
         },
         schemaExpandable: {

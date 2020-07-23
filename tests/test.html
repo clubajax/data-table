@@ -372,10 +372,30 @@
                             done();
                         });
                     });
+                    it.only('should expand first row', (done) => {
+                        const data = getGeneralData();
+                        const section = dom('section', {html: dom('label', {html: 'Expandable Rows'})}, body);
+                        const node = dom('data-table', {
+                            schema: data.schemaExpandable,
+                            rows: data.items,
+                        }, section);
+                        const events = [];
+                        onDomReady(node, function () {
+                            const newData = [...data.items];
+                            newData.unshift(clear(newData[0]));
+                            newData[0].expanded = true;
+                            node.rows = newData;
+
+                            node.on('expanded', function (e) {
+                                console.log('expanded', e.detail);
+                            });
+                            done();
+                        });
+                    });
                 });
 
                 describe('grouping', () => {
-                    it.only('should group inline data', (done) => {
+                    it('should group inline data', (done) => {
                         const section = dom('section', {html: dom('label', {html: 'Group Child Data'})}, body);
                         const node = dom('data-table', {
                             schema: groupedSchema,
@@ -489,12 +509,12 @@
 
                     it('should be scrollable with maxHeight set FIXME', function (done) {
                         const data = getData();
-                        const section = dom('section', {html: 'Scrollable, Max Height'}, body);
+                        const section = dom('section', {html: 'Scrollable, Max Height', style: {height: 400}}, body);
                         const node = dom('data-table', {
                             schema: {columns: data.columns},
-                            rows: data.items,
+                            rows: data.items.slice(0,2),
                             scrollable: true,
-                            'max-height': 200
+                            // 'max-height': 200
                         }, section);
                         onDomReady(node, function () {
                             done();
@@ -809,6 +829,21 @@
                 return null
             }
             on.emit(th, 'click');
+        }
+
+        function clear(item){
+            item = {...item};
+            Object.keys(item).forEach((key) => {
+                const value = item[key];
+                if (typeof value === 'number') {
+                    item[key] = 0;
+                } else if (typeof value === 'boolean') {
+                    item[key] = false;
+                } else {
+                    item[key] = '';
+                }
+            })
+            return item;
         }
 
         function clickRow(node, index) {

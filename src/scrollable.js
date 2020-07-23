@@ -69,7 +69,23 @@ const Scrollable = {
 			}
 			this.scrollHandle = this.on(this.tableBodyWrapper, 'scroll', this.handleScroll.bind(this));
 		}.bind(this));
-	},
+    },
+    
+    handleResize() {
+        const grid = this;
+        const headeHeight = dom.box(this.tableHeader).height;
+        grid.tableBodyWrapper.style.top = (headeHeight - 1) + 'px';
+    },
+
+    connectResize() {
+        window.requestAnimationFrame(function() {
+			if (this.resizeHandle) {
+				this.resizeHandle.remove();
+			}
+			this.resizeHandle = this.on(window, 'resize', this.handleResize.bind(this));
+        }.bind(this));
+        this.handleResize();
+    },
 
 	sizeColumns () {
 		const head = this.thead.parentNode;
@@ -142,9 +158,6 @@ const Scrollable = {
 				}
 			}
 
-			const headeHeight = dom.box(this.tableHeader).height;
-			grid.tableBodyWrapper.style.top = (headeHeight - 1) + 'px';
-
 			// remove temp body styles
 			dom.style(head, {
 				position:'',
@@ -158,7 +171,8 @@ const Scrollable = {
 			gridParent.appendChild(grid);
 			dom.destroy(tempNode);
 
-			this.connectScroll();
+            this.connectScroll();
+            this.connectResize();
 		});
 
 	}

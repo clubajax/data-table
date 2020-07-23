@@ -37,6 +37,7 @@ function createInput(col, item, dataTable) {
             {
                 type: col.component.subtype || 'text',
                 value: fromHtml(node.textContent, formatter),
+                class: 'data-table-field input'
             },
             parent,
         );
@@ -107,6 +108,7 @@ function createDropdown(col, item, dataTable) {
     const input = dom('ui-dropdown', {
         data: () => col.component.options,
         value,
+        class: 'data-table-field select'
     });
     input.on('change', (e) => {
         e.stopPropagation();
@@ -132,7 +134,8 @@ function createSearch(col, item, dataTable) {
     const value = item[col.component.key] || item[col.key];
     const input = dom('ui-search', {
         value,
-        data: []
+        data: [],
+        class: 'data-table-field search'
     });
     input.on('change', (e) => {
         e.stopPropagation();
