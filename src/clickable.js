@@ -23,7 +23,7 @@ const Clickable = {
 		}
 		row = e.target.closest('tr');
 
-		if (!row) {
+		if (!row || row.classList.contains('expanded-row')) {
 			return;
 		}
 

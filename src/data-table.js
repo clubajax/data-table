@@ -58,8 +58,11 @@ class DataTable extends BaseComponent {
             if (rowItem[key] !== item[key]) {
                 rowItem[key] = item[key];
                 column = this.getColumn(key);
-                const formatter = util.getFormatter(column, rowItem);
                 const td = dom.query(this, `tr[data-row-id="${item.id}"] td[data-field="${key}"]`);
+                if (!td) {
+                    return;
+                }
+                const formatter = util.getFormatter(column, rowItem);
                 td.innerHTML = formatter.toHtml(rowItem[key]);
                 rowItem[key] = formatter.from(td.innerHTML);
                 changed = key;
@@ -572,20 +575,31 @@ function renderRow(item, index, columns, colSizes, tbody, selectable, grouped, d
 }
 
 function renderExpandedRow(item, index, columns, tbody, dataTable) {
-    const node = dom.query(dataTable.nodeHolder, `[data-row-id="ex-${item.id}"]`);
+    let node = dom.query(dataTable.nodeHolder, `[data-row-id="ex-${item.id}"]`);
     if (node) {
         tbody.appendChild(node);
         return;
     }
+
+    node = dom('div', {class: 'expanded-container'});
     const rowOptions = {
         class: 'expanded-row',
         'data-row-id': `ex-${item.id}`,
         html: dom('td', {
             colspan: columns.length + 1,
-            html: dom('div', { class: 'expanded-container' }),
+            html: node,
         }),
     };
-    dom('tr', rowOptions, tbody);
+    const tr = dom('tr', rowOptions, tbody);
+
+    if (item.expanded === 'external') {
+        item.expanded = true;
+        dataTable.fire('expand', {
+            node,
+            rowIndex: tr.rowIndex,
+            item,
+        }, true);
+    }
 }
 
 function render(items, columns, colSizes, tbody, selectable, grouped, dataTable, callback) {

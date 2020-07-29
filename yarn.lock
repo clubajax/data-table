@@ -750,10 +750,10 @@
   resolved "https://registry.yarnpkg.com/@clubajax/dom/-/dom-2.8.5.tgz#1d8893d9956f500d5354f248e5e553576cd55a64"
   integrity sha512-uDj2meNcvcrGE/mC1Jfzuq5mDRqydBLseFR9TSlH1529wYFWfqwvAl5lV22uXngIJerBFPcbULwZFDoeqkIU+g==
 
-"@clubajax/form@0.8.50":
-  version "0.8.50"
-  resolved "https://registry.yarnpkg.com/@clubajax/form/-/form-0.8.50.tgz#66d1bd19b09e0dc78830475098d5b8ecf4ffea13"
-  integrity sha512-siGOI5wDe7Q+bZeFfOGPJ4RSycMebE0NBNAMErh8oEB6ekrV/qsn2oNLxCgcTvvHJN9QfkeJ89ojn5aSTYWQ2A==
+"@clubajax/form@0.8.66":
+  version "0.8.66"
+  resolved "https://registry.yarnpkg.com/@clubajax/form/-/form-0.8.66.tgz#60a2ee6bd6e02c8ca064dd3b077d8da92f1fa4bc"
+  integrity sha512-tqRAF60djcnOZGs1RMHStGyzh8VowBCmfdSqB5M/jF2IdNI71WToTvPrlIZUxWfFN8KQU7miurXhNC7eejBPNA==
   dependencies:
     "@clubajax/base-component" "2.4.2"
     "@clubajax/dates" "^2.3.1"

@@ -176,7 +176,7 @@
                 });
 
                 describe('new schema + components', function () {
-                    it('should search', function (done) {
+                    it.only('should search', function (done) {
                         const data = getSearchData();
                         const section = dom('section', {html: dom('label', {html: 'Search Columns'})}, body);
                         const node = dom('data-table', {
@@ -372,7 +372,7 @@
                             done();
                         });
                     });
-                    it.only('should expand first row', (done) => {
+                    it('should expand first row', (done) => {
                         const data = getGeneralData();
                         const section = dom('section', {html: dom('label', {html: 'Expandable Rows'})}, body);
                         const node = dom('data-table', {

@@ -1,14 +1,12 @@
 require('@clubajax/form');
 const dom = require('@clubajax/dom');
 const on = require('@clubajax/on');
-const {getFormatter, toHtml, fromHtml} = require('./util');
+const { getFormatter, toHtml, fromHtml } = require('./util');
 //
 // helpers
 //
 const SPACE = '&nbsp;';
 const PERF = localStorage.getItem('data-table-perf');
-
-
 
 //
 // components
@@ -37,14 +35,15 @@ function createInput(col, item, dataTable) {
             {
                 type: col.component.subtype || 'text',
                 value: fromHtml(node.textContent, formatter),
-                class: 'data-table-field input'
+                class: 'data-table-field input',
+                autoselect: true
             },
             parent,
         );
 
         input.onDomReady(() => {
             // in case all fields are editable, get the first
-            dom.query(input.closest('tr'), 'input').focus();
+            dom.query(input.closest('td'), 'input').focus();
         });
 
         const destroy = () => {
@@ -103,12 +102,120 @@ function createInput(col, item, dataTable) {
     return node;
 }
 
+function createSearch(col, item, dataTable) {
+    let items;
+    let value = item[col.component.key] || item[col.key];
+    let changed;
+
+    function edit(node) {
+        value = item[col.component.key] || item[col.key];
+        const parent = node.parentNode;
+        on.emit(parent, 'cell-edit');
+        let hadWidth = true;
+        if (!parent.style.width) {
+            hadWidth = false;
+            dom.style(parent, 'width', dom.box(parent).w);
+        }
+        parent.removeChild(node);
+        let exitTimer;
+        const input = dom('ui-search', {
+            value,
+            data: [],
+            autoselect: true,
+            class: 'data-table-field search',
+        }, parent);
+
+        input.onDomReady(() => {
+            // in case all fields are editable, get the first
+            dom.query(input.closest('td'), 'input').focus();
+        });
+
+        const destroy = () => {
+            if (window.keepPopupsOpen) {
+                return;
+            }
+            parent.appendChild(node);
+            input.destroy();
+            if (!hadWidth) {
+                dom.style(parent, 'width', '');
+            }
+        };
+
+        input.on('blur', () => {
+            if (!input.value && item.added) {
+                return;
+            }
+            setTimeout(() => {
+                on.emit(dataTable, 'cell-blur');
+                destroy();
+            }, 30);
+            
+        });
+
+        input.on('keyup', (e) => {
+            exitTimer = setTimeout(() => {
+                if (e.key === 'Enter' || e.key === 'Escape') {
+                    destroy();
+                }
+            }, 1);
+        });
+
+        input.on('change', (e) => {
+            e.stopPropagation();
+            changed = true;
+            if (!e || e.value == undefined) {
+                return;
+            }
+            item[col.key] = e.value;
+            
+            const searchItem = items.find((m) => m.value === e.value);
+            node.innerHTML = searchItem.display || searchItem.alias || searchItem.label;
+            on.emit(input.parentNode, 'cell-change', {value: item, column: col, searchItem});
+            destroy();
+        });
+
+        input.on('search', (e) => {
+            e.stopPropagation();
+            if (!e || e.detail.value == undefined) {
+                return;
+            }
+            col.component.search(e.detail.value).then((data) => {
+                input.data = data;
+                items = data;
+            });
+        });
+    }
+    // return input;
+
+    const node = dom('div', {
+        class: 'td-editable',
+        html: value || '&nbsp;',
+        tabindex: '0',
+    });
+    dataTable.on(node, 'focus', () => {
+        edit(node);
+    });
+    dataTable.on(node, 'keyup', (e) => {
+        if (e.key === 'Enter') {
+            edit(node);
+        }
+    });
+
+    if (item.added) {
+        setTimeout(() => {
+            edit(node);
+        }, 1);
+    }
+
+    return node;
+}
+
 function createDropdown(col, item, dataTable) {
     const value = item[col.component.key] || item[col.key];
     const input = dom('ui-dropdown', {
         data: () => col.component.options,
         value,
-        class: 'data-table-field select'
+        class: 'data-table-field select',
     });
     input.on('change', (e) => {
         e.stopPropagation();
@@ -125,37 +232,6 @@ function createDropdown(col, item, dataTable) {
             }, 1);
         }
         on.emit(input.parentNode, 'cell-change', { value: item, column: col });
-    });
-    return input;
-}
-
-function createSearch(col, item, dataTable) {
-    let items;
-    const value = item[col.component.key] || item[col.key];
-    const input = dom('ui-search', {
-        value,
-        data: [],
-        class: 'data-table-field search'
-    });
-    input.on('change', (e) => {
-        e.stopPropagation();
-        if (!e || e.value == undefined) {
-            return;
-        }
-        item[col.key] = e.value;
-        const searchItem = items.find(m => m.value === e.value)
-        on.emit(input.parentNode, 'cell-change', { value: item, column: col, searchItem });
-    });
-    input.on('search', (e) => {
-        
-        e.stopPropagation();
-        if (!e || e.detail.value == undefined) {
-            return;
-        }
-        col.component.search(e.detail.value).then((data) => {
-            input.data = data;
-            items = data;
-        });
     });
     return input;
 }
