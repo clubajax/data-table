@@ -14,9 +14,11 @@
         body {
             height: 100%;
         }
+
         * {
             box-sizing: border-box;
         }
+
         body {
             padding: 20px;
             font-family: sans-serif;
@@ -176,7 +178,42 @@
                 });
 
                 describe('new schema + components', function () {
-                    it.only('should search', function (done) {
+                    it('should use components', function (done) {
+                        const data = copy(getData4());
+                        const section = dom('section', {html: dom('label', {html: 'Use Components'})}, body);
+                        const node = dom('data-table', {
+                            schema: data.schema,
+                            rows: data.items,
+                        }, section);
+                        const events = [];
+                        onDomReady(node, function () {
+                            node.on('change', function (e) {
+                                console.log('change', e);
+                            });
+                            node.on('remove-row', function (e) {
+                                console.log('remove-row', e);
+                            });
+                            done();
+                        });
+                    });
+
+                    it('should display components', function (done) {
+                        const data = getData3();
+                        const section = dom('section', {html: dom('label', {html: 'Display Components'})}, body);
+                        const node = dom('data-table', {
+                            schema: data.schema,
+                            rows: data.items,
+                        }, section);
+                        const events = [];
+                        onDomReady(node, function () {
+                            node.on('change', function (e) {
+                                console.log('change', e);
+                            });
+                            done();
+                        });
+                    });
+
+                    it('should search', function (done) {
                         const data = getSearchData();
                         const section = dom('section', {html: dom('label', {html: 'Search Columns'})}, body);
                         const node = dom('data-table', {
@@ -215,7 +252,7 @@
                     });
 
                     it('should add/remove input rows', function (done) {
-                        const section = dom('section', {html: dom('label', {html: 'Add/Remove Rows'})}, body);
+                        const section = dom('section', {html: dom('label', {html: 'Add/Remove Input Rows'})}, body);
                         const data = getInputData();
                         const items = data.items.slice(0, 1);
                         const node = dom('data-table', {
@@ -238,23 +275,6 @@
                                 items.splice(e.value.index, 1);
                                 node.rows = items;
                             });
-                            done();
-                        });
-                    });
-
-                    it('should format data', function (done) {
-                        const section = dom('section', {html: dom('label', {html: 'Add/Remove Rows'})}, body);
-                        const data = getInputData();
-                        const items = data.items;
-                        const schema = data.schema;
-                        schema.columns[0].component.format = 'accounting';
-                        schema.columns[1].component.format = 'accounting';
-                        const node = dom('data-table', {
-                            schema: schema,
-                            rows: items,
-                        }, section);
-                        const events = [];
-                        onDomReady(node, function () {
                             done();
                         });
                     });
@@ -293,40 +313,27 @@
                             done();
                         });
                     });
+                });
 
-                    it('should format data', function (done) {
-                        const data = getData3();
-                        const section = dom('section', {html: dom('label', {html: 'New Schema + Components'})}, body);
+                describe('formatters', function () {
+                    it('should format component data', function (done) {
+                        const section = dom('section', {html: dom('label', {html: 'Format Component Data'})}, body);
+                        const data = getInputData();
+                        const items = data.items;
+                        const schema = data.schema;
+                        schema.columns[0].component.format = 'accounting';
+                        schema.columns[1].component.format = 'accounting';
                         const node = dom('data-table', {
-                            schema: data.schema,
-                            rows: data.items,
+                            schema: schema,
+                            rows: items,
                         }, section);
                         const events = [];
                         onDomReady(node, function () {
-                            node.on('change', function (e) {
-                                console.log('change', e);
-                            });
                             done();
                         });
-                    });
-
-                    it('should start from empty', function (done) {
-                        const data = getData3();
-                        const section = dom('section', {html: dom('label', {html: 'New Schema + Components'})}, body);
-                        const node = dom('data-table', {
-                            schema: data.schema,
-                            rows: data.items,
-                        }, section);
-                        const events = [];
-                        onDomReady(node, function () {
-                            node.on('change', function (e) {
-                                console.log('change', e);
-                            });
-                            done();
-                        });
-                    });
-
-                    it('should be format-able', function (done) {
+                    }); 
+                    
+                    it('should have formatable inputs', function (done) {
                         const section = dom('section', {html: dom('label', {html: 'Formatable Inputs'})}, body);
                         const data = getFormatData();
                         const node = dom('data-table', {
@@ -350,6 +357,20 @@
                             rows: data.items,
                             sortable: true
                         }, section);
+                        onDomReady(node, function () {
+                            done();
+                        });
+                    });
+
+                    it.only('should format readonly checkboxes', function (done) {
+                        const data = getDataFiltered(['firstName', 'lastName', 'has', 'is']);
+                        console.log('data', data);
+                        const section = dom('section', {html: dom('label', {html: 'Readonly Checkboxes'})}, body);
+                        const node = dom('data-table', {
+                            schema: data.schema,
+                            rows: data.items,
+                        }, section);
+                        const events = [];
                         onDomReady(node, function () {
                             done();
                         });
@@ -415,7 +436,7 @@
                     });
                 });
 
-                describe('rendering', function () {
+                describe('rendering (with components)', function () {
                     it('should render a table', function (done) {
                         const data = getData3();
                         const section = dom('section', {html: dom('label', {html: 'Non Selectable Item'})}, body);
@@ -425,6 +446,44 @@
                         }, section);
                         const events = [];
                         onDomReady(node, function () {
+                            done();
+                        });
+                    });
+
+                    it('should handle "loading"', function (done) {
+                        const data = getGeneralData();
+                        const section = dom('section', {html: dom('label', {html: 'Loading Status'})}, body);
+                        const node = dom('data-table', {
+                            loading: true,
+                            rows: [],
+                            schema: data.schema,
+                        }, section);
+                        onDomReady(node, function () {
+                            node.on('sort', function (e) {
+                                console.log('sort.event', e);
+                            });
+                            setTimeout(() => {
+                                // node.loading = false;
+                            }, 500)
+                            done();
+                        });
+                    });
+
+                    it('should handle "error"', function (done) {
+                        const data = getGeneralData();
+                        const section = dom('section', {html: dom('label', {html: 'Display Error'})}, body);
+                        const node = dom('data-table', {
+                            error: 'Some stuff did not load properly',
+                            rows: [],
+                            schema: data.schema,
+                        }, section);
+                        onDomReady(node, function () {
+                            node.on('sort', function (e) {
+                                console.log('sort.event', e);
+                            });
+                            setTimeout(() => {
+                                node.error = false;
+                            }, 1500)
                             done();
                         });
                     });
@@ -512,7 +571,7 @@
                         const section = dom('section', {html: 'Scrollable, Max Height', style: {height: 400}}, body);
                         const node = dom('data-table', {
                             schema: {columns: data.columns},
-                            rows: data.items.slice(0,2),
+                            rows: data.items.slice(0, 2),
                             scrollable: true,
                             // 'max-height': 200
                         }, section);
@@ -831,7 +890,7 @@
             on.emit(th, 'click');
         }
 
-        function clear(item){
+        function clear(item) {
             item = {...item};
             Object.keys(item).forEach((key) => {
                 const value = item[key];

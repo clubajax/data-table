@@ -1,13 +1,10 @@
-// @ts-ignore
 const BaseComponent = require('@clubajax/base-component');
-// @ts-ignore
 const dom = require('@clubajax/dom');
 const sortable = require('./sortable');
 const clickable = require('./clickable');
 const selectable = require('./selectable');
 const scrollable = require('./scrollable');
 const createComponent = require('./component');
-// @ts-ignore
 const formatters = require('@clubajax/format');
 const util = require('./util');
 
@@ -37,7 +34,7 @@ class DataTable extends BaseComponent {
         // this.rows = false;
         // this.exclude = [];
 
-        this.nodeHolder = dom('div', {class: 'data-table-node-holder'}, document.body);
+        this.nodeHolder = dom('div', { class: 'data-table-node-holder' }, document.body);
     }
 
     get editable() {
@@ -85,6 +82,20 @@ class DataTable extends BaseComponent {
         this.loadData(rows);
     }
 
+    onLoading(loading) {
+        this.displayLoading(loading);
+        if (!loading && !this.error && this.items) {
+            this.loadData(this.items);
+        }
+    }
+
+    onError(error) {
+        this.displayError(error);
+        if (!this.loading && !error && this.items) {
+            this.loadData(this.items);
+        }
+    }
+
     loadData(rows) {
         const items = rows || [];
         this.orgItems = items;
@@ -102,7 +113,7 @@ class DataTable extends BaseComponent {
                 this.hasExpandable();
             }
             this.render();
-            if (!items.length) {
+            if (!items.length && !this.loading && !this.error) {
                 this.displayNoData(true);
                 if (this.editable) {
                     //add default row
@@ -134,30 +145,38 @@ class DataTable extends BaseComponent {
     domReady() {
         if (!this.items) {
             this.noDataTimer = setTimeout(() => {
-                this.displayNoData(true);
+                this.displayNoData(!this.loading && !this.error);
             }, 1000);
         }
-        // @ts-ignore
-        this.on('cell-change', (e) => {
-            const event = { value: e.value, column: e.column };
-            if (e.searchItem) {
-                event.searchItem = e.searchItem;
-            }
-            if (!e.value.added || !dom.query(this, 'input')) {
-                this.emit(e.value.added ? 'add-row' : 'change', event);
-                if (e.value.added) {
-                    e.value.added = false;
-                    const row = dom.query(this, 'tr.added-row');
-                    if (row) {
-                        row.classList.remove('added-row');
-                    }
+        this.on(
+            'cell-change',
+            (e) => {
+                const event = { value: e.value, column: e.column };
+                if (e.searchItem) {
+                    event.searchItem = e.searchItem;
                 }
-                this.updateStatus();
-            }
-            if (e.value.added) {
-                this.emit('change', event);
-            }
-        });
+                if (!e.value.added || !dom.query(this, 'input')) {
+                    const added = e.value.added;
+                    if (added) {
+                        e.value.index = dom.query(this, 'tr.added-row').rowIndex;
+                    }
+                    this.emit(added ? 'add-row' : 'change', event);
+                    if (added) {
+                        e.value.added = false;
+                        const row = dom.query(this, 'tr.added-row');
+                        if (row && e.value.id) {
+                            row.classList.remove('added-row');
+                        }
+                    }
+                    this.updateStatus();
+                }
+                if (e.value.added) {
+                    this.emit('change', event);
+                }
+            },
+            null,
+            null,
+        );
         // @ts-ignore
         this.on('cell-edit', () => {
             dom.attr(this, 'is-editing', true);
@@ -245,25 +264,33 @@ class DataTable extends BaseComponent {
             item.expanded = !(state === 'on');
             if (!item.expanded) {
                 const container = dom.query(tr.nextElementSibling, '.expanded-container');
-                this.fire('collapse', {
-                    node: container,
-                    rowIndex: tr.rowIndex,
-                    item,
-                }, true);
+                this.fire(
+                    'collapse',
+                    {
+                        node: container,
+                        rowIndex: tr.rowIndex,
+                        item,
+                    },
+                    true,
+                );
                 setTimeout(() => {
                     dom.destroy(container.closest('.expanded-row'));
-                }, 30)
+                }, 30);
             }
-            
+
             this.render();
 
-            const afterTR = dom.query(this, `[data-row-id="${id}"]`)
+            const afterTR = dom.query(this, `[data-row-id="${id}"]`);
             if (item.expanded) {
-                this.fire('expand', {
-                    node: dom.query(afterTR.nextElementSibling, '.expanded-container'),
-                    rowIndex: afterTR.rowIndex,
-                    item,
-                }, true);
+                this.fire(
+                    'expand',
+                    {
+                        node: dom.query(afterTR.nextElementSibling, '.expanded-container'),
+                        rowIndex: afterTR.rowIndex,
+                        item,
+                    },
+                    true,
+                );
             }
         });
     }
@@ -381,10 +408,11 @@ class DataTable extends BaseComponent {
         dom.clean(tbody, true);
 
         if (!items || !items.length) {
-            this.bodyHasRendered = true;
-            // @ts-ignore
-            this.fire('render-body', { tbody: this.tbody });
-            this.displayNoData(true);
+            if (!this.loading && !this.error) {
+                this.bodyHasRendered = true;
+                this.fire('render-body', { tbody: this.tbody }, null);
+                this.displayNoData(true);
+            }
             return;
         }
 
@@ -418,6 +446,42 @@ class DataTable extends BaseComponent {
 
     getColumn(key) {
         return this.schema.columns.find((c) => c.key === key);
+    }
+
+    displayLoading(loading) {
+        if (!loading && this.loadNode) {
+            dom.destroy(this.loadNode);
+        }
+        if (loading && !this.loadNode) {
+            this.loadNode = dom(
+                'div',
+                {
+                    class: 'loader',
+                    html: dom('div', { class: 'spinner' }),
+                },
+                this,
+            );
+        }
+    }
+
+    displayError(error) {
+        if (!error && this.errorNode) {
+            dom.destroy(this.errorNode);
+        }
+        if (error && !this.errorNode) {
+            if (this.tbody) {
+                dom.clean(this.tbody, true);
+            }
+            dom.destroy(this.loadNode);
+            this.errorNode = dom(
+                'div',
+                {
+                    class: 'error',
+                    html: dom('div', {class: 'message', html: error.message || error}),
+                },
+                this,
+            );
+        }
     }
 
     displayNoData(show) {
@@ -480,7 +544,8 @@ function renderRow(item, index, columns, colSizes, tbody, selectable, grouped, d
     if (selectable) {
         rowOptions.tabindex = 1;
     }
-    if (item.added) {
+
+    if (item.added || !item.id) {
         itemCss('added-row');
     }
 
@@ -543,7 +608,6 @@ function renderRow(item, index, columns, colSizes, tbody, selectable, grouped, d
                 if (/property:/.test(fmt)) {
                     const prop = (fmt.split(':')[1] || '').trim();
                     if (prop) {
-                        // @ts-ignore
                         const f = item[prop];
                         html = formatters[fmt].toHtml(html);
                     }
@@ -581,7 +645,7 @@ function renderExpandedRow(item, index, columns, tbody, dataTable) {
         return;
     }
 
-    node = dom('div', {class: 'expanded-container'});
+    node = dom('div', { class: 'expanded-container' });
     const rowOptions = {
         class: 'expanded-row',
         'data-row-id': `ex-${item.id}`,
@@ -594,11 +658,15 @@ function renderExpandedRow(item, index, columns, tbody, dataTable) {
 
     if (item.expanded === 'external') {
         item.expanded = true;
-        dataTable.fire('expand', {
-            node,
-            rowIndex: tr.rowIndex,
-            item,
-        }, true);
+        dataTable.fire(
+            'expand',
+            {
+                node,
+                rowIndex: tr.rowIndex,
+                item,
+            },
+            true,
+        );
     }
 }
 
@@ -685,6 +753,6 @@ function lazyRender(allItems, columns, tbody, sorts, callback) {
 function noop() {}
 
 module.exports = BaseComponent.define('data-table', DataTable, {
-    props: ['schema', 'rows', 'extsort', 'selected', 'update', 'max-height', 'borders', 'footer'],
-    bools: ['sortable', 'selectable', 'scrollable', 'clickable', 'perf', 'autoselect', 'zebra'],
+    props: ['schema', 'rows', 'extsort', 'selected', 'update', 'max-height', 'borders', 'footer', 'error'],
+    bools: ['sortable', 'selectable', 'scrollable', 'clickable', 'perf', 'autoselect', 'zebra', 'loading'],
 });

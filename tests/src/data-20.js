@@ -1,3 +1,16 @@
+function getDataFiltered(names) {
+    const data = getData20();
+    const columns = names.map((name) => {
+        return data.columns.find(c => c.key === name);
+    })
+    return {
+        items: data.items,
+        schema: {
+            columns
+        }
+    }
+}
+
 function getData20() {
     return {
         columns: [
@@ -13,6 +26,8 @@ function getData20() {
             { key: 'zipcode', label: 'Zipcode' },
             { key: 'phone', label: 'Phone' },
             { key: 'ssn', label: 'SSN', width: 150 },
+            { key: 'has', label: 'Has' },
+            { key: 'is', label: 'Is' },
         ],
         items: [
             {
@@ -29,6 +44,8 @@ function getData20() {
                 zipcode: '01444',
                 phone: '363-761-0337',
                 ssn: '103-23-0666',
+                is: true,
+                has: false
             },
             {
                 id: '21781',
@@ -44,6 +61,8 @@ function getData20() {
                 zipcode: '71148',
                 phone: '042-677-5367',
                 ssn: '256-36-1832',
+                is: false,
+                has: true
             },
             {
                 id: '43112',
@@ -59,6 +78,8 @@ function getData20() {
                 zipcode: '72734',
                 phone: '468-655-8613',
                 ssn: '643-88-3534',
+                is: 'Y',
+                has: 'N'
             },
             {
                 id: '04403',
@@ -74,6 +95,8 @@ function getData20() {
                 zipcode: '61405',
                 phone: '418-068-1067',
                 ssn: '465-65-2021',
+                is: 'n',
+                has: 'y'
             },
             {
                 id: '51424',
@@ -89,6 +112,8 @@ function getData20() {
                 zipcode: '84305',
                 phone: '174-156-3314',
                 ssn: '441-40-1301',
+                is: null,
+                has: false
             },
             {
                 id: '44260',
@@ -104,6 +129,8 @@ function getData20() {
                 zipcode: '71574',
                 phone: '657-858-0164',
                 ssn: '468-85-8443',
+                is: true,
+                has: false
             },
             {
                 id: '07873',
@@ -119,6 +146,8 @@ function getData20() {
                 zipcode: '55301',
                 phone: '054-404-1056',
                 ssn: '327-51-8222',
+                is: true,
+                has: false
             },
             {
                 id: '88521',
@@ -134,6 +163,8 @@ function getData20() {
                 zipcode: '14328',
                 phone: '516-674-2733',
                 ssn: '145-50-8586',
+                is: true,
+                has: false
             },
             {
                 id: '33500',
@@ -149,6 +180,8 @@ function getData20() {
                 zipcode: '61252',
                 phone: '832-816-5458',
                 ssn: '101-13-6571',
+                is: true,
+                has: false
             },
             {
                 id: '10778',
@@ -164,6 +197,8 @@ function getData20() {
                 zipcode: '07257',
                 phone: '645-852-1152',
                 ssn: '660-72-5004',
+                is: true,
+                has: false
             },
             {
                 id: '35755',
@@ -179,6 +214,8 @@ function getData20() {
                 zipcode: '35511',
                 phone: '085-411-2053',
                 ssn: '404-86-1848',
+                is: true,
+                has: false
             },
             {
                 id: '75651',
@@ -194,6 +231,8 @@ function getData20() {
                 zipcode: '67603',
                 phone: '045-535-6048',
                 ssn: '676-64-3782',
+                is: true,
+                has: false
             },
             {
                 id: '58548',

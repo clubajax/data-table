@@ -7,7 +7,7 @@ const { getFormatter, toHtml, fromHtml } = require('./util');
 //
 const SPACE = '&nbsp;';
 const PERF = localStorage.getItem('data-table-perf');
-
+let focusTimeout;
 //
 // components
 //
@@ -18,7 +18,7 @@ function createLink(col, item) {
     });
 }
 
-function createInput(col, item, dataTable) {
+function create(col, item, dataTable, type, compType) {
     const formatter = getFormatter(col, item);
     function edit(node) {
         const parent = node.parentNode;
@@ -31,24 +31,33 @@ function createInput(col, item, dataTable) {
         parent.removeChild(node);
         let exitTimer;
         const input = dom(
-            'ui-input',
+            compType,
             {
                 type: col.component.subtype || 'text',
                 value: fromHtml(node.textContent, formatter),
-                class: 'data-table-field input',
-                autoselect: true
+                class: `data-table-field input ${type}`,
+                autoselect: true,
             },
             parent,
         );
 
         input.onDomReady(() => {
             // in case all fields are editable, get the first
-            dom.query(input.closest('td'), 'input').focus();
+            clearTimeout(focusTimeout);
+            focusTimeout = setTimeout(() => {
+                dom.query(input.closest('tr'), 'input').focus();
+            });
         });
 
         const destroy = () => {
+            if (window.keepPopupsOpen) {
+                return;
+            }
+            item[col.key] = input.value;
+            node.innerHTML = input.value;
             parent.appendChild(node);
             input.destroy();
+            on.emit(node, 'cell-change', { value: item });
             if (!hadWidth) {
                 dom.style(parent, 'width', '');
             }
@@ -102,10 +111,17 @@ function createInput(col, item, dataTable) {
     return node;
 }
 
+function createInput(col, item, dataTable) {
+    return create(col, item, dataTable, 'input', 'ui-input');
+}
+
+function createDate(col, item, dataTable) {
+    return create(col, item, dataTable, 'date', 'date-input');
+}
+
 function createSearch(col, item, dataTable) {
     let items;
     let value = item[col.component.key] || item[col.key];
-    let changed;
 
     function edit(node) {
         value = item[col.component.key] || item[col.key];
@@ -118,16 +134,23 @@ function createSearch(col, item, dataTable) {
         }
         parent.removeChild(node);
         let exitTimer;
-        const input = dom('ui-search', {
-            value,
-            data: [],
-            autoselect: true,
-            class: 'data-table-field search',
-        }, parent);
+        const input = dom(
+            'ui-search',
+            {
+                value,
+                data: [],
+                autoselect: true,
+                class: 'data-table-field search',
+            },
+            parent,
+        );
 
         input.onDomReady(() => {
             // in case all fields are editable, get the first
-            dom.query(input.closest('td'), 'input').focus();
+            clearTimeout(focusTimeout);
+            focusTimeout = setTimeout(() => {
+                dom.query(input.closest('tr'), 'input').focus();
+            });
         });
 
         const destroy = () => {
@@ -149,7 +172,6 @@ function createSearch(col, item, dataTable) {
                 on.emit(dataTable, 'cell-blur');
                 destroy();
             }, 30);
-            
         });
 
         input.on('keyup', (e) => {
@@ -167,10 +189,10 @@ function createSearch(col, item, dataTable) {
                 return;
             }
             item[col.key] = e.value;
-            
+
             const searchItem = items.find((m) => m.value === e.value);
             node.innerHTML = searchItem.display || searchItem.alias || searchItem.label;
-            on.emit(input.parentNode, 'cell-change', {value: item, column: col, searchItem});
+            on.emit(input.parentNode, 'cell-change', { value: item, column: col, searchItem });
             destroy();
         });
 
@@ -185,7 +207,6 @@ function createSearch(col, item, dataTable) {
             });
         });
     }
-    // return input;
 
     const node = dom('div', {
         class: 'td-editable',
@@ -317,6 +338,8 @@ function createComponent(col, item, index, dataTable) {
             return createDropdown(col, item, dataTable);
         case 'ui-search':
             return createSearch(col, item, dataTable);
+        case 'date-input':
+            return createDate(col, item, dataTable);
         case 'ui-checkbox':
             return createCheckbox(col, item, dataTable);
         case 'edit-rows':

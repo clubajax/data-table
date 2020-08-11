@@ -1,5 +1,6 @@
 :root {
-    --primary: #4660bf;
+    --primary: #3597d2;
+    --error: #962025;
     --tbl-brd: 0px solid #ccc;
     --tbl-nodata-clr: #aaa;
 
@@ -74,7 +75,7 @@ data-table {
             color: var(--tbl-head-clr);
             line-height: 1.2;
 
-            &.center{
+            &.center {
                 text-align: center;
             }
             &.right,
@@ -192,6 +193,16 @@ data-table {
                     display: none;
                 }
             }
+            date-input {
+                width: 100px;
+                button.icon-button {
+                    display: none;
+                }
+                .date-input-wrapper input {
+                    width: 100%;
+                    font-size: var(--tbl-body-txt);
+                }
+            }
             &.ui-checkbox {
                 text-align: center;
                 ui-checkbox {
@@ -199,7 +210,7 @@ data-table {
                     width: 16px;
                 }
             }
-            &.center{
+            &.center {
                 text-align: center;
             }
             &.right,
@@ -473,9 +484,57 @@ data-table {
     }
 }
 
-.data-table-node-holder{
+.data-table-node-holder {
     position: absolute;
     top: 0;
     left: -10000;
     display: none;
+}
+
+// loading spinner
+data-table {
+    .loader {
+        position: absolute;
+        top: 90px;
+        left: calc(50% - 25px);
+        width: 0;
+        .spinner {
+            position: relative;
+            width: 50px;
+            height: 50px;
+            animation-name: data-table-loader-spin;
+            animation-duration: 800ms;
+            animation-iteration-count: infinite;
+            animation-timing-function: linear;
+            border-radius: 50%;
+            border: 2px solid var(--primary);
+            border-right-color: transparent;
+            border-bottom: 0;
+        }
+    }
+}
+
+@keyframes data-table-loader-spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+// loading spinner
+data-table {
+    .error {
+        position: absolute;
+        top: 90px;
+        width: 100%;
+        text-align: center;
+        .message{
+            display: inline-block;
+            background-color: var(--error);
+            color: white;
+            padding: 15px;
+        }
+    }
 }

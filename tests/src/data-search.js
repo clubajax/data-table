@@ -5,7 +5,7 @@ function getSearchData() {
         rows: [
             {
                 id: 1,
-                label: 'Search',
+                label: 'Some Text',
                 nameId: 'Mike',
                 rateTypeId: 273,
             },
@@ -58,7 +58,7 @@ const searchSchema = {
     columns: [
         {
             key: 'label',
-            label: 'Name',
+            label: 'Data',
             component: {
                 type: 'ui-input',
             },
