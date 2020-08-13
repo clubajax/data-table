@@ -53,8 +53,8 @@ function create(col, item, dataTable, type, compType) {
             if (window.keepPopupsOpen) {
                 return;
             }
-            item[col.key] = input.value;
-            node.innerHTML = input.value;
+            item[col.key] = formatter.from(input.value);
+            node.innerHTML = formatter.toHtml(input.value);
             parent.appendChild(node);
             input.destroy();
             on.emit(node, 'cell-change', { value: item });
@@ -82,11 +82,6 @@ function create(col, item, dataTable, type, compType) {
         // if added and input is empty, don't close on blur
         input.on('change', (e) => {
             e.stopPropagation();
-            node.innerHTML = toHtml(e.value, formatter);
-            destroy();
-            item[col.key] = fromHtml(e.value, formatter);
-            on.emit(node, 'cell-change', { value: item });
-            clearTimeout(exitTimer);
         });
     }
     const node = dom('div', {

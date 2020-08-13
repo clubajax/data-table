@@ -178,9 +178,9 @@
                 });
 
                 describe('new schema + components', function () {
-                    it('should use components', function (done) {
+                    it.only('should use components and date', function (done) {
                         const data = copy(getData4());
-                        const section = dom('section', {html: dom('label', {html: 'Use Components'})}, body);
+                        const section = dom('section', {html: dom('label', {html: 'Use All Components (Date)'})}, body);
                         const node = dom('data-table', {
                             schema: data.schema,
                             rows: data.items,
@@ -316,7 +316,7 @@
                 });
 
                 describe('formatters', function () {
-                    it('should format component data', function (done) {
+                    it.only('should format component data', function (done) {
                         const section = dom('section', {html: dom('label', {html: 'Format Component Data'})}, body);
                         const data = getInputData();
                         const items = data.items;
@@ -362,7 +362,7 @@
                         });
                     });
 
-                    it.only('should format readonly checkboxes', function (done) {
+                    it('should format readonly checkboxes', function (done) {
                         const data = getDataFiltered(['firstName', 'lastName', 'has', 'is']);
                         console.log('data', data);
                         const section = dom('section', {html: dom('label', {html: 'Readonly Checkboxes'})}, body);
