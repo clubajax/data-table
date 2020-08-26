@@ -158,7 +158,7 @@ class DataTable extends BaseComponent {
                 if (!e.value.added || !dom.query(this, 'input')) {
                     const added = e.value.added;
                     if (added) {
-                        e.value.index = dom.query(this, 'tr.added-row').rowIndex;
+                        e.value.index = dom.query(this, 'tr.added-row').rowIndex - 1;
                     }
                     this.emit(added ? 'add-row' : 'change', event);
                     if (added) {
@@ -207,7 +207,8 @@ class DataTable extends BaseComponent {
     }
 
     removeRow(index) {
-        this.emit('remove-row', { value: { index } });
+        const item = this.items[index];
+        this.emit('remove-row', { value: { index, id: item.id, item } });
     }
 
     cancelEdit() {
@@ -306,7 +307,6 @@ class DataTable extends BaseComponent {
     render() {
         // @ts-ignore
         this.fire('pre-render');
-        // @ts-ignore
         if (this.zebra) {
             this.classList.add('zebra');
         }
@@ -422,8 +422,7 @@ class DataTable extends BaseComponent {
 
         render(items, columns, this.colSizes, tbody, this.selectable, this.grouped, this, () => {
             this.bodyHasRendered = true;
-            // @ts-ignore
-            this.fire('render-body', { tbody: this.tbody });
+            this.fire('render-body', { tbody: this.tbody }, false);
         });
     }
 
