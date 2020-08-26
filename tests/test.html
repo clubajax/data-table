@@ -178,7 +178,7 @@
                 });
 
                 describe('new schema + components', function () {
-                    it.only('should use components and date', function (done) {
+                    it('should use components and date', function (done) {
                         const data = copy(getData4());
                         const section = dom('section', {html: dom('label', {html: 'Use All Components (Date)'})}, body);
                         const node = dom('data-table', {
@@ -251,13 +251,41 @@
                         });
                     });
 
-                    it('should add/remove input rows', function (done) {
-                        const section = dom('section', {html: dom('label', {html: 'Add/Remove Input Rows'})}, body);
-                        const data = getInputData();
-                        const items = data.items.slice(0, 1);
+                    it('should add but not remove input rows', function (done) {
+                        const section = dom('section', {html: dom('label', {html: 'Add, not remove Input Rows'})}, body);
+                        const data = getInputData({noRemove: true});
+                        const items = data.items.slice(0, 4);
                         const node = dom('data-table', {
                             schema: data.schema,
                             rows: items,
+                        }, section);
+                        const events = [];
+                        onDomReady(node, function () {
+                            node.on('change', function (e) {
+                                console.log('change', e.value);
+                            });
+                            node.on('add-row', function (e) {
+                                console.log('change', e);
+                                delete e.value.added;
+                                items.splice(e.value.index, 0, e.value);
+                                node.rows = items;
+                            });
+                            node.on('remove-row', function (e) {
+                                console.log('remove-row', e);
+                                items.splice(e.value.index, 1);
+                                node.rows = items;
+                            });
+                            done();
+                        });
+                    });
+
+                    it('should add but not edit input rows', function (done) {
+                        const section = dom('section', {html: dom('label', {html: 'Add, not Edit Input Rows'})}, body);
+                        const data = getInputData({noEdit: true});
+                        const items = data.items.slice(0, 4);
+                        const node = dom('data-table', {
+                            schema: data.schema,
+                            rows: items
                         }, section);
                         const events = [];
                         onDomReady(node, function () {
@@ -316,7 +344,7 @@
                 });
 
                 describe('formatters', function () {
-                    it.only('should format component data', function (done) {
+                    it('should format component data', function (done) {
                         const section = dom('section', {html: dom('label', {html: 'Format Component Data'})}, body);
                         const data = getInputData();
                         const items = data.items;
@@ -416,7 +444,7 @@
                 });
 
                 describe('grouping', () => {
-                    it('should group inline data', (done) => {
+                    it.only('should group inline data', (done) => {
                         const section = dom('section', {html: dom('label', {html: 'Group Child Data'})}, body);
                         const node = dom('data-table', {
                             schema: groupedSchema,

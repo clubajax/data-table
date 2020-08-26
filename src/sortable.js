@@ -14,6 +14,10 @@ const Sortable = {
         // does not fire on init - only on updates
         // data-table.onExtsort fires on init, but use sortable.init instead
         this.setSort(sort.field, sort.dir);
+        clearTimeout(this.clickHandleTimer);
+        if (this.clickHandle) {
+            this.clickHandle.resume();
+        }
     },
 
 
@@ -109,6 +113,10 @@ const Sortable = {
         } else {
             this.setSort(field, dir);
         }
+        this.clickHandle.pause();
+        this.clickHandleTimer = setTimeout(() => {
+            this.clickHandle.resume();
+        }, 1000);
     },
 };
 

@@ -1,7 +1,7 @@
 require('@clubajax/form');
 const dom = require('@clubajax/dom');
 const on = require('@clubajax/on');
-const { getFormatter, toHtml, fromHtml } = require('./util');
+const { getFormatter, position, fromHtml, uid } = require('./util');
 //
 // helpers
 //
@@ -46,7 +46,7 @@ function create(col, item, dataTable, type, compType) {
             clearTimeout(focusTimeout);
             focusTimeout = setTimeout(() => {
                 dom.query(input.closest('tr'), 'input').focus();
-            });
+            }, 1);
         });
 
         const destroy = () => {
@@ -157,16 +157,19 @@ function createSearch(col, item, dataTable) {
             if (!hadWidth) {
                 dom.style(parent, 'width', '');
             }
+            on.emit(parent.parentNode, 'cell-change', { value: item, column: col });
         };
 
         input.on('blur', () => {
             if (!input.value && item.added) {
                 return;
             }
-            setTimeout(() => {
-                on.emit(dataTable, 'cell-blur');
-                destroy();
-            }, 30);
+            on.emit(dataTable, 'cell-blur');
+            destroy();
+            // TODO:
+            // There is no focus after selecting an item,
+            // so it selects the same input again
+            // SOLUTION: after select, move to nextSibilingElement
         });
 
         input.on('keyup', (e) => {
@@ -179,7 +182,6 @@ function createSearch(col, item, dataTable) {
 
         input.on('change', (e) => {
             e.stopPropagation();
-            changed = true;
             if (!e || e.value == undefined) {
                 return;
             }
@@ -187,7 +189,7 @@ function createSearch(col, item, dataTable) {
 
             const searchItem = items.find((m) => m.value === e.value);
             node.innerHTML = searchItem.display || searchItem.alias || searchItem.label;
-            on.emit(input.parentNode, 'cell-change', { value: item, column: col, searchItem });
+            // on.emit(input.parentNode, 'cell-change', { value: item, column: col, searchItem });
             destroy();
         });
 
@@ -267,28 +269,88 @@ function createCheckbox(col, item, dataTable) {
     return input;
 }
 
+function createTags(col, item, dataTable) {
+    // TODO
+    // need to expose form library
+    // convert to webpack?
+    // so I can get to:
+    // close on escape and clickoff
+
+    function edit() {
+        const value = item[col.component.key] || item[col.key];
+        const tags = dom(
+            'ui-minitags',
+            {
+                class: 'data-table-minitags',
+                data: col.component.options,
+                readonly: col.component.readonly,
+                value,
+            },
+            container,
+        );
+
+        const destroy = () => {
+            item[col.key] = tags.value;
+            tags.destroy();
+            on.emit(container, 'cell-change', { value: item });
+        };
+
+        tags.on('change', (e) => {
+            e.stopPropagation();
+        });
+
+        tags.on('popup-close', () => {
+            destroy();
+        });
+
+        if (col.component.readonly) {
+            const h = tags.on('clickoff', () => {
+                destroy();
+                h.remove();
+            });
+            h.resume();
+        }
+    }
+
+    const button = dom('button', {
+        class: 'fas fa-tags',
+    });
+    const container = dom('div', {
+        class: 'minitag-button-container',
+        html: button,
+    });
+
+    dataTable.on(button, 'click', edit);
+
+    return container;
+}
+
 function createEditRows(col, item, index) {
     // https://mdbootstrap.com/docs/jquery/tables/editable/#!
     // https://codepen.io/mikewax/pen/YWxwPw
     return dom('span', {
         class: 'add-remove',
         html: [
-            dom('button', {
-                onClick() {
-                    on.fire(this, 'action-event', { value: 'add' }, true);
-                },
-                class: 'tbl-icon-button add',
-                type: 'button',
-                html: dom('span', { class: 'fas fa-plus' }),
-            }),
-            dom('button', {
-                onClick() {
-                    on.fire(this, 'action-event', { value: 'remove' }, true);
-                },
-                class: 'tbl-icon-button remove',
-                type: 'button',
-                html: dom('span', { class: 'fas fa-trash-alt' }),
-            }),
+            col.component.noAdd
+                ? null
+                : dom('button', {
+                      onClick() {
+                          on.fire(this, 'action-event', { value: 'add' }, true);
+                      },
+                      class: 'tbl-icon-button add',
+                      type: 'button',
+                      html: dom('span', { class: 'fas fa-plus' }),
+                  }),
+            col.component.noRemove
+                ? null
+                : dom('button', {
+                      onClick() {
+                          on.fire(this, 'action-event', { value: 'remove' }, true);
+                      },
+                      class: 'tbl-icon-button remove',
+                      type: 'button',
+                      html: dom('span', { class: 'fas fa-trash-alt' }),
+                  }),
             dom('button', {
                 onClick() {
                     on.fire(this, 'action-event', { value: 'cancel' }, true);
@@ -337,6 +399,8 @@ function createComponent(col, item, index, dataTable) {
             return createDate(col, item, dataTable);
         case 'ui-checkbox':
             return createCheckbox(col, item, dataTable);
+        case 'ui-minitags':
+            return createTags(col, item, dataTable);
         case 'edit-rows':
             if (col.component.options) {
                 return createActionButton(col, item);

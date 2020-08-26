@@ -75,6 +75,10 @@ data-table {
             color: var(--tbl-head-clr);
             line-height: 1.2;
 
+            &[data-field='edit'] {
+                pointer-events: none;
+            }
+
             &.center {
                 text-align: center;
             }
@@ -249,14 +253,6 @@ data-table {
             }
         }
         ui-search.data-table-field.search {
-            ui-input {
-                // border: 0;
-            }
-            &:hover {
-                ui-input {
-                    // background-color: var(--tbl-cmp-input-hvr);
-                }
-            }
             label.ui-label {
                 display: none;
             }
@@ -530,11 +526,50 @@ data-table {
         top: 90px;
         width: 100%;
         text-align: center;
-        .message{
+        .message {
             display: inline-block;
             background-color: var(--error);
             color: white;
             padding: 15px;
+        }
+    }
+}
+
+data-table {
+    button.fa-tags {
+        border: 0;
+        background-color: transparent;
+        outline: 0;
+        cursor: pointer;
+    }
+}
+.minitag-button-container {
+    position: relative;
+    z-index: 2;
+    ui-minitags.data-table-minitags {
+        position: absolute;
+        top: -15px;
+        right: 38px;
+        border-radius: 6px;
+
+        .minitag-button {
+            position: relative;
+            z-index: 2;
+            border-radius: 6px;
+        }
+
+        &::after {
+            content: '';
+            display: block;
+            position: absolute;
+            z-index: 1;
+            right: 2px;
+            top: 22px;
+            width: 16px;
+            height: 16px;
+            background-color: white;
+            transform: rotate(45deg) translate(0, -75%);
+            box-shadow: 2px 0 2px rgba(0, 0, 0, 0.4);
         }
     }
 }

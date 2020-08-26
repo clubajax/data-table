@@ -1,4 +1,5 @@
 const formatters = require('@clubajax/format');
+const dom = require('@clubajax/dom');
 
 function bindMethods(object, context) {
 	Object.keys(object).forEach((key) => {
@@ -66,11 +67,43 @@ function getFormatter(col, item){
     return formatters[fmt] || formatters.default;
 }
 
+function position(node, button, {align}) {
+    const btn = dom.box(button);
+    const n = dom.box(node);
+    const gapH = 20;
+    const gapV = 5;
+
+    switch (align) {
+        case 'left':
+            dom.style(node, {
+                top: btn.y,
+                left: btn.x - n.w - gapH
+            })
+            break;
+        case 'right':
+
+            break;
+        case 'bottom':
+        default:
+            
+    }
+}
+
+const uidMap = {};
+function uid (prefix = 'uid') {
+	uidMap[prefix] = uidMap[prefix] || 0;
+	uidMap[prefix]++;
+	return `${prefix}-${uidMap[prefix]}`;
+}
+
+
 module.exports = {
 	bindMethods,
     isEqual,
     classnames,
     getFormatter,
     fromHtml,
-    toHtml
+    toHtml,
+    position,
+    uid
 };

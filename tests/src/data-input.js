@@ -1,6 +1,11 @@
-function getInputData() {
+function getInputData({noRemove, noEdit}) {
     const inputSchema = {
+        sort: true,
         columns: [
+            {
+                key: 'name',
+                label: 'Name'
+            },
             {
                 key: 'fromAmount',
                 label: 'Monthly Billing From',
@@ -55,6 +60,8 @@ function getInputData() {
                 icon: 'edit',
                 component: {
                     type: 'edit-rows',
+                    noRemove,
+                    noEdit
                 },
             },
         ],
