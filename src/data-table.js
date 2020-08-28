@@ -249,6 +249,7 @@ class DataTable extends BaseComponent {
     hasExpandable() {
         // @ts-ignore
         this.on('click', '[data-expanded]', (e) => {
+            console.log('CLICK');
             // @ts-ignore
             if (!this.expandable === 'multiple') {
                 // first close all rows
@@ -420,7 +421,7 @@ class DataTable extends BaseComponent {
             console.warn('Items do not have an id');
         }
 
-        render(items, columns, this.colSizes, tbody, this.selectable, this.grouped, this, () => {
+        render(items, columns, this.colSizes, tbody, this.selectable, this, () => {
             this.bodyHasRendered = true;
             this.fire('render-body', { tbody: this.tbody }, false);
         });
@@ -529,7 +530,11 @@ class DataTable extends BaseComponent {
     }
 }
 
-function renderRow(item, index, columns, colSizes, tbody, selectable, grouped, dataTable) {
+function renderRow(item, index, columns, colSizes, tbody, selectable, dataTable) {
+    if (!item) {
+        console.log('no row');
+        return;
+    }
     item.index = index;
     let itemCss = util.classnames(item.css || item.class || item.className);
     let html,
@@ -539,7 +544,8 @@ function renderRow(item, index, columns, colSizes, tbody, selectable, grouped, d
         tr;
 
     const expandable = dataTable.expandable;
-
+    const grouped = dataTable.grouped;
+    const hasChildIds = item.childIds && item.childIds.length;
     if (selectable) {
         rowOptions.tabindex = 1;
     }
@@ -553,7 +559,7 @@ function renderRow(item, index, columns, colSizes, tbody, selectable, grouped, d
         // This assumes there are only parents and children
         // does not allow for parents without children
         // maybe if they have an empty array it will work
-        if (item.subItemIds) {
+        if (item.subItemIds || hasChildIds) {
             itemCss('parent-row');
         } else {
             itemCss('child-row');
@@ -566,25 +572,26 @@ function renderRow(item, index, columns, colSizes, tbody, selectable, grouped, d
 
     columns.forEach((col, i) => {
         if ((expandable || grouped) && i === 0) {
+            
             let isExpanded;
-            if (expandable) {
-                isExpanded = !item.expanded ? 'off' : 'on';
-            } else {
+            // if (expandable) {
+            //     isExpanded = !item.expanded ? 'off' : 'on';
+            // } else {
                 isExpanded = item.expanded === undefined ? false : item.expanded === false ? 'off' : 'on';
-            }
+            // }
 
             dom(
                 'td',
                 {
-                    html: item.isSubitem
-                        ? null
-                        : dom('span', {
-                              class: 'expandable-buttons',
-                              html: [
-                                  dom('span', { class: 'fas fa-chevron-right' }),
-                                  dom('span', { class: 'fas fa-chevron-down' }),
-                              ],
-                          }),
+                    html: !item.isSubitem || hasChildIds
+                        ? dom('span', {
+                            class: 'expandable-buttons',
+                            html: [
+                                dom('span', { class: 'fas fa-chevron-right' }),
+                                dom('span', { class: 'fas fa-chevron-down' }),
+                            ],
+                        })
+                        : null,
                     class: 'expandable',
                     'data-expanded': isExpanded,
                 },
@@ -626,12 +633,22 @@ function renderRow(item, index, columns, colSizes, tbody, selectable, grouped, d
     });
 
     if (item.expanded) {
+        console.log('render expanded item');
         if (expandable) {
+            console.log('expandable...');
             renderExpandedRow(item, index, columns, tbody, dataTable);
+
+        } else if (hasChildIds) {
+            console.log('render child ids...');
+            item.childIds.forEach((id) => {
+                const subitem = dataTable.getItemById(id);
+                renderRow(subitem, index, columns, colSizes, tbody, selectable, dataTable);
+            });
         } else {
+            console.log('chillen');
             (item.subItemIds || []).forEach((subItemId) => {
                 const subitem = dataTable.getItemById(subItemId);
-                renderRow(subitem, index, columns, colSizes, tbody, selectable, grouped, dataTable);
+                renderRow(subitem, index, columns, colSizes, tbody, selectable, dataTable);
             });
         }
     }
@@ -669,10 +686,10 @@ function renderExpandedRow(item, index, columns, tbody, dataTable) {
     }
 }
 
-function render(items, columns, colSizes, tbody, selectable, grouped, dataTable, callback) {
+function render(items, columns, colSizes, tbody, selectable, dataTable, callback) {
     items.forEach((item, index) => {
         if (!item.isSubitem) {
-            renderRow(item, index, columns, colSizes, tbody, selectable, grouped, dataTable);
+            renderRow(item, index, columns, colSizes, tbody, selectable, dataTable);
         }
     });
     callback();
@@ -697,6 +714,16 @@ function checkGrouped(items) {
             }
         });
     }
+    else if (items.some((m) => !!m.childIds)) {
+        items.forEach((item) => {
+            if (item.childIds && item.childIds.length) {
+                item.expanded = false;
+            }
+        });
+
+        return true;
+    }
+    console.log('grouped', grouped);
     return grouped;
 }
 

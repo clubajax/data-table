@@ -444,11 +444,31 @@
                 });
 
                 describe('grouping', () => {
-                    it.only('should group inline data', (done) => {
-                        const section = dom('section', {html: dom('label', {html: 'Group Child Data'})}, body);
+                    it('should group based on parentIds', (done) => {
+                        const section = dom('section', {html: dom('label', {html: 'Group by Parent IDs'})}, body);
                         const node = dom('data-table', {
                             schema: groupedSchema,
                             rows: groupedItems,
+                            zebra: true
+                        }, section);
+                        const events = [];
+                        onDomReady(node, function () {
+                            node.on('change', function (e) {
+                                console.log('change', e);
+                            });
+                            node.on('remove-row', function (e) {
+                                console.log('remove-row', e);
+                            });
+                            done();
+                        });
+                    });
+
+                    it.only('should group based on child ids', (done) => {
+                        const data = getChildIdData();
+                        const section = dom('section', {html: dom('label', {html: 'Group by Child IDs'})}, body);
+                        const node = dom('data-table', {
+                            schema: data.schema,
+                            rows: data.items,
                             zebra: true
                         }, section);
                         const events = [];
