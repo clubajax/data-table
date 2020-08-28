@@ -2,19 +2,21 @@
     --primary: #3597d2;
     --error: #962025;
     --tbl-brd: 0px solid #ccc;
+    --tbl-body-txt: 16px;
+    --tbl-body-clr: ##333;
+
     --tbl-nodata-clr: #aaa;
 
     --tbl-head-txt: 11px;
     --tbl-head-clr: #919191;
     --tbl-head-bk: #d5dee2;
     --tbl-head-brd: 2px solid #ccc;
+
     --tbl-th-hvr: #f4f8fc;
     --tbl-th-brd: 0px solid #aaa;
     --tbl-th-pad: 15px;
     --tbl-th-align: left;
 
-    --tbl-body-txt: 16px;
-    --tbl-body-clr: ##333;
     --tbl-tr-odd: #eee;
     --tbl-tr-even: #fff;
     --tbl-tr-sel-bk: #6a7394;
@@ -23,8 +25,9 @@
     --tbl-tr-hvr: #f9f9f9;
     --tbl-tr-focus: cyan;
     --tbl-tr-added: rgb(236, 246, 255);
+    --tbl-tr-bg: #ccc;// #f9f9f9;
 
-    --tbl-td-brd: #eee;
+    --tbl-td-brd: #c7c7c7;
     --tbl-td-pad: 15px;
     --tbl-td-focus: #ccc;
 
@@ -46,13 +49,10 @@ data-table {
     height: 100%;
     min-height: 170px;
     outline: none;
-    // &[clickable],
-    // &[selectable] {
-        tbody tr:not(.selected):not(.unselectable):hover {
-            background-color: var(--tbl-tr-hvr);
-            cursor: pointer;
-        }
-    // }
+    tbody tr:not(.selected):not(.unselectable):hover {
+        background-color: var(--tbl-tr-hvr);
+        cursor: pointer;
+    }
     table {
         width: 100%;
         border-collapse: collapse;
@@ -328,20 +328,18 @@ data-table.zebra {
     tbody {
         tr:not(.child-row):nth-child(odd) {
             background-color: var(--tbl-tr-odd);
-            &:hover{
+            &:hover {
                 background-color: var(--tbl-tr-hvr);
             }
         }
         tr:not(.child-row):nth-child(even) {
             background-color: var(--tbl-tr-even);
-            &:hover{
+            &:hover {
                 background-color: var(--tbl-tr-hvr);
             }
         }
     }
 }
-
-
 
 // style editable buttons
 .tbl-icon-button {
@@ -446,8 +444,35 @@ data-table {
         background-color: var(--tbl-grp-parent);
     }
 
-    tr.child-row{
+    tr.child-row {
+        position: relative;
+        transform: scale(1); // hack to make row obey position: relative
         padding: 0 10px;
+        border: 10px solid var(--tbl-tr-bg);
+        border-top: 0;
+        border-bottom: 0;
+        // &:after{
+        //     content: '';
+        // }
+        box-sizing: border-box;
+        &.last-child {
+            border-bottom: 30px solid var(--tbl-tr-bg);
+            // td{
+            //     border-bottom: 2px solid red !important; //var(--tbl-td-brd);
+            // }
+            // &:after{
+                
+            //     width: calc(100% - 35px);
+            //     margin-left: 35px;
+            //     display: block;
+            //     height: 0;
+            //     border: 1px solid var(--tbl-td-brd);
+            //     position: absolute;
+            //     left: 0;
+            //     bottom: -20px;
+            // }
+        }
+        
     }
 
     td,

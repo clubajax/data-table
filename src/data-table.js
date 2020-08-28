@@ -530,7 +530,7 @@ class DataTable extends BaseComponent {
     }
 }
 
-function renderRow(item, index, columns, colSizes, tbody, selectable, dataTable) {
+function renderRow(item, {index, columns, colSizes, tbody, selectable, dataTable, isChild, isLastChild}) {
     if (!item) {
         console.log('no row');
         return;
@@ -561,8 +561,11 @@ function renderRow(item, index, columns, colSizes, tbody, selectable, dataTable)
         // maybe if they have an empty array it will work
         if (item.subItemIds || hasChildIds) {
             itemCss('parent-row');
-        } else {
+        } else if (isChild) {
             itemCss('child-row');
+            if (isLastChild) {
+                itemCss('last-child');
+            }
         }
     }
 
@@ -633,22 +636,22 @@ function renderRow(item, index, columns, colSizes, tbody, selectable, dataTable)
     });
 
     if (item.expanded) {
-        console.log('render expanded item');
         if (expandable) {
-            console.log('expandable...');
+            // empty contaner below row
             renderExpandedRow(item, index, columns, tbody, dataTable);
 
         } else if (hasChildIds) {
-            console.log('render child ids...');
-            item.childIds.forEach((id) => {
+            // a parent has childIds
+            item.childIds.forEach((id, i) => {
                 const subitem = dataTable.getItemById(id);
-                renderRow(subitem, index, columns, colSizes, tbody, selectable, dataTable);
+                renderRow(subitem, {index, columns, colSizes, tbody, selectable, dataTable, isChild: true, isLastChild: item.childIds.length - 1 === i});
             });
         } else {
-            console.log('chillen');
+            // children have parentIds
+            // converted to subItemIds
             (item.subItemIds || []).forEach((subItemId) => {
                 const subitem = dataTable.getItemById(subItemId);
-                renderRow(subitem, index, columns, colSizes, tbody, selectable, dataTable);
+                renderRow(subitem, {index, columns, colSizes, tbody, selectable, dataTable, isChild: true, isLastChild: false});
             });
         }
     }
@@ -689,7 +692,7 @@ function renderExpandedRow(item, index, columns, tbody, dataTable) {
 function render(items, columns, colSizes, tbody, selectable, dataTable, callback) {
     items.forEach((item, index) => {
         if (!item.isSubitem) {
-            renderRow(item, index, columns, colSizes, tbody, selectable, dataTable);
+            renderRow(item, {index, columns, colSizes, tbody, selectable, dataTable});
         }
     });
     callback();
