@@ -1,6 +1,9 @@
 :root {
-    --primary: #3597d2;
-    --error: #962025;
+    --tbl-primary: #3597d2;
+    --tbl-primary-hover: #77c2f0;
+    --tbl-primary-active: #417890;
+    --tbl-error: #962025;
+    
     --tbl-brd: 0px solid #ccc;
     --tbl-body-txt: 16px;
     --tbl-body-clr: ##333;
@@ -25,7 +28,7 @@
     --tbl-tr-hvr: #f9f9f9;
     --tbl-tr-focus: cyan;
     --tbl-tr-added: rgb(236, 246, 255);
-    --tbl-tr-bg: #ccc;// #f9f9f9;
+    --tbl-tr-bg: #eee;
 
     --tbl-td-brd: #c7c7c7;
     --tbl-td-pad: 15px;
@@ -51,7 +54,7 @@ data-table {
     outline: none;
     tbody tr:not(.selected):not(.unselectable):hover {
         background-color: var(--tbl-tr-hvr);
-        cursor: pointer;
+        // cursor: pointer;
     }
     table {
         width: 100%;
@@ -355,7 +358,7 @@ data-table.zebra {
     }
     &:focus {
         outline: 0;
-        background-color: var(--primary);
+        background-color: var(--tbl-primary);
         color: white;
         opacity: 1;
     }
@@ -432,6 +435,31 @@ data-table {
 
 // expandable rows
 data-table {
+    &.has-grouped {
+        th:first-child {
+            padding-left: 25px;
+        }
+        td:first-child {
+            padding-left: 30px;
+        }
+        td.expand-cell {
+            padding-left: 15px;
+            div {
+                display: flex;
+                flex-direction: row;
+                color: var(--tbl-primary);
+                cursor: pointer;
+                span {
+                    display: block;
+                    &.fas {
+                        margin-right: 5px;
+                    }
+                }
+            }
+        }
+    }
+    
+
     tr.expanded-row {
         td {
             padding: 0;
@@ -461,7 +489,7 @@ data-table {
             //     border-bottom: 2px solid red !important; //var(--tbl-td-brd);
             // }
             // &:after{
-                
+
             //     width: calc(100% - 35px);
             //     margin-left: 35px;
             //     display: block;
@@ -472,51 +500,50 @@ data-table {
             //     bottom: -20px;
             // }
         }
-        
     }
 
-    td,
-    th {
-        &.expandable {
-            width: 40px;
-        }
-    }
-    &[borders='bottom'] {
-        table {
-            td.expandable {
-                border: 0;
-            }
-        }
-    }
-    td.expandable {
-        border: 0;
-        position: relative;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        .expandable-buttons {
-            .fa-chevron-right,
-            .fa-chevron-down {
-                display: none;
-            }
-        }
-        &[data-expanded='on'] {
-            .fa-chevron-down {
-                display: block;
-            }
-        }
-        &[data-expanded='off'] {
-            .fa-chevron-right {
-                display: block;
-            }
-        }
+    // td,
+    // th {
+    //     &.expandable {
+    //         width: 40px;
+    //     }
+    // }
+    // &[borders='bottom'] {
+    //     table {
+    //         td.expandable {
+    //             border: 0;
+    //         }
+    //     }
+    // }
+    // td.expandable {
+    //     border: 0;
+    //     position: relative;
+    //     display: flex;
+    //     flex-direction: column;
+    //     justify-content: center;
+    //     align-items: center;
+    //     .expandable-buttons {
+    //         .fa-chevron-right,
+    //         .fa-chevron-down {
+    //             display: none;
+    //         }
+    //     }
+    //     &[data-expanded='on'] {
+    //         .fa-chevron-down {
+    //             display: block;
+    //         }
+    //     }
+    //     &[data-expanded='off'] {
+    //         .fa-chevron-right {
+    //             display: block;
+    //         }
+    //     }
 
-        &[data-expanded='on'],
-        &[data-expanded='off'] {
-            cursor: pointer;
-        }
-    }
+    //     &[data-expanded='on'],
+    //     &[data-expanded='off'] {
+    //         cursor: pointer;
+    //     }
+    // }
 }
 
 .data-table-node-holder {
@@ -542,7 +569,7 @@ data-table {
             animation-iteration-count: infinite;
             animation-timing-function: linear;
             border-radius: 50%;
-            border: 2px solid var(--primary);
+            border: 2px solid var(--tbl-primary);
             border-right-color: transparent;
             border-bottom: 0;
         }
@@ -567,7 +594,7 @@ data-table {
         text-align: center;
         .message {
             display: inline-block;
-            background-color: var(--error);
+            background-color: var(--tbl-error);
             color: white;
             padding: 15px;
         }
