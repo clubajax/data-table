@@ -11,6 +11,16 @@ const util = require('./util');
 const perf = localStorage.getItem('data-table-perf');
 const PERF = perf === 'true' || perf === '1';
 
+formatters.checkbox = {
+    // for readonly checkbox
+    toHtml(value) {
+        return dom('div', {
+            class: 'tbl-checkbox',
+            html: !value ? null : dom('ui-icon', {type: 'check'})
+        });
+    }
+}
+
 // TODO
 // widget / function for content (checkbox)
 // automatic virtual scroll after 100+ rows
@@ -152,25 +162,12 @@ class DataTable extends BaseComponent {
             'cell-change',
             (e) => {
                 const event = { value: e.value, column: e.column };
+                console.log('change', e.value);
                 if (e.searchItem) {
                     event.searchItem = e.searchItem;
                 }
-                if (!e.value.added || !dom.query(this, 'input')) {
-                    const added = e.value.added;
-                    if (added) {
-                        e.value.index = dom.query(this, 'tr.added-row').rowIndex - 1;
-                    }
-                    this.emit(added ? 'add-row' : 'change', event);
-                    if (added) {
-                        e.value.added = false;
-                        const row = dom.query(this, 'tr.added-row');
-                        if (row && e.value.id) {
-                            row.classList.remove('added-row');
-                        }
-                    }
-                    this.updateStatus();
-                }
-                if (e.value.added) {
+                if (!e.value.added) {
+                    console.log('emit');
                     this.emit('change', event);
                 }
             },
@@ -188,12 +185,7 @@ class DataTable extends BaseComponent {
     }
 
     getBlankItem() {
-        return this.schema.columns.reduce((acc, col) => {
-            if (col.key) {
-                acc[col.key] = '';
-            }
-            return acc;
-        }, {});
+        return getBlankItem(this.schema.columns, this.items[0]);
     }
 
     addRow(index = 0, item) {
@@ -211,6 +203,23 @@ class DataTable extends BaseComponent {
         this.emit('remove-row', { value: { index, id: item.id, item } });
     }
 
+    saveRow(index) {
+        const item = this.items[index];
+        const event = { value: item };
+        const added = item.added;
+        if (added) {
+            item.index = dom.query(this, 'tr.added-row').rowIndex - 1;
+            this.emit(added ? 'add-row' : 'change', event);
+            item.added = false;
+            const row = dom.query(this, 'tr.added-row');
+            if (row) {
+                row.classList.remove('added-row');
+            }
+            this.updateStatus();
+        }
+        
+    }
+
     cancelEdit() {
         const index = this.items.findIndex((item) => item.added);
         this.items.splice(index, 1);
@@ -226,6 +235,9 @@ class DataTable extends BaseComponent {
         const action = (e, type) => {
             const index = e.target.closest('tr').rowIndex - 1;
             switch (type) {
+                case 'save':
+                    this.saveRow(index);
+                    break;
                 case 'add':
                     this.addRow(index);
                     break;
@@ -339,15 +351,6 @@ class DataTable extends BaseComponent {
     renderHeader(columns) {
         dom.clean(this.thead, true);
         const tr = dom('tr', {}, this.thead);
-        // if (this.grouped || this.expandable) {
-        //     dom(
-        //         'th',
-        //         {
-        //             class: 'expandable',
-        //         },
-        //         tr,
-        //     );
-        // }
         const colSizes = [];
         (columns || []).forEach((col, i) => {
             let options;
@@ -533,7 +536,6 @@ class DataTable extends BaseComponent {
 
 function renderRow(item, { index, columns, colSizes, tbody, selectable, dataTable, isChild, isLastChild }) {
     if (!item) {
-        console.log('no row');
         return;
     }
     item.index = index;
@@ -556,10 +558,6 @@ function renderRow(item, { index, columns, colSizes, tbody, selectable, dataTabl
     }
 
     if (grouped) {
-        // FIXME!!
-        // This assumes there are only parents and children
-        // does not allow for parents without children
-        // maybe if they have an empty array it will work
         if (item.subItemIds || hasChildIds) {
             itemCss('parent-row');
         } else if (isChild) {
@@ -610,14 +608,14 @@ function renderRow(item, { index, columns, colSizes, tbody, selectable, dataTabl
         if (isExpanded) {
             html = dom('div', {
                 html: [
-                    dom('span', {class: isExpanded === 'on' ? 'fas fa-caret-down' : 'fas fa-caret-right'}),
-                    dom('span', {html})
-                ]
+                    dom('span', { class: isExpanded === 'on' ? 'fas fa-caret-down' : 'fas fa-caret-right' }),
+                    dom('span', { html }),
+                ],
             });
-            
+
             css('expand-cell');
         }
-        const cellOptions = {html, 'data-field': key, class: css()};
+        const cellOptions = { html, 'data-field': key, class: css() };
         if (isExpanded) {
             cellOptions['data-expanded'] = isExpanded;
         }
@@ -701,7 +699,16 @@ function renderExpandedRow(item, index, columns, tbody, dataTable) {
 function render(items, columns, colSizes, tbody, selectable, dataTable, callback) {
     items.forEach((item, index) => {
         if (!item.isSubitem) {
-            renderRow(item, { index, columns, colSizes, tbody, selectable, dataTable, isChild: false, isLastChild: false });
+            renderRow(item, {
+                index,
+                columns,
+                colSizes,
+                tbody,
+                selectable,
+                dataTable,
+                isChild: false,
+                isLastChild: false,
+            });
         }
     });
     callback();
@@ -735,6 +742,43 @@ function checkGrouped(items) {
         return true;
     }
     return grouped;
+}
+
+function getBlankItem(columns, item) {
+    const formatValues = {
+        integer: 0,
+        number: 0,
+        decimal: 0,
+        percentage: 0,
+    };
+    return columns.reduce((acc, col) => {
+        // filter out dynamic columns
+        if (item && item[col.key] !== undefined) {
+            let value;
+            if (col.component) {
+                switch (col.component.type) {
+                    case 'ui-checkbox':
+                        value = false;
+                        break;
+                    case 'ui-minitags':
+                        value = [];
+                        break;
+                    case 'ui-dropdown':
+                        value = null;
+                        break;
+                    default:
+                        if (col.format) {
+                            value = formatValues[col.format];
+                        }
+                        if (value === undefined) {
+                            value = '';
+                        }
+                }
+            }
+            acc[col.key] = value;
+        }
+        return acc;
+    }, {});
 }
 
 // experimental

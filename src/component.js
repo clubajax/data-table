@@ -270,12 +270,6 @@ function createCheckbox(col, item, dataTable) {
 }
 
 function createTags(col, item, dataTable) {
-    // TODO
-    // need to expose form library
-    // convert to webpack?
-    // so I can get to:
-    // close on escape and clickoff
-
     function edit() {
         const value = item[col.component.key] || item[col.key];
         const tags = dom(
@@ -353,11 +347,19 @@ function createEditRows(col, item, index) {
                   }),
             dom('button', {
                 onClick() {
+                    on.fire(this, 'action-event', { value: 'save' }, true);
+                },
+                class: 'tbl-icon-button save',
+                type: 'button',
+                html: dom('span', { class: 'fas fa-check' }),
+            }),
+            dom('button', {
+                onClick() {
                     on.fire(this, 'action-event', { value: 'cancel' }, true);
                 },
                 class: 'tbl-icon-button cancel',
                 type: 'button',
-                html: dom('span', { class: 'fas fa-ban' }),
+                html: dom('span', { class: 'fas fa-trash-alt' }),
             }),
         ],
     });

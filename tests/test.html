@@ -207,7 +207,10 @@
                         const events = [];
                         onDomReady(node, function () {
                             node.on('change', function (e) {
-                                console.log('change', e);
+                                console.log('test.change', e);
+                            });
+                            node.on('add-row', function (e) {
+                                console.log('test.add', e.value);
                             });
                             done();
                         });
@@ -463,7 +466,7 @@
                         });
                     });
 
-                    it.only('should group based on child ids', (done) => {
+                    it('should group based on child ids', (done) => {
                         const data = getChildIdData();
                         const section = dom('section', {html: dom('label', {html: 'Group by Child IDs'})}, body);
                         const node = dom('data-table', {
@@ -563,7 +566,7 @@
                 });
 
                 describe('clickable', function () {
-                    it('should have clickable rows', function (done) {
+                    it.only('should have clickable rows', function (done) {
                         const section = dom('section', {html: dom('label', {html: 'Clickable Rows'})}, body);
                         const data = getGeneralData();
                         const node = dom('data-table', {

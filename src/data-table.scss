@@ -2,8 +2,9 @@
     --tbl-primary: #3597d2;
     --tbl-primary-hover: #77c2f0;
     --tbl-primary-active: #417890;
+    --tbl-readonly: #e3e9eb;
     --tbl-error: #962025;
-    
+
     --tbl-brd: 0px solid #ccc;
     --tbl-body-txt: 16px;
     --tbl-body-clr: ##333;
@@ -52,9 +53,8 @@ data-table {
     height: 100%;
     min-height: 170px;
     outline: none;
-    tbody tr:not(.selected):not(.unselectable):hover {
+    tbody tr:not(.added-row):not(.selected):not(.unselectable):hover {
         background-color: var(--tbl-tr-hvr);
-        // cursor: pointer;
     }
     table {
         width: 100%;
@@ -148,11 +148,6 @@ data-table {
                     }
                 }
             }
-
-            &[data-field='edit'] {
-                text-align: center;
-                width: 60px;
-            }
         }
         tbody {
             tr {
@@ -170,97 +165,15 @@ data-table {
                 }
             }
         }
+
         td {
             border: 1px solid var(--tbl-td-brd);
             padding: var(--tbl-td-pad);
             font-size: var(--tbl-body-txt);
             color: var(--tbl-body-clr);
-            .td-editable {
-                cursor: pointer;
-                &:focus {
-                    outline: none;
-                    box-shadow: 0 0 7px rgba(0, 0, 0, 0.2) inset;
-                }
-            }
-            ui-input {
-                display: inline-block;
-                input {
-                    box-sizing: border-box;
-                    display: inline-block;
-                    padding: 5px;
-                    font-size: var(--tbl-body-txt);
-                    border: 0;
-                    outline: 0;
-                    &:focus {
-                        // background-color: var(--tbl-cmp-input-focus);
-                        // border: 1px solid red;
-                    }
-                }
-                label {
-                    display: none;
-                }
-            }
-            date-input {
-                width: 100px;
-                button.icon-button {
-                    display: none;
-                }
-                .date-input-wrapper input {
-                    width: 100%;
-                    font-size: var(--tbl-body-txt);
-                }
-            }
-            &.ui-checkbox {
-                text-align: center;
-                ui-checkbox {
-                    margin: 0;
-                    width: 16px;
-                }
-            }
-            &.center {
-                text-align: center;
-            }
-            &.right,
-            &.percentage,
-            &.currency,
-            &.accounting {
-                text-align: right;
-            }
-        }
-        tr {
-            &.added-row {
-                background-color: var(--tbl-tr-added);
-                td {
-                    ui-input {
-                        input {
-                            background-color: white;
-                            &:focus {
-                                background-color: white;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        ui-dropdown.data-table-field.select {
-            width: 100%;
-            button.ui-button {
-                width: 100%;
-                border-width: 0;
-                &:focus {
-                    border-width: 1px;
-                }
-            }
-            label.ui-label {
-                display: none;
-            }
-        }
-        ui-search.data-table-field.search {
-            label.ui-label {
-                display: none;
-            }
         }
     }
+
     &[borders='bottom'] {
         table {
             td {
@@ -306,6 +219,15 @@ data-table {
             white-space: nowrap;
         }
     }
+    &[clickable] {
+        tbody {
+            tr {
+                &:hover {
+                    cursor: pointer;
+                }
+            }
+        }
+    }
     &.no-data {
         border: var(--tbl-brd);
         padding-bottom: 25px;
@@ -347,7 +269,7 @@ data-table.zebra {
 // style editable buttons
 .tbl-icon-button {
     border: 0;
-    background-color: none;
+    background-color: transparent;
     cursor: pointer;
     font-size: 14px;
     border-radius: 50%;
@@ -364,8 +286,44 @@ data-table.zebra {
     }
 }
 
-// editable button state
+// edit buttons
 data-table {
+    th {
+        &[data-field='edit'] {
+            text-align: center;
+            width: 60px;
+        }
+    }
+    tr {
+        &.added-row {
+            background-color: var(--tbl-tr-added);
+            td {
+                ui-input {
+                    input {
+                        background-color: white;
+                        &:focus {
+                            background-color: white;
+                        }
+                    }
+                }
+            }
+            .tbl-icon-button.remove,
+            .tbl-icon-button.add {
+                display: none;
+            }
+            .tbl-icon-button.save,
+            .tbl-icon-button.cancel {
+                display: inline-block;
+                opacity: 1;
+            }
+        }
+        &:hover {
+            .tbl-icon-button {
+                opacity: 1;
+            }
+        }
+    }
+
     ui-actionbutton {
         label.ui-label {
             display: none;
@@ -375,6 +333,7 @@ data-table {
             height: 16px;
         }
     }
+    .tbl-icon-button.save,
     .tbl-icon-button.cancel {
         display: none;
     }
@@ -384,7 +343,15 @@ data-table {
             pointer-events: none;
         }
     }
+
     td {
+        .td-editable {
+            cursor: pointer;
+            &:focus {
+                outline: none;
+                box-shadow: 0 0 7px rgba(0, 0, 0, 0.2) inset;
+            }
+        }
         &[data-field='edit'] {
             text-align: center;
             padding: 0;
@@ -399,31 +366,24 @@ data-table {
                 opacity: 1;
             }
         }
-    }
-    tr {
-        &.added-row {
-            .tbl-icon-button.cancel {
-                display: inline-block;
-                opacity: 1;
-            }
+        // formatting
+        &.center {
+            text-align: center;
         }
-        &:hover {
-            .tbl-icon-button {
-                opacity: 1;
-            }
+        &.right,
+        &.percentage,
+        &.currency,
+        &.accounting {
+            text-align: right;
         }
     }
+
     &[is-editing] {
-        .add-remove {
-            .tbl-icon-button {
-                opacity: 0;
-                pointer-events: none;
-            }
+        .tbl-icon-button {
+            display: none;
         }
         tr.added-row {
-            .tbl-icon-button {
-                display: none;
-            }
+            .tbl-icon-button.save,
             .tbl-icon-button.cancel {
                 display: inline-block;
                 opacity: 1;
@@ -433,6 +393,92 @@ data-table {
     }
 }
 
+// components
+data-table {
+    td {
+        // display: inline-block;
+        input {
+            box-sizing: border-box;
+            display: inline-block;
+            padding: 5px;
+            font-size: var(--tbl-body-txt);
+            border: 0;
+            outline: 0;
+            &:focus {
+                // background-color: var(--tbl-cmp-input-focus);
+                // border: 1px solid red;
+            }
+        }
+        label {
+            display: none;
+        }
+    }
+    date-input {
+        width: 100px;
+        button.icon-button {
+            display: none;
+        }
+        .date-input-wrapper input {
+            width: 100%;
+            font-size: var(--tbl-body-txt);
+        }
+    }
+
+    .ui-checkbox {
+        text-align: center;
+        ui-checkbox {
+            margin: 0;
+
+            width: 20px;
+            height: 20px;
+            ui-icon {
+                width: auto;
+                height: 20px;
+                margin: 0;
+                &::before {
+                    // padding-bottom: 5px;
+
+                    font-size: 16px;
+                }
+            }
+        }
+    }
+
+    ui-dropdown.data-table-field.select {
+        width: 100%;
+        button.ui-button {
+            width: 100%;
+            border-width: 0;
+            &:focus {
+                border-width: 1px;
+            }
+        }
+        label.ui-label {
+            display: none;
+        }
+    }
+    ui-search.data-table-field.search {
+        label.ui-label {
+            display: none;
+        }
+    }
+}
+// readonly checkbox
+.tbl-checkbox {
+    width: 20px;
+    height: 20px;
+    background-color: var(--tbl-readonly);
+    border-radius: 2px;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    ui-icon {
+        &::before {
+            font-size: 16px;
+            color: var(--tbl-tr-sel-bk);
+        }
+    }
+}
 // expandable rows
 data-table {
     &.has-grouped {
@@ -458,7 +504,6 @@ data-table {
             }
         }
     }
-    
 
     tr.expanded-row {
         td {
@@ -501,49 +546,6 @@ data-table {
             // }
         }
     }
-
-    // td,
-    // th {
-    //     &.expandable {
-    //         width: 40px;
-    //     }
-    // }
-    // &[borders='bottom'] {
-    //     table {
-    //         td.expandable {
-    //             border: 0;
-    //         }
-    //     }
-    // }
-    // td.expandable {
-    //     border: 0;
-    //     position: relative;
-    //     display: flex;
-    //     flex-direction: column;
-    //     justify-content: center;
-    //     align-items: center;
-    //     .expandable-buttons {
-    //         .fa-chevron-right,
-    //         .fa-chevron-down {
-    //             display: none;
-    //         }
-    //     }
-    //     &[data-expanded='on'] {
-    //         .fa-chevron-down {
-    //             display: block;
-    //         }
-    //     }
-    //     &[data-expanded='off'] {
-    //         .fa-chevron-right {
-    //             display: block;
-    //         }
-    //     }
-
-    //     &[data-expanded='on'],
-    //     &[data-expanded='off'] {
-    //         cursor: pointer;
-    //     }
-    // }
 }
 
 .data-table-node-holder {
@@ -601,6 +603,7 @@ data-table {
     }
 }
 
+// tags
 data-table {
     button.fa-tags {
         border: 0;
