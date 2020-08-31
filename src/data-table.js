@@ -581,6 +581,7 @@ function renderRow(item, { index, columns, colSizes, tbody, selectable, dataTabl
         key = col.key || col.icon || col;
         css = util.classnames(key);
         css(col.align);
+        css(col.format);
         if (col.component) {
             html = createComponent(col, item, index, dataTable);
             css(col.component.type);
