@@ -79,6 +79,8 @@ function create(col, item, dataTable, type, compType) {
             }, 1);
         });
 
+        input.onCloseInputs = destroy;
+
         // if added and input is empty, don't close on blur
         input.on('change', (e) => {
             e.stopPropagation();

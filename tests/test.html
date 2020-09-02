@@ -197,7 +197,7 @@
                         });
                     });
 
-                    it('should display components', function (done) {
+                    it.only('should display components', function (done) {
                         const data = getData3();
                         const section = dom('section', {html: dom('label', {html: 'Display Components'})}, body);
                         const node = dom('data-table', {
@@ -566,7 +566,7 @@
                 });
 
                 describe('clickable', function () {
-                    it.only('should have clickable rows', function (done) {
+                    it('should have clickable rows', function (done) {
                         const section = dom('section', {html: dom('label', {html: 'Clickable Rows'})}, body);
                         const data = getGeneralData();
                         const node = dom('data-table', {

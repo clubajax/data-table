@@ -162,12 +162,10 @@ class DataTable extends BaseComponent {
             'cell-change',
             (e) => {
                 const event = { value: e.value, column: e.column };
-                console.log('change', e.value);
                 if (e.searchItem) {
                     event.searchItem = e.searchItem;
                 }
                 if (!e.value.added) {
-                    console.log('emit');
                     this.emit('change', event);
                 }
             },
@@ -208,12 +206,12 @@ class DataTable extends BaseComponent {
         const event = { value: item };
         const added = item.added;
         if (added) {
-            item.index = dom.query(this, 'tr.added-row').rowIndex - 1;
             this.emit(added ? 'add-row' : 'change', event);
             item.added = false;
             const row = dom.query(this, 'tr.added-row');
             if (row) {
                 row.classList.remove('added-row');
+                dom.queryAll(row, 'ui-input,ui-search').forEach(input => input.onCloseInputs());
             }
             this.updateStatus();
         }
