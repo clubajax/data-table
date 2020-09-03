@@ -57,7 +57,7 @@ function create(col, item, dataTable, type, compType) {
             node.innerHTML = formatter.toHtml(input.value);
             parent.appendChild(node);
             input.destroy();
-            on.emit(node, 'cell-change', { value: item });
+            on.emit(node, 'cell-change', { value: item, column: col });
             if (!hadWidth) {
                 dom.style(parent, 'width', '');
             }
