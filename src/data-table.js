@@ -106,6 +106,14 @@ class DataTable extends BaseComponent {
         }
     }
 
+    onErrors(errors) {
+        this.render();
+    }
+
+    getCellError(index, name) {
+        return (this.errors || []).find(e => e.index === index && e.name === name);
+    }
+
     loadData(rows) {
         const items = rows || [];
         this.orgItems = items;
@@ -186,12 +194,22 @@ class DataTable extends BaseComponent {
         return getBlankItem(this.schema.columns, this.items[0]);
     }
 
+    NEWaddRow(index = 0, item) {
+        if (!item) {
+            // 
+            this.emit('create-row', {value: {index}});
+        } else {
+            this.items.splice(index + 1, 0, item);
+            this.loadData(this.items);
+        }
+    }
+
     addRow(index = 0, item) {
         if (!item) {
             // create a blank item, for when adding a row
             item = this.getBlankItem();
             item.added = true;
-        }
+        } 
         this.items.splice(index + 1, 0, item);
         this.loadData(this.items);
     }
@@ -832,6 +850,6 @@ function lazyRender(allItems, columns, tbody, sorts, callback) {
 function noop() {}
 
 module.exports = BaseComponent.define('data-table', DataTable, {
-    props: ['schema', 'rows', 'extsort', 'selected', 'update', 'max-height', 'borders', 'footer', 'error'],
+    props: ['schema', 'rows', 'extsort', 'selected', 'update', 'max-height', 'borders', 'footer', 'error', 'errors'],
     bools: ['sortable', 'selectable', 'scrollable', 'clickable', 'perf', 'autoselect', 'zebra', 'loading'],
 });

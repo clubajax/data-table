@@ -36,6 +36,7 @@ function create(col, item, dataTable, type, compType) {
                 type: col.component.subtype || 'text',
                 value: fromHtml(node.textContent, formatter),
                 class: `data-table-field input ${type}`,
+                placeholder: col.component.placeholder,
                 autoselect: true,
             },
             parent,
@@ -45,8 +46,8 @@ function create(col, item, dataTable, type, compType) {
             // in case all fields are editable, get the first
             clearTimeout(focusTimeout);
             focusTimeout = setTimeout(() => {
-                dom.query(input.closest('tr'), 'input').focus();
-            }, 1);
+                dom.query(dataTable, 'input').focus();
+            }, 100);
         });
 
         const destroy = () => {
@@ -57,7 +58,7 @@ function create(col, item, dataTable, type, compType) {
             node.innerHTML = formatter.toHtml(input.value);
             parent.appendChild(node);
             input.destroy();
-            on.emit(node, 'cell-change', { value: item });
+            on.emit(node, 'cell-change', { value: item, column: col });
             if (!hadWidth) {
                 dom.style(parent, 'width', '');
             }
@@ -100,11 +101,18 @@ function create(col, item, dataTable, type, compType) {
         }
     });
 
-    if (item.added) {
-        setTimeout(() => {
-            edit(node);
-        }, 1);
+    // if (!node.textContent.trim()) {
+    //     setTimeout(() => {
+    //         edit(node);
+    //     }, 1);
+    // }
+
+    const error = dataTable.getCellError(item.index, col.key);
+
+    if (error) {
+        node.parentNode.appendChild(dom('div', {class: 'cell-error', html: error.message}));
     }
+
     return node;
 }
 
@@ -130,7 +138,6 @@ function createSearch(col, item, dataTable) {
             dom.style(parent, 'width', dom.box(parent).w);
         }
         parent.removeChild(node);
-        let exitTimer;
         const input = dom(
             'ui-search',
             {
@@ -236,6 +243,7 @@ function createDropdown(col, item, dataTable) {
         data: () => col.component.options,
         value,
         class: 'data-table-field select',
+        placeholder: col.component.placeholder,
     });
     input.on('change', (e) => {
         e.stopPropagation();
@@ -272,14 +280,18 @@ function createCheckbox(col, item, dataTable) {
 }
 
 function createTags(col, item, dataTable) {
+    
+    const value = item[col.component.key] || item[col.key] || [];
+    console.log('value', value);
     function edit() {
-        const value = item[col.component.key] || item[col.key];
+        
         const tags = dom(
             'ui-minitags',
             {
                 class: 'data-table-minitags',
                 data: col.component.options,
                 readonly: col.component.readonly,
+                
                 value,
             },
             container,
@@ -310,6 +322,7 @@ function createTags(col, item, dataTable) {
 
     const button = dom('button', {
         class: 'fas fa-tags',
+        disabled: !value.length,
     });
     const container = dom('div', {
         class: 'minitag-button-container',
@@ -346,23 +359,23 @@ function createEditRows(col, item, index) {
                       class: 'tbl-icon-button remove',
                       type: 'button',
                       html: dom('span', { class: 'fas fa-trash-alt' }),
-                  }),
-            dom('button', {
-                onClick() {
-                    on.fire(this, 'action-event', { value: 'save' }, true);
-                },
-                class: 'tbl-icon-button save',
-                type: 'button',
-                html: dom('span', { class: 'fas fa-check' }),
-            }),
-            dom('button', {
-                onClick() {
-                    on.fire(this, 'action-event', { value: 'cancel' }, true);
-                },
-                class: 'tbl-icon-button cancel',
-                type: 'button',
-                html: dom('span', { class: 'fas fa-trash-alt' }),
-            }),
+                }),
+                dom('button', {
+                    onClick() {
+                        on.fire(this, 'action-event', { value: 'save' }, true);
+                    },
+                    class: 'tbl-icon-button save',
+                    type: 'button',
+                    html: dom('span', { class: 'fas fa-check' }),
+                }),
+                dom('button', {
+                    onClick() {
+                        on.fire(this, 'action-event', { value: 'cancel' }, true);
+                    },
+                    class: 'tbl-icon-button cancel',
+                    type: 'button',
+                    html: dom('span', { class: 'fas fa-trash-alt' }),
+                }),
         ],
     });
 }

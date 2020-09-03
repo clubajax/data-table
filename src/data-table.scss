@@ -7,7 +7,9 @@
 
     --tbl-brd: 0px solid #ccc;
     --tbl-body-txt: 16px;
-    --tbl-body-clr: ##333;
+    --tbl-body-clr: #231F20;
+    --tbl-child-clr: #6B7682;
+    
 
     --tbl-nodata-clr: #aaa;
 
@@ -53,6 +55,7 @@ data-table {
     height: 100%;
     min-height: 170px;
     outline: none;
+
     tbody tr:not(.added-row):not(.selected):not(.unselectable):hover {
         background-color: var(--tbl-tr-hvr);
     }
@@ -524,6 +527,9 @@ data-table {
         border: 10px solid var(--tbl-tr-bg);
         border-top: 0;
         border-bottom: 0;
+        td{
+            color: var(--tbl-child-clr);
+        }
         // &:after{
         //     content: '';
         // }
@@ -610,6 +616,9 @@ data-table {
         background-color: transparent;
         outline: 0;
         cursor: pointer;
+        &:disabled{
+            cursor: default;
+        }
     }
 }
 

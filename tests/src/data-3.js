@@ -1,5 +1,22 @@
 function getData3() {
     return {
+        getBlankItem() {
+            return {
+                id: (new Date()).getTime(),
+                first: '',
+                last: '',
+                age: null,
+                job: '',
+                company: '',
+                site: '',
+                edu: '',
+                optin: false,
+                verified: false,
+                school: '',
+                schoolId: 0,
+                tags: [],
+            };
+        },
         schema: {
             columns: [
                 {
@@ -85,6 +102,7 @@ function getData3() {
                     width: '50px',
                     component: {
                         type: 'ui-minitags',
+                        readonly: true,
                         options: [
                             { label: 'Orange', value: 'orange' },
                             { label: 'Red', value: 'red' },

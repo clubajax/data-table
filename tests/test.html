@@ -197,7 +197,7 @@
                         });
                     });
 
-                    it.only('should display components', function (done) {
+                    it('should display components', function (done) {
                         const data = getData3();
                         const section = dom('section', {html: dom('label', {html: 'Display Components'})}, body);
                         const node = dom('data-table', {
@@ -211,6 +211,12 @@
                             });
                             node.on('add-row', function (e) {
                                 console.log('test.add', e.value);
+                            });
+                            node.on('create-row', function (e) {
+                                console.log('test.create', e.value.index);
+                                const rows = [...data.items];
+                                rows.splice(e.value.index + 1, 0, data.getBlankItem())
+                                node.rows = rows; 
                             });
                             done();
                         });
@@ -466,7 +472,7 @@
                         });
                     });
 
-                    it('should group based on child ids', (done) => {
+                    it.only('should group based on child ids', (done) => {
                         const data = getChildIdData();
                         const section = dom('section', {html: dom('label', {html: 'Group by Child IDs'})}, body);
                         const node = dom('data-table', {
