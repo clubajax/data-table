@@ -194,7 +194,7 @@ class DataTable extends BaseComponent {
         return getBlankItem(this.schema.columns, this.items[0]);
     }
 
-    NEWaddRow(index = 0, item) {
+    addRow(index = 0, item) {
         if (!item) {
             // 
             this.emit('create-row', {value: {index}});
@@ -202,16 +202,6 @@ class DataTable extends BaseComponent {
             this.items.splice(index + 1, 0, item);
             this.loadData(this.items);
         }
-    }
-
-    addRow(index = 0, item) {
-        if (!item) {
-            // create a blank item, for when adding a row
-            item = this.getBlankItem();
-            item.added = true;
-        } 
-        this.items.splice(index + 1, 0, item);
-        this.loadData(this.items);
     }
 
     removeRow(index) {

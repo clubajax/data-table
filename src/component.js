@@ -20,7 +20,7 @@ function createLink(col, item) {
 
 function create(col, item, dataTable, type, compType) {
     const formatter = getFormatter(col, item);
-    function edit(node) {
+    function edit(node, timerTriggered) {
         const parent = node.parentNode;
         on.emit(parent, 'cell-edit');
         let hadWidth = true;
@@ -44,21 +44,27 @@ function create(col, item, dataTable, type, compType) {
 
         input.onDomReady(() => {
             // in case all fields are editable, get the first
-            clearTimeout(focusTimeout);
-            focusTimeout = setTimeout(() => {
-                dom.query(dataTable, 'input').focus();
-            }, 100);
+            const row = timerTriggered ? parent.closest('tr.added-row') : parent.closest('tr');
+            if (row) {
+                clearTimeout(focusTimeout);
+                focusTimeout = setTimeout(() => {
+                    dom.query(row, 'input').focus();
+                }, 100);
+            }
         });
 
         const destroy = () => {
             if (window.keepPopupsOpen) {
                 return;
             }
+            const changed = item[col.key] !== formatter.from(input.value);
             item[col.key] = formatter.from(input.value);
             node.innerHTML = formatter.toHtml(input.value);
             parent.appendChild(node);
             input.destroy();
-            on.emit(node, 'cell-change', { value: item, column: col });
+            if (changed) {
+                on.emit(node, 'cell-change', {value: item, column: col});
+            }
             if (!hadWidth) {
                 dom.style(parent, 'width', '');
             }
@@ -87,25 +93,33 @@ function create(col, item, dataTable, type, compType) {
             e.stopPropagation();
         });
     }
+    const editCell = dataTable.schema.columns.find(c => c.component && c.component.type === 'edit-rows');
+    const noEdit = editCell ? editCell.component.noEdit : false;
+    const editable = item.added || (!noEdit && !(col.component || {}).noEdit);
+
     const node = dom('div', {
-        class: 'td-editable',
+        class: editable ? 'td-editable' : '',
         html: formatter.toHtml(item[col.key]) || '&nbsp;',
-        tabindex: '0',
-    });
-    dataTable.on(node, 'focus', () => {
-        edit(node);
-    });
-    dataTable.on(node, 'keyup', (e) => {
-        if (e.key === 'Enter') {
-            edit(node);
-        }
+        tabindex: editable ? '0' : '-1',
     });
 
-    // if (!node.textContent.trim()) {
-    //     setTimeout(() => {
-    //         edit(node);
-    //     }, 1);
-    // }
+    if (editable) {
+        dataTable.on(node, 'focus', () => {
+            edit(node);
+        });
+
+        dataTable.on(node, 'keyup', (e) => {
+            if (e.key === 'Enter') {
+                edit(node);
+            }
+        });
+
+        if (!node.textContent.trim() || item.added) {
+            setTimeout(() => {
+                edit(node, true);
+            }, 1);
+        }
+    }
 
     const error = dataTable.getCellError(item.index, col.key);
 
@@ -255,8 +269,20 @@ function createDropdown(col, item, dataTable) {
             col.component.onChange({ value: item, column: col });
         }
         if (col.component.renders) {
+
+            const rowId = dom.attr(input.closest('tr'), 'data-row-id');
+            const value = item[col.key];
+            const selector = `tbody tr[data-row-id="${rowId}"] ui-dropdown[value="${value}"] button`;
             setTimeout(() => {
                 dataTable.refresh();
+                setTimeout(() => {
+                    const drop = dom.query(dataTable, selector);
+                    if (drop) {
+                        drop.focus();
+                    } else {
+                        console.log('DROP NOT FOUND', selector);
+                    }
+                }, 30)
             }, 1);
         }
         on.emit(input.parentNode, 'cell-change', { value: item, column: col });
@@ -282,16 +308,13 @@ function createCheckbox(col, item, dataTable) {
 function createTags(col, item, dataTable) {
     
     const value = item[col.component.key] || item[col.key] || [];
-    console.log('value', value);
     function edit() {
-        
         const tags = dom(
             'ui-minitags',
             {
                 class: 'data-table-minitags',
                 data: col.component.options,
                 readonly: col.component.readonly,
-                
                 value,
             },
             container,
@@ -359,22 +382,6 @@ function createEditRows(col, item, index) {
                       class: 'tbl-icon-button remove',
                       type: 'button',
                       html: dom('span', { class: 'fas fa-trash-alt' }),
-                }),
-                dom('button', {
-                    onClick() {
-                        on.fire(this, 'action-event', { value: 'save' }, true);
-                    },
-                    class: 'tbl-icon-button save',
-                    type: 'button',
-                    html: dom('span', { class: 'fas fa-check' }),
-                }),
-                dom('button', {
-                    onClick() {
-                        on.fire(this, 'action-event', { value: 'cancel' }, true);
-                    },
-                    class: 'tbl-icon-button cancel',
-                    type: 'button',
-                    html: dom('span', { class: 'fas fa-trash-alt' }),
                 }),
         ],
     });
