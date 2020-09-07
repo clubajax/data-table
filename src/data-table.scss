@@ -317,12 +317,10 @@ data-table {
                     }
                 }
             }
-            .tbl-icon-button.remove,
             .tbl-icon-button.add {
                 display: none;
             }
-            .tbl-icon-button.save,
-            .tbl-icon-button.cancel {
+            .tbl-icon-button.save{
                 display: inline-block;
                 opacity: 1;
             }

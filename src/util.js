@@ -51,8 +51,8 @@ function toHtml(value, formatter) {
 }
 
 function fromHtml(value, formatter) {
-    value = typeof value === 'string' ? value.trim() : value;
     value = value === SPACE ? '' : value;
+    value = typeof value === 'string' ? value.trim() : value;
     return formatter.from(value);
 }
 
@@ -89,6 +89,10 @@ function position(node, button, {align}) {
     }
 }
 
+function isNull(item) {
+    return item === null || item === undefined || Number.isNaN(item);
+}
+
 const uidMap = {};
 function uid (prefix = 'uid') {
 	uidMap[prefix] = uidMap[prefix] || 0;
@@ -105,5 +109,6 @@ module.exports = {
     fromHtml,
     toHtml,
     position,
+    isNull,
     uid
 };

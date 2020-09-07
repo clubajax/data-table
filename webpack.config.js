@@ -30,7 +30,7 @@ module.exports = {
         '@clubajax/on',
         '@clubajax/base-component',
         '@clubajax/form',
-        // '@clubajax/dates',
+        '@clubajax/format',
         // '@clubajax/key-nav',
         // '@clubajax/no-dash'
     ],

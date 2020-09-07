@@ -1,7 +1,7 @@
 require('@clubajax/form');
 const dom = require('@clubajax/dom');
 const on = require('@clubajax/on');
-const { getFormatter, position, fromHtml, uid } = require('./util');
+const { getFormatter, fromHtml, isNull } = require('./util');
 //
 // helpers
 //
@@ -30,11 +30,12 @@ function create(col, item, dataTable, type, compType) {
         }
         parent.removeChild(node);
         let exitTimer;
+        const val = fromHtml(item[col.key], formatter)
         const input = dom(
             compType,
             {
                 type: col.component.subtype || 'text',
-                value: fromHtml(node.textContent, formatter),
+                value: val,
                 class: `data-table-field input ${type}`,
                 placeholder: col.component.placeholder,
                 autoselect: true,
@@ -97,9 +98,10 @@ function create(col, item, dataTable, type, compType) {
     const noEdit = editCell ? editCell.component.noEdit : false;
     const editable = item.added || (!noEdit && !(col.component || {}).noEdit);
 
+    const nodeValue = isNull(item[col.key]) ? '&nbsp;' : formatter.toHtml(item[col.key]); 
     const node = dom('div', {
         class: editable ? 'td-editable' : '',
-        html: formatter.toHtml(item[col.key]) || '&nbsp;',
+        html: nodeValue,
         tabindex: editable ? '0' : '-1',
     });
 
@@ -114,7 +116,7 @@ function create(col, item, dataTable, type, compType) {
             }
         });
 
-        if (!node.textContent.trim() || item.added) {
+        if (isNull(item[col.key]) || item.added) {
             setTimeout(() => {
                 edit(node, true);
             }, 1);
@@ -373,7 +375,7 @@ function createEditRows(col, item, index) {
                       type: 'button',
                       html: dom('span', { class: 'fas fa-plus' }),
                   }),
-            col.component.noRemove
+            col.component.noRemove && !item.added
                 ? null
                 : dom('button', {
                       onClick() {

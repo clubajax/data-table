@@ -1,6 +1,6 @@
 {
   "name": "@clubajax/data-table",
-  "version": "0.9.8",
+  "version": "0.9.9",
   "description": "Data Table Web Component",
   "main": "src/data-table.js",
   "directories": {
@@ -36,10 +36,10 @@
   "dependencies": {
     "@clubajax/base-component": "2.3.2",
     "@clubajax/dom": "2.8.5",
-    "@clubajax/format": "^0.5.14",
     "@clubajax/on": "2.2.0"
   },
   "peerDependencies": {
+    "@clubajax/format": "^0.5.14",
     "@clubajax/form": "0.8.81"
   },
   "devDependencies": {
