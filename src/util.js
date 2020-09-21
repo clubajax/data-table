@@ -101,6 +101,153 @@ function uid (prefix = 'uid') {
 }
 
 
+function copy(data) {
+    if (!data) {
+        return data;
+    }
+    const type = getType(data);
+    if (type === 'array') {
+        return data.map((item) => {
+            if (item && typeof item === 'object') {
+                return copy(item);
+            }
+            return item;
+        });
+    }
+
+    if (type === 'html' || type === 'window') {
+        throw new Error('HTMLElements and the window object cannot be copied');
+    }
+
+    if (type === 'date') {
+        return new Date(data.getTime());
+    }
+
+    if (type === 'function') {
+        return data;
+    }
+
+    if (type === 'map') {
+        return new Map(data);
+    }
+
+    if (type === 'set') {
+        return new Set(data);
+    }
+
+    if (type === 'object') {
+        return Object.keys(data).reduce((obj, key) => {
+            const item = data[key];
+            if (typeof item === 'object') {
+                obj[key] = copy(item);
+            } else {
+                obj[key] = data[key];
+            }
+            return obj;
+        }, {});
+    }
+    return data;
+}
+
+function equal(a, b) {
+    const typeA = getType(a);
+    const typeB = getType(b);
+    if (typeA !== typeB) {
+        return false;
+    }
+    const type = typeA;
+    if (/number|string|boolean/.test(type)) {
+        return a === b;
+    }
+
+    if (type === 'date') {
+        return a.getTime() === b.getTime();
+    }
+
+    if (type === 'nan') {
+        return true;
+    }
+
+    if (type === 'array') {
+        return (
+            a.length === b.length &&
+            a.every((item, i) => {
+                return equal(item, b[i]);
+            })
+        );
+    }
+
+    if (type === 'object' || type === 'map' || type === 'set') {
+        const keys = getUniqueKeys(a, b);
+        return keys.every((key) => {
+            return equal(a[key], b[key]);
+        });
+    }
+
+    return a === b;
+}
+
+
+function getType(item) {
+    if (item === null) {
+        return 'null';
+    }
+    if (typeof item === 'object') {
+        if (Array.isArray(item)) {
+            return 'array';
+        }
+        if (item instanceof Date) {
+            return 'date';
+        }
+        if (item instanceof Promise) {
+            return 'promise';
+        }
+        if (item instanceof Error) {
+            return 'error';
+        }
+        if (item instanceof Map) {
+            return 'map';
+        }
+        if (item instanceof WeakMap) {
+            return 'weakmap';
+        }
+        if (item instanceof Set) {
+            return 'set';
+        }
+        if (item instanceof WeakSet) {
+            return 'weakset';
+        }
+        if (item === global) {
+            if (typeof window !== 'undefined') {
+                return 'window';
+            }
+            return 'global';
+        }
+        if (item.documentElement || item.innerHTML !== undefined) {
+            return 'html';
+        }
+        if (item.length !== undefined && item.callee) {
+            return 'arguments';
+        }
+    }
+    if (typeof item === 'number' && Number.isNaN(item)) {
+        return 'nan';
+    }
+    return typeof item;
+}
+
+function getUniqueKeys(...args) {
+    const keys = [];
+    args.forEach((o) => {
+        Object.keys(o).forEach((key) => {
+            if (!keys.includes(key)) {
+                keys.push(key);
+            }
+        });
+    });
+    return keys;
+}
+
 module.exports = {
 	bindMethods,
     isEqual,
@@ -110,5 +257,7 @@ module.exports = {
     toHtml,
     position,
     isNull,
-    uid
+    uid,
+    copy,
+    equal
 };

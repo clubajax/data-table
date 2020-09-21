@@ -4,6 +4,7 @@
     --tbl-primary-active: #417890;
     --tbl-readonly: #e3e9eb;
     --tbl-error: #962025;
+    --tbl-row-error: #ffc3c5;
 
     --tbl-brd: 0px solid #ccc;
     --tbl-body-txt: 16px;
@@ -261,13 +262,13 @@ data-table {
 // zebra striping
 data-table.zebra {
     tbody {
-        tr:not(.child-row):nth-child(odd) {
+        tr:not(.child-row):not(.row-error):nth-child(odd) {
             background-color: var(--tbl-tr-odd);
             &:hover {
                 background-color: var(--tbl-tr-hvr);
             }
         }
-        tr:not(.child-row):nth-child(even) {
+        tr:not(.child-row):not(.row-error):nth-child(even) {
             background-color: var(--tbl-tr-even);
             &:hover {
                 background-color: var(--tbl-tr-hvr);
@@ -324,6 +325,9 @@ data-table {
                 display: inline-block;
                 opacity: 1;
             }
+        }
+        &.row-error{
+            background-color: var(--tbl-row-error);
         }
         &:hover {
             .tbl-icon-button {
@@ -437,7 +441,7 @@ data-table {
         text-align: center;
         ui-checkbox {
             margin: 0;
-
+            background-color: white;
             width: 20px;
             height: 20px;
             ui-icon {

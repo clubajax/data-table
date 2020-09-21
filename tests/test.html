@@ -430,6 +430,25 @@
                             done();
                         });
                     });
+
+                    it.only('should request to collapse rows', (done) => {
+                        const data = getGeneralData();
+                        const schema = data.schemaExpandable;
+                        schema.requestCollapse = true;
+                        const section = dom('section', {html: dom('label', {html: 'Expandable Rows'})}, body);
+                        const node = dom('data-table', {
+                            schema: schema,
+                            rows: data.items,
+                        }, section);
+                        const events = [];
+                        onDomReady(node, function () {
+                            node.on('expanded', function (e) {
+                                console.log('expanded', e.detail);
+                            });
+                            done();
+                        });
+                    });
+
                     it('should expand first row', (done) => {
                         const data = getGeneralData();
                         const section = dom('section', {html: dom('label', {html: 'Expandable Rows'})}, body);
@@ -472,7 +491,7 @@
                         });
                     });
 
-                    it.only('should group based on child ids', (done) => {
+                    it('should group based on child ids', (done) => {
                         const data = getChildIdData();
                         const section = dom('section', {html: dom('label', {html: 'Group by Child IDs'})}, body);
                         const node = dom('data-table', {

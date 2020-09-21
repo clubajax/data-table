@@ -30,7 +30,7 @@ function create(col, item, dataTable, type, compType) {
         }
         parent.removeChild(node);
         let exitTimer;
-        const val = fromHtml(item[col.key], formatter)
+        const val = fromHtml(item[col.key], formatter);
         const input = dom(
             compType,
             {
@@ -46,11 +46,19 @@ function create(col, item, dataTable, type, compType) {
         input.onDomReady(() => {
             // in case all fields are editable, get the first
             const row = timerTriggered ? parent.closest('tr.added-row') : parent.closest('tr');
-            if (row) {
+            if (row && item.added === 'start') {
                 clearTimeout(focusTimeout);
                 focusTimeout = setTimeout(() => {
-                    dom.query(row, 'input').focus();
+                    const inp = dom.query(row, 'input');
+                    if (inp) {
+                        inp.focus();
+                    }
+                    item.added = true;
                 }, 100);
+            } else {
+                setTimeout(() => {
+                    input.focus();
+                }, 1);
             }
         });
 
@@ -59,25 +67,28 @@ function create(col, item, dataTable, type, compType) {
                 return;
             }
             const changed = item[col.key] !== formatter.from(input.value);
-            item[col.key] = formatter.from(input.value);
-            node.innerHTML = formatter.toHtml(input.value);
+            const formatted = formatter.from(input.value);
+            item[col.key] = formatted;
+            node.innerHTML = formatted;
             parent.appendChild(node);
             input.destroy();
             if (changed) {
-                on.emit(node, 'cell-change', {value: item, column: col});
+                on.emit(node, 'cell-change', { value: item, column: col });
             }
             if (!hadWidth) {
                 dom.style(parent, 'width', '');
             }
         };
 
-        input.on('blur', () => {
-            if (!input.value && item.added) {
-                return;
-            }
-            on.emit(dataTable, 'cell-blur');
-            destroy();
-        });
+        setTimeout(() => {
+            input.on('blur', () => {
+                if (!input.value && item.added) {
+                    return;
+                }
+                on.emit(dataTable, 'cell-blur');
+                destroy();
+            });
+        }, 30);
 
         input.on('keyup', (e) => {
             exitTimer = setTimeout(() => {
@@ -94,11 +105,11 @@ function create(col, item, dataTable, type, compType) {
             e.stopPropagation();
         });
     }
-    const editCell = dataTable.schema.columns.find(c => c.component && c.component.type === 'edit-rows');
+    const editCell = dataTable.schema.columns.find((c) => c.component && c.component.type === 'edit-rows');
     const noEdit = editCell ? editCell.component.noEdit : false;
     const editable = item.added || (!noEdit && !(col.component || {}).noEdit);
 
-    const nodeValue = isNull(item[col.key]) ? '&nbsp;' : formatter.toHtml(item[col.key]); 
+    const nodeValue = isNull(item[col.key]) ? '&nbsp;' : formatter.toHtml(item[col.key]);
     const node = dom('div', {
         class: editable ? 'td-editable' : '',
         html: nodeValue,
@@ -123,11 +134,11 @@ function create(col, item, dataTable, type, compType) {
         }
     }
 
-    const error = dataTable.getCellError(item.index, col.key);
+    // const error = dataTable.getCellError(item.index, col.key);
 
-    if (error) {
-        node.parentNode.appendChild(dom('div', {class: 'cell-error', html: error.message}));
-    }
+    // if (error) {
+    //     node.parentNode.appendChild(dom('div', {class: 'cell-error', html: error.message}));
+    // }
 
     return node;
 }
@@ -271,7 +282,6 @@ function createDropdown(col, item, dataTable) {
             col.component.onChange({ value: item, column: col });
         }
         if (col.component.renders) {
-
             const rowId = dom.attr(input.closest('tr'), 'data-row-id');
             const value = item[col.key];
             const selector = `tbody tr[data-row-id="${rowId}"] ui-dropdown[value="${value}"] button`;
@@ -284,7 +294,7 @@ function createDropdown(col, item, dataTable) {
                     } else {
                         console.log('DROP NOT FOUND', selector);
                     }
-                }, 30)
+                }, 30);
             }, 1);
         }
         on.emit(input.parentNode, 'cell-change', { value: item, column: col });
@@ -308,7 +318,6 @@ function createCheckbox(col, item, dataTable) {
 }
 
 function createTags(col, item, dataTable) {
-    
     const value = item[col.component.key] || item[col.key] || [];
     function edit() {
         const tags = dom(
@@ -384,7 +393,7 @@ function createEditRows(col, item, index) {
                       class: 'tbl-icon-button remove',
                       type: 'button',
                       html: dom('span', { class: 'fas fa-trash-alt' }),
-                }),
+                  }),
         ],
     });
 }
