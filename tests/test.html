@@ -434,7 +434,7 @@
                     it.only('should request to collapse rows', (done) => {
                         const data = getGeneralData();
                         const schema = data.schemaExpandable;
-                        schema.requestCollapse = true;
+                        // schema.requestCollapse = true;
                         const section = dom('section', {html: dom('label', {html: 'Expandable Rows'})}, body);
                         const node = dom('data-table', {
                             schema: schema,
