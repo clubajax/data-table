@@ -131,7 +131,7 @@ class DataTable extends BaseComponent {
             this.expandable = this.schema.expandable;
             dom.classList.toggle(this, 'has-grouped', this.grouped || this.expandable);
             if (this.grouped || this.expandable) {
-                this.hasExpandable();
+                this.makeExpandable();
             }
 
             if (!items.length && !this.loading && !this.error) {
@@ -154,6 +154,8 @@ class DataTable extends BaseComponent {
     }
 
     updateCells() {
+        // updates cells instead of re-render
+        // used during expanded row
         const orgItems = this.orgItems;
         this.items.forEach((item, i) => {
             const org = orgItems[i];
@@ -309,7 +311,7 @@ class DataTable extends BaseComponent {
         return !!dom.query(this, '.expanded-row');
     }
 
-    hasExpandable() {
+    makeExpandable() {
         // @ts-ignore
         this.on('click', '[data-expanded]', (e) => {
             // @ts-ignore
