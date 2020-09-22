@@ -216,7 +216,7 @@
                                 console.log('test.create', e.value.index);
                                 const rows = [...data.items];
                                 rows.splice(e.value.index + 1, 0, data.getBlankItem())
-                                node.rows = rows; 
+                                node.rows = rows;
                             });
                             done();
                         });
@@ -358,8 +358,6 @@
                         const data = getInputData();
                         const items = data.items;
                         const schema = data.schema;
-                        schema.columns[0].component.format = 'accounting';
-                        schema.columns[1].component.format = 'accounting';
                         const node = dom('data-table', {
                             schema: schema,
                             rows: items,
@@ -368,8 +366,8 @@
                         onDomReady(node, function () {
                             done();
                         });
-                    }); 
-                    
+                    });
+
                     it('should have formatable inputs', function (done) {
                         const section = dom('section', {html: dom('label', {html: 'Formatable Inputs'})}, body);
                         const data = getFormatData();
@@ -433,8 +431,10 @@
 
                     it.only('should request to collapse rows', (done) => {
                         const data = getGeneralData();
+                        const item1 = data.items.pop();
+                        const item2 = data.items.pop();
                         const schema = data.schemaExpandable;
-                        // schema.requestCollapse = true;
+                        schema.requestCollapse = true;
                         const section = dom('section', {html: dom('label', {html: 'Expandable Rows'})}, body);
                         const node = dom('data-table', {
                             schema: schema,
@@ -442,8 +442,26 @@
                         }, section);
                         const events = [];
                         onDomReady(node, function () {
+
+                            // testing multiple click handler
+                            setTimeout(() => {
+                                data.items.push(item1);
+                                node.rows = data.items;
+                                setTimeout(() => {
+                                    data.items.push(item2);
+                                    node.rows = data.items;
+                                }, 30);
+                            }, 30)
+
                             node.on('expanded', function (e) {
                                 console.log('expanded', e.detail);
+                            });
+
+                            node.on('request-collapse', function (e) {
+                                console.log('request-collapse', e.detail);
+                                e.detail.item.expanded = false;
+                                // node.collapse = e.detail.item
+                                node.collapse = true;
                             });
                             done();
                         });

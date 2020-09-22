@@ -38,13 +38,11 @@ class DataTable extends BaseComponent {
         this.sortable = false;
         this.selectable = false;
         this.scrollable = false;
-        this.legacyCheck();
-        // this.data = 0;
-        // this.schema = false;
-        // this.rows = false;
-        // this.exclude = [];
+        this.propCheck();
 
         this.nodeHolder = dom('div', { class: 'data-table-node-holder' }, document.body);
+
+        this.makeExpandable();
     }
 
     get editable() {
@@ -107,8 +105,54 @@ class DataTable extends BaseComponent {
     }
 
     onErrors(errors) {
-        console.log('table.errors', errors);
         this.render();
+    }
+
+    onCollapse(item) {
+        if (!item) {
+            // nothing to do
+            return;
+        }
+        let container;
+        let tr;
+        if (item === true) {
+            container = dom.query(this, 'tr.expanded-row');
+            if (!container) {
+                console.log('no row to collapse');
+                return;
+            }
+            tr = container.previousElementSibling;
+            const id = dom.attr(tr, 'data-row-id');
+            item = this.getItemById(id);
+        } else {
+            tr = dom.query(this, `tr[data-row-id="${item.id}"]`);
+            if (!tr) {
+                console.log('row to collapse not found for', item);
+                return;
+            }
+            container = tr.nextElementSibling;
+        }
+
+        //
+        item.expanded = false;
+
+        // re-render to change the caret
+        // A very inefficient render
+        this.render();
+
+        // this.fire(
+        //     'collapse',
+        //     {
+        //         node: container, // Not the same node as below - is it even necessary?
+        //         rowIndex: tr.rowIndex,
+        //         item,
+        //     },
+        //     true,
+        // );
+        setTimeout(() => {
+            dom.destroy(container);
+            this.collapse = false;
+        }, 30);
     }
 
     getCellError(index, name) {
@@ -121,7 +165,7 @@ class DataTable extends BaseComponent {
             return;
         }
 
-        this.legacyCheck(true);
+        this.propCheck(true);
         this.displayNoData(false);
         this.items = [...items];
         this.mixPlugins();
@@ -130,9 +174,6 @@ class DataTable extends BaseComponent {
             this.grouped = checkGrouped(this.items);
             this.expandable = this.schema.expandable;
             dom.classList.toggle(this, 'has-grouped', this.grouped || this.expandable);
-            if (this.grouped || this.expandable) {
-                this.makeExpandable();
-            }
 
             if (!items.length && !this.loading && !this.error) {
                 this.displayNoData(true);
@@ -159,7 +200,7 @@ class DataTable extends BaseComponent {
         const orgItems = this.orgItems;
         this.items.forEach((item, i) => {
             const org = orgItems[i];
-            if (!util.equal(item, org)) {
+            if (!util.equal(item, org, ['expanded'])) {
                 this.schema.columns.forEach((col) => {
                     const key = col.key;
                     if (item[key] !== org[key]) {
@@ -193,7 +234,7 @@ class DataTable extends BaseComponent {
         }
     }
 
-    legacyCheck(disable) {
+    propCheck(disable) {
         if (!disable) {
             this.legacyTimer = setTimeout(() => {
                 throw new Error('a `rows` and a `schema` is required');
@@ -314,7 +355,25 @@ class DataTable extends BaseComponent {
     makeExpandable() {
         // @ts-ignore
         this.on('click', '[data-expanded]', (e) => {
-            // @ts-ignore
+            const td = e.target.closest('td');
+            const tr = e.target.closest('tr');
+            const id = dom.attr(tr, 'data-row-id');
+            const item = this.getItemById(id);
+            const state = dom.attr(td, 'data-expanded');
+
+            if (state === 'on' && this.schema.requestCollapse) {
+                this.fire(
+                    'request-collapse',
+                    {
+                        // node: container,
+                        rowIndex: tr.rowIndex,
+                        item,
+                    },
+                    true,
+                );
+                return;
+            }
+
             if (this.expandable !== 'multiple') {
                 // first close all rows
                 this.items.forEach((item) => {
@@ -322,52 +381,42 @@ class DataTable extends BaseComponent {
                 });
             }
 
-            setTimeout(() => {
-                const td = e.target.closest('td');
-                const tr = e.target.closest('tr');
-                const id = dom.attr(tr, 'data-row-id');
-                const item = this.getItemById(id);
-                const state = dom.attr(td, 'data-expanded');
-                const wasExpanded = item.expanded;
-                item.expanded = !(state === 'on');
+            item.expanded = !(state === 'on');
 
-                if (wasExpanded && item.expanded) {
-                    return;
-                }
-
-                if (!item.expanded && tr.nextElementSibling) {
-                    const container = dom.query(tr.nextElementSibling, '.expanded-container');
-                    if (container) {
-                        this.fire(
-                            'collapse',
-                            {
-                                node: container,
-                                rowIndex: tr.rowIndex,
-                                item,
-                            },
-                            true,
-                        );
-                        setTimeout(() => {
-                            dom.destroy(container.closest('.expanded-row'));
-                        }, 30);
-                    }
-                }
-
-                this.render();
-
-                const afterTR = dom.query(this, `[data-row-id="${id}"]`);
-                if (item.expanded) {
+            if (!item.expanded && tr.nextElementSibling) {
+                // non-request collapse
+                const container = dom.query(tr.nextElementSibling, '.expanded-container');
+                if (container) {
                     this.fire(
-                        'expand',
+                        'collapse',
                         {
-                            node: dom.query(afterTR.nextElementSibling, '.expanded-container'),
-                            rowIndex: afterTR.rowIndex,
+                            node: container,
+                            rowIndex: tr.rowIndex,
                             item,
                         },
                         true,
                     );
+                    setTimeout(() => {
+                        dom.destroy(container.closest('.expanded-row'));
+                    }, 30);
                 }
-            }, 100);
+            }
+
+            this.render();
+
+            const afterTR = dom.query(this, `[data-row-id="${id}"]`);
+            if (item.expanded) {
+                // non-request expand
+                this.fire(
+                    'expand',
+                    {
+                        node: dom.query(afterTR.nextElementSibling, '.expanded-container'),
+                        rowIndex: afterTR.rowIndex,
+                        item,
+                    },
+                    true,
+                );
+            }
         });
     }
 
@@ -903,6 +952,6 @@ function lazyRender(allItems, columns, tbody, sorts, callback) {
 function noop() {}
 
 module.exports = BaseComponent.define('data-table', DataTable, {
-    props: ['schema', 'rows', 'extsort', 'selected', 'update', 'max-height', 'borders', 'footer', 'error', 'errors'],
+    props: ['schema', 'rows', 'extsort', 'selected', 'update', 'max-height', 'borders', 'footer', 'error', 'errors', 'collapse'],
     bools: ['sortable', 'selectable', 'scrollable', 'clickable', 'perf', 'autoselect', 'zebra', 'loading'],
 });

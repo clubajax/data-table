@@ -1,5 +1,7 @@
-function getInputData({noRemove, noEdit}) {
-    const inputSchema = {
+function getInputData(options = {}) {
+    const {noRemove, noEdit} = options;
+
+    const schema = {
         sort: true,
         columns: [
             {
@@ -11,7 +13,7 @@ function getInputData({noRemove, noEdit}) {
                 label: 'Monthly Billing From',
                 component: {
                     type: 'ui-input',
-                    format: 'currency',
+                    format: 'accounting',
                 },
             },
             {
@@ -19,7 +21,7 @@ function getInputData({noRemove, noEdit}) {
                 label: 'Monthly Billing To',
                 component: {
                     type: 'ui-input',
-                    format: 'currency',
+                    format: 'accounting',
                 },
             },
             {
@@ -68,7 +70,7 @@ function getInputData({noRemove, noEdit}) {
     };
 
     const inputData = {
-        schema: inputSchema,
+        schema,
         items: [
             {
                 id: 1,

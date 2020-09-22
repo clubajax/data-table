@@ -149,7 +149,7 @@ function copy(data) {
     return data;
 }
 
-function equal(a, b) {
+function equal(a, b, exclude = []) {
     const typeA = getType(a);
     const typeB = getType(b);
     if (typeA !== typeB) {
@@ -172,7 +172,7 @@ function equal(a, b) {
         return (
             a.length === b.length &&
             a.every((item, i) => {
-                return equal(item, b[i]);
+                return equal(item, b[i], exclude);
             })
         );
     }
@@ -180,7 +180,10 @@ function equal(a, b) {
     if (type === 'object' || type === 'map' || type === 'set') {
         const keys = getUniqueKeys(a, b);
         return keys.every((key) => {
-            return equal(a[key], b[key]);
+            if (exclude.includes(key)) {
+                return true;
+            }
+            return equal(a[key], b[key], exclude);
         });
     }
 
