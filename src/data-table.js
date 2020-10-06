@@ -171,7 +171,7 @@ class DataTable extends BaseComponent {
         this.mixPlugins();
         clearTimeout(this.noDataTimer);
         this.onDomReady(() => {
-            this.grouped = checkGrouped(this.items);
+            this.grouped = setGrouped(this.items);
             this.expandable = this.schema.expandable;
             dom.classList.toggle(this, 'has-grouped', this.grouped || this.expandable);
 
@@ -182,6 +182,7 @@ class DataTable extends BaseComponent {
                     this.addRow();
                 }
             } else {
+                
                 if (this.isExpanded()) {
                     this.updateCells();
                 } else {
@@ -678,7 +679,7 @@ function renderRow(item, { index, columns, colSizes, tbody, selectable, dataTabl
         }
     }
 
-    if (Array.isArray(dataTable.errors) && dataTable.errors[index]) {
+    if (Array.isArray(dataTable.errors) && dataTable.errors.find(e => e.errors.index === index)) {
         itemCss('row-error');
     }
 
@@ -688,7 +689,7 @@ function renderRow(item, { index, columns, colSizes, tbody, selectable, dataTabl
 
     columns.forEach((col, i) => {
         let isExpanded;
-        if ((expandable || grouped) && i === 0) {
+        if ((expandable || (grouped && (item.subItemIds || hasChildIds))) && i === 0) {
             if (expandable) {
                 isExpanded = !item.expanded ? 'off' : 'on';
             } else {
@@ -833,7 +834,7 @@ function render(items, columns, colSizes, tbody, selectable, dataTable, callback
     callback();
 }
 
-function checkGrouped(items) {
+function setGrouped(items) {
     const grouped = items.some((m) => !!m.parentId);
     if (grouped) {
         const parentMap = items.reduce((acc, item) => {

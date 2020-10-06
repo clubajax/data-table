@@ -240,13 +240,34 @@
                             done();
                         });
                     });
+                });
 
+                describe('add/remove', () => {
                     it('should add/remove rows', function (done) {
                         const data = copy(getData3());
                         const section = dom('section', {html: dom('label', {html: 'Add/Remove Rows'})}, body);
                         const node = dom('data-table', {
                             schema: data.schema,
                             rows: data.items,
+                        }, section);
+                        const events = [];
+                        onDomReady(node, function () {
+                            node.on('change', function (e) {
+                                console.log('change', e);
+                            });
+                            node.on('remove-row', function (e) {
+                                console.log('remove-row', e);
+                            });
+                            done();
+                        });
+                    });
+
+                    it.only('should have a message when no data', function (done) {
+                        const data = copy(getData3());
+                        const section = dom('section', {html: dom('label', {html: 'Message When No Data'})}, body);
+                        const node = dom('data-table', {
+                            schema: data.schema,
+                            rows: [],
                         }, section);
                         const events = [];
                         onDomReady(node, function () {
@@ -429,7 +450,7 @@
                         });
                     });
 
-                    it.only('should request to collapse rows', (done) => {
+                    it('should request to collapse rows', (done) => {
                         const data = getGeneralData();
                         const item1 = data.items.pop();
                         const item2 = data.items.pop();
@@ -490,7 +511,7 @@
                 });
 
                 describe('grouping', () => {
-                    it('should group based on parentIds', (done) => {
+                    it.only('should group based on parentIds', (done) => {
                         const section = dom('section', {html: dom('label', {html: 'Group by Parent IDs'})}, body);
                         const node = dom('data-table', {
                             schema: groupedSchema,
