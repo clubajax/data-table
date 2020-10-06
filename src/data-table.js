@@ -24,7 +24,6 @@ formatters.checkbox = {
 // TODO
 // widget / function for content (checkbox)
 // automatic virtual scroll after 100+ rows
-// optional stetchy column for scrollable
 // filter / search
 // github.io demos
 // sticky column:
@@ -177,12 +176,7 @@ class DataTable extends BaseComponent {
 
             if (!items.length && !this.loading && !this.error) {
                 this.displayNoData(true);
-                if (this.editable) {
-                    //add default row
-                    this.addRow();
-                }
             } else {
-                
                 if (this.isExpanded()) {
                     this.updateCells();
                 } else {
@@ -282,7 +276,6 @@ class DataTable extends BaseComponent {
 
     addRow(index = 0, item) {
         if (!item) {
-            //
             this.emit('create-row', { value: { index } });
         } else {
             this.items.splice(index + 1, 0, item);
@@ -320,11 +313,13 @@ class DataTable extends BaseComponent {
     }
 
     hasAddRemove() {
+        console.log('hasAddRemove!');
         if (this.actionEventsSet) {
             return;
         }
         const action = (e, type) => {
-            const index = e.target.closest('tr').rowIndex - 1;
+            const row = e.target.closest('tr');
+            const index = row ? row.rowIndex - 1 : 0;
             switch (type) {
                 case 'save':
                     this.saveRow(index);
@@ -600,11 +595,48 @@ class DataTable extends BaseComponent {
     }
 
     displayNoData(show) {
-        if (show) {
-            this.classList.add('no-data');
-        } else {
+        const message = this['no-data-message'];
+        if (!show) {
             this.classList.remove('no-data');
+            if (this.noDataNode) {
+                dom.destroy(this.noDataNode);
+            }
+            if (this.noDataHandle) {
+                this.noDataHandle.remove();
+            }
+            return;
         }
+        if (!message) {
+            this.classList.add('no-data');
+            if (this.editable) {
+                //add default row
+                this.addRow();
+            }
+            return;
+        }
+        if (this.noDataHandle) {
+            return;
+        }
+        const btn = dom('button', {
+            class: 'ui-button',
+            html: 'Add Row'
+        });
+        this.noDataHandle = this.on(btn, 'click', () => {
+            this.fire('action-event', { value: 'add' });
+        });
+
+        this.noDataNode = dom('div', {
+            class: 'no-data-container',
+            html: [
+                dom('div', {
+                    class: 'message',
+                    html: message
+                }),
+                btn
+            ]
+        }, this);
+
+        this.hasAddRemove();
     }
 
     mixPlugins() {
@@ -679,7 +711,7 @@ function renderRow(item, { index, columns, colSizes, tbody, selectable, dataTabl
         }
     }
 
-    if (Array.isArray(dataTable.errors) && dataTable.errors.find(e => e.errors.index === index)) {
+    if (Array.isArray(dataTable.errors) && dataTable.errors.find((e) => e.errors.index === index)) {
         itemCss('row-error');
     }
 
@@ -953,6 +985,19 @@ function lazyRender(allItems, columns, tbody, sorts, callback) {
 function noop() {}
 
 module.exports = BaseComponent.define('data-table', DataTable, {
-    props: ['schema', 'rows', 'extsort', 'selected', 'update', 'max-height', 'borders', 'footer', 'error', 'errors', 'collapse'],
+    props: [
+        'schema',
+        'rows',
+        'extsort',
+        'selected',
+        'update',
+        'max-height',
+        'borders',
+        'footer',
+        'error',
+        'errors',
+        'collapse',
+        'no-data-message',
+    ],
     bools: ['sortable', 'selectable', 'scrollable', 'clickable', 'perf', 'autoselect', 'zebra', 'loading'],
 });

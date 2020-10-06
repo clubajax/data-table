@@ -3,10 +3,10 @@ function getData3() {
         getBlankItem() {
             return {
                 id: (new Date()).getTime(),
-                first: '',
-                last: '',
+                first: 'temp',
+                last: 'temp',
                 age: null,
-                job: '',
+                job: 'temp',
                 company: '',
                 site: '',
                 edu: '',

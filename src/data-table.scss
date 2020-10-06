@@ -477,6 +477,21 @@ data-table {
         }
     }
 }
+
+// no data .message
+data-table{
+    .no-data-container{
+        margin-top: 50px;
+        text-align: center;
+        .message{
+            margin-bottom: 10px;
+        }
+        .ui-button{
+            display: inline-block;
+        }
+    }
+}
+
 // readonly checkbox
 .tbl-checkbox {
     width: 20px;

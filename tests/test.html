@@ -30,9 +30,10 @@
             margin: 5px;
         }
 
-        section label {
+        section > label {
             display: block;
             padding: 5px;
+            background-color: #eee;
         }
 
         .sized {
@@ -264,18 +265,27 @@
 
                     it.only('should have a message when no data', function (done) {
                         const data = copy(getData3());
+                        const items = [];
                         const section = dom('section', {html: dom('label', {html: 'Message When No Data'})}, body);
                         const node = dom('data-table', {
                             schema: data.schema,
-                            rows: [],
+                            rows: items,
+                            'no-data-message': 'Would you like to add data?'
                         }, section);
                         const events = [];
                         onDomReady(node, function () {
+                            console.log('data', data);
                             node.on('change', function (e) {
                                 console.log('change', e);
                             });
                             node.on('remove-row', function (e) {
                                 console.log('remove-row', e);
+                            });
+                            node.on('create-row', function (e) {
+                                console.log('test.create', e.value.index);
+                                const rows = [...node.items];
+                                rows.splice(e.value.index + 1, 0, getData3().getBlankItem())
+                                node.rows = rows;
                             });
                             done();
                         });
@@ -511,7 +521,7 @@
                 });
 
                 describe('grouping', () => {
-                    it.only('should group based on parentIds', (done) => {
+                    it('should group based on parentIds', (done) => {
                         const section = dom('section', {html: dom('label', {html: 'Group by Parent IDs'})}, body);
                         const node = dom('data-table', {
                             schema: groupedSchema,
