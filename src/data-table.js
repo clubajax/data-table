@@ -293,7 +293,7 @@ class DataTable extends BaseComponent {
 
     getRowIndex(row) {
         const rows = dom.queryAll(this.tbody, 'tr');
-        for (let i = 0; i <= rows.length; i++){
+        for (let i = 0; i <= rows.length; i++) {
             if (row === rows[i]) {
                 return i;
             }
@@ -510,14 +510,33 @@ class DataTable extends BaseComponent {
             }
             if (col.width) {
                 colSizes[i] = col.width;
-                // @ts-ignore
                 options.style = { width: col.width };
             }
             dom('th', options, tr);
         });
         this.colSizes = colSizes;
         this.headHasRendered = true;
-        // @ts-ignore
+        if (this.schema.toolbar) {
+            const th = dom('th', {
+                colspan: columns.length,
+            });
+            const tr = dom(
+                'tr',
+                {
+                    class: 'toolbar',
+                    html: th,
+                },
+                this.thead,
+            );
+
+            this.fire(
+                'toolbar',
+                {
+                    node: th,
+                },
+                true,
+            );
+        }
         this.fire('render-header', { thead: this.thead });
     }
 
@@ -634,24 +653,28 @@ class DataTable extends BaseComponent {
         if (addBtn) {
             const btn = dom('button', {
                 class: 'ui-button',
-                html: 'Add Row'
+                html: 'Add Row',
             });
             this.noDataHandle = this.on(btn, 'click', () => {
-                this.fire('action-event', {value: 'add'});
+                this.fire('action-event', { value: 'add' });
             });
         }
 
         if (!this.noDataNode) {
-            this.noDataNode = dom('div', {
-                class: 'no-data-container',
-                html: [
-                    dom('div', {
-                        class: 'message',
-                        html: message
-                    }),
-                    btn
-                ]
-            }, this);
+            this.noDataNode = dom(
+                'div',
+                {
+                    class: 'no-data-container',
+                    html: [
+                        dom('div', {
+                            class: 'message',
+                            html: message,
+                        }),
+                        btn,
+                    ],
+                },
+                this,
+            );
         }
 
         this.hasAddRemove();
@@ -661,7 +684,6 @@ class DataTable extends BaseComponent {
         if (this.clickable) {
             clickable.call(this);
         }
-        // @ts-ignore
         if (this.extsort || this.schema.sort) {
             clickable.call(this);
             sortable.call(this);

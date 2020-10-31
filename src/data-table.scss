@@ -262,13 +262,13 @@ data-table {
 // zebra striping
 data-table.zebra {
     tbody {
-        tr:not(.child-row):not(.row-error):nth-child(odd) {
+        tr:not(.child-row):not(.row-error):nth-child(even) {
             background-color: var(--tbl-tr-odd);
             &:hover {
                 background-color: var(--tbl-tr-hvr);
             }
         }
-        tr:not(.child-row):not(.row-error):nth-child(even) {
+        tr:not(.child-row):not(.row-error):nth-child(odd) {
             background-color: var(--tbl-tr-even);
             &:hover {
                 background-color: var(--tbl-tr-hvr);
