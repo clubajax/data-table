@@ -8,14 +8,51 @@ const { getFormatter, fromHtml, isNull } = require('./util');
 const SPACE = '&nbsp;';
 const PERF = localStorage.getItem('data-table-perf');
 let focusTimeout;
+
+function getEditable(item, col, dataTable) {
+    const editCell = dataTable.schema.columns.find((c) => c.component && c.component.type === 'edit-rows');
+    let noEdit = editCell ? editCell.component.noEdit : false;
+    if (typeof noEdit === 'function') {
+        noEdit = noEdit(item);
+    }
+
+    // noEdit can be on the 'edit-rows' col or the current col
+    // here, it is editable if item.added, is not (edit-cell)noEdit and not (current cell)noEdit
+    const editable = item.added || (!noEdit && !(col.component || {}).noEdit);
+
+    return editable;
+}
+
+function getRemoveable(item, col, dataTable) {
+    const editCell = dataTable.schema.columns.find((c) => c.component && c.component.type === 'edit-rows');
+    let noRemove = editCell ? editCell.component.noRemove : false;
+    if (typeof noRemove === 'function') {
+        return item.added || !noRemove(item);
+    }
+    return item.added || (!noRemove && !(col.component || {}).noRemove);
+}
 //
 // components
 //
-function createLink(col, item) {
-    return dom('a', {
+
+// TODO: dataTable."subon" which removes on pre-render
+function createLink(col, item, dataTable) {
+    const node = dom('a', {
         href: item[col.component.url],
         html: item[col.key],
     });
+
+    if (col.component.type === 'click-link') {
+        dataTable.on(node, 'click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            dataTable.emit('click-link', {
+                item,
+                value: item[col.component.url]
+            })
+        });
+    }
+    return node;
 }
 
 function create(col, item, dataTable, type, compType) {
@@ -67,9 +104,8 @@ function create(col, item, dataTable, type, compType) {
                 return;
             }
             const changed = item[col.key] !== formatter.from(input.value);
-            const formatted = formatter.from(input.value);
-            item[col.key] = formatted;
-            node.innerHTML = formatted;
+            item[col.key] = formatter.from(input.value);
+            node.innerHTML = formatter.to(input.value);
             parent.appendChild(node);
             input.destroy();
             if (changed) {
@@ -105,18 +141,18 @@ function create(col, item, dataTable, type, compType) {
             e.stopPropagation();
         });
     }
-    const editCell = dataTable.schema.columns.find((c) => c.component && c.component.type === 'edit-rows');
-    const noEdit = editCell ? editCell.component.noEdit : false;
-    const editable = item.added || (!noEdit && !(col.component || {}).noEdit);
+
+    const editable = getEditable(item, col, dataTable);
 
     const nodeValue = isNull(item[col.key]) ? '&nbsp;' : formatter.toHtml(item[col.key]);
     const node = dom('div', {
         class: editable ? 'td-editable' : '',
         html: nodeValue,
-        tabindex: editable ? '0' : '-1',
+        // tabindex: editable ? '0' : '-1',
     });
 
     if (editable) {
+        dom.attr(node, 'tabindex', '0');
         dataTable.on(node, 'focus', () => {
             edit(node);
         });
@@ -265,56 +301,69 @@ function createSearch(col, item, dataTable) {
 }
 
 function createDropdown(col, item, dataTable) {
+    const editable = getEditable(item, col, dataTable);
     const value = item[col.component.key] || item[col.key];
-    const input = dom('ui-dropdown', {
-        data: () => col.component.options,
-        value,
-        class: 'data-table-field select',
-        placeholder: col.component.placeholder,
-    });
-    input.on('change', (e) => {
-        e.stopPropagation();
-        if (!e || e.value == undefined) {
-            return;
-        }
-        item[col.key] = e.value;
-        if (col.component.onChange) {
-            col.component.onChange({ value: item, column: col });
-        }
-        if (col.component.renders) {
-            const rowId = dom.attr(input.closest('tr'), 'data-row-id');
-            const value = item[col.key];
-            const selector = `tbody tr[data-row-id="${rowId}"] ui-dropdown[value="${value}"] button`;
-            setTimeout(() => {
-                dataTable.refresh();
+    const label = (col.component.options.find((o) => o.value === value) || { label: '&nbsp;' }).label;
+    if (editable) {
+        const input = dom('ui-dropdown', {
+            data: () => col.component.options,
+            value,
+            class: 'data-table-field select',
+            placeholder: col.component.placeholder,
+        });
+        input.on('change', (e) => {
+            e.stopPropagation();
+            if (!e || e.value == undefined) {
+                return;
+            }
+            item[col.key] = e.value;
+            if (col.component.onChange) {
+                col.component.onChange({ value: item, column: col });
+            }
+            if (col.component.renders) {
+                const rowId = dom.attr(input.closest('tr'), 'data-row-id');
+                const value = item[col.key];
+                const selector = `tbody tr[data-row-id="${rowId}"] ui-dropdown[value="${value}"] button`;
                 setTimeout(() => {
-                    const drop = dom.query(dataTable, selector);
-                    if (drop) {
-                        drop.focus();
-                    } else {
-                        console.log('DROP NOT FOUND', selector);
-                    }
-                }, 30);
-            }, 1);
-        }
-        on.emit(input.parentNode, 'cell-change', { value: item, column: col });
-    });
-    return input;
+                    dataTable.refresh();
+                    setTimeout(() => {
+                        const drop = dom.query(dataTable, selector);
+                        if (drop) {
+                            drop.focus();
+                        } else {
+                            console.log('DROP NOT FOUND', selector);
+                        }
+                    }, 30);
+                }, 1);
+            }
+            on.emit(input.parentNode, 'cell-change', { value: item, column: col });
+        });
+        return input;
+    }
+    return label;
 }
 
 function createCheckbox(col, item, dataTable) {
+    const editable = getEditable(item, col, dataTable);
+    const value = item[col.key];
     const input = dom('ui-checkbox', {
-        value: item[col.key],
+        value,
     });
-    input.on('change', (e) => {
-        e.stopPropagation();
-        if (!e || e.value == undefined) {
-            return;
-        }
-        item[col.key] = e.value;
-        on.emit(input.parentNode, 'cell-change', { value: item, column: col });
+    if (editable) {
+        input.on('change', (e) => {
+            e.stopPropagation();
+            if (!e || e.value == undefined) {
+                return;
+            }
+            item[col.key] = e.value;
+            on.emit(input.parentNode, 'cell-change', { value: item, column: col });
+        });
+        return input;
+    }
+    return dom('div', {
+        class: 'tbl-checkbox',
+        html: !value ? null : dom('ui-icon', { type: 'check' }),
     });
-    return input;
 }
 
 function createTags(col, item, dataTable) {
@@ -368,9 +417,10 @@ function createTags(col, item, dataTable) {
     return container;
 }
 
-function createEditRows(col, item, index) {
+function createEditCell(col, item, dataTable, index) {
     // https://mdbootstrap.com/docs/jquery/tables/editable/#!
     // https://codepen.io/mikewax/pen/YWxwPw
+    const removeable = getRemoveable(item, col, dataTable);
     return dom('span', {
         class: 'add-remove',
         html: [
@@ -384,16 +434,16 @@ function createEditRows(col, item, index) {
                       type: 'button',
                       html: dom('span', { class: 'fas fa-plus' }),
                   }),
-            col.component.noRemove && !item.added
-                ? null
-                : dom('button', {
+            removeable
+                ? dom('button', {
                       onClick() {
                           on.fire(this, 'action-event', { value: 'remove' }, true);
                       },
                       class: 'tbl-icon-button remove',
                       type: 'button',
                       html: dom('span', { class: 'fas fa-trash-alt' }),
-                  }),
+                  })
+                : null,
         ],
     });
 }
@@ -423,7 +473,8 @@ function createActionButton(col, item) {
 function createComponent(col, item, index, dataTable) {
     switch (col.component.type) {
         case 'link':
-            return createLink(col, item);
+        case 'click-link':
+            return createLink(col, item, dataTable);
         case 'ui-input':
             return createInput(col, item, dataTable);
         case 'ui-dropdown':
@@ -440,7 +491,7 @@ function createComponent(col, item, index, dataTable) {
             if (col.component.options) {
                 return createActionButton(col, item);
             }
-            return createEditRows(col, item, index);
+            return createEditCell(col, item, dataTable, index);
         default:
             return item[col.key];
     }

@@ -171,8 +171,11 @@ const Scrollable = {
 			gridParent.appendChild(grid);
 			dom.destroy(tempNode);
 
-            this.connectScroll();
-            this.connectResize();
+            setTimeout(() => {
+                this.connectScroll();
+                this.connectResize();
+            }, 300);
+            
 		});
 
 	}

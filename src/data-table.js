@@ -92,7 +92,11 @@ class DataTable extends BaseComponent {
     onLoading(loading) {
         this.displayLoading(loading);
         if (!loading && !this.error && this.items) {
-            this.loadData(this.items);
+            if (!this.items.length) {
+                this.displayNoData(true);
+            } else {
+                this.loadData(this.items);
+            }
         }
     }
 
@@ -139,15 +143,6 @@ class DataTable extends BaseComponent {
         // A very inefficient render
         this.render();
 
-        // this.fire(
-        //     'collapse',
-        //     {
-        //         node: container, // Not the same node as below - is it even necessary?
-        //         rowIndex: tr.rowIndex,
-        //         item,
-        //     },
-        //     true,
-        // );
         setTimeout(() => {
             dom.destroy(container);
             this.collapse = false;
@@ -170,11 +165,17 @@ class DataTable extends BaseComponent {
         this.mixPlugins();
         clearTimeout(this.noDataTimer);
         this.onDomReady(() => {
-            this.grouped = setGrouped(this.items);
+            this.grouped = setGrouped(this.items, this.schema);
+            if (this.grouped && this.schema.grouped) {
+                this.grouped = this.schema.grouped;
+            }
             this.expandable = this.schema.expandable;
             dom.classList.toggle(this, 'has-grouped', this.grouped || this.expandable);
 
             if (!items.length && !this.loading && !this.error) {
+                if (this.tbody) {
+                    dom.clean(this.tbody, true);
+                }
                 this.displayNoData(true);
             } else {
                 if (this.isExpanded()) {
@@ -275,20 +276,32 @@ class DataTable extends BaseComponent {
     }
 
     addRow(index = 0, item) {
+        // index is 1-based
         if (!item) {
             this.emit('create-row', { value: { index } });
         } else {
-            this.items.splice(index + 1, 0, item);
+            this.items.splice(index, 0, item);
             this.loadData(this.items);
         }
     }
 
     removeRow(index) {
+        // index is 1-based
         const item = this.items[index];
         this.emit('remove-row', { value: { index, id: item.id, item } });
     }
 
+    getRowIndex(row) {
+        const rows = dom.queryAll(this.tbody, 'tr');
+        for (let i = 0; i <= rows.length; i++){
+            if (row === rows[i]) {
+                return i;
+            }
+        }
+    }
+
     saveRow(index) {
+        // index is 1-based
         const item = this.items[index];
         const event = { value: item };
         const added = item.added;
@@ -313,13 +326,12 @@ class DataTable extends BaseComponent {
     }
 
     hasAddRemove() {
-        console.log('hasAddRemove!');
         if (this.actionEventsSet) {
             return;
         }
         const action = (e, type) => {
             const row = e.target.closest('tr');
-            const index = row ? row.rowIndex - 1 : 0;
+            const index = this.getRowIndex(row);
             switch (type) {
                 case 'save':
                     this.saveRow(index);
@@ -370,7 +382,7 @@ class DataTable extends BaseComponent {
                 return;
             }
 
-            if (this.expandable !== 'multiple') {
+            if (this.expandable !== 'multiple' && this.grouped !== 'multiple') {
                 // first close all rows
                 this.items.forEach((item) => {
                     item.expanded = false;
@@ -586,7 +598,7 @@ class DataTable extends BaseComponent {
             this.errorNode = dom(
                 'div',
                 {
-                    class: 'error',
+                    class: 'tbl-error',
                     html: dom('div', { class: 'message', html: error.message || error }),
                 },
                 this,
@@ -595,7 +607,8 @@ class DataTable extends BaseComponent {
     }
 
     displayNoData(show) {
-        const message = this['no-data-message'];
+        const message = this['add-data-message'] || this['no-data-message'];
+        const addBtn = this['add-data-message'];
         if (!show) {
             this.classList.remove('no-data');
             if (this.noDataNode) {
@@ -617,24 +630,29 @@ class DataTable extends BaseComponent {
         if (this.noDataHandle) {
             return;
         }
-        const btn = dom('button', {
-            class: 'ui-button',
-            html: 'Add Row'
-        });
-        this.noDataHandle = this.on(btn, 'click', () => {
-            this.fire('action-event', { value: 'add' });
-        });
+        let btn = null;
+        if (addBtn) {
+            const btn = dom('button', {
+                class: 'ui-button',
+                html: 'Add Row'
+            });
+            this.noDataHandle = this.on(btn, 'click', () => {
+                this.fire('action-event', {value: 'add'});
+            });
+        }
 
-        this.noDataNode = dom('div', {
-            class: 'no-data-container',
-            html: [
-                dom('div', {
-                    class: 'message',
-                    html: message
-                }),
-                btn
-            ]
-        }, this);
+        if (!this.noDataNode) {
+            this.noDataNode = dom('div', {
+                class: 'no-data-container',
+                html: [
+                    dom('div', {
+                        class: 'message',
+                        html: message
+                    }),
+                    btn
+                ]
+            }, this);
+        }
 
         this.hasAddRemove();
     }
@@ -866,7 +884,10 @@ function render(items, columns, colSizes, tbody, selectable, dataTable, callback
     callback();
 }
 
-function setGrouped(items) {
+function setGrouped(items, schema) {
+    if (schema.grouped === false && schema.expandable === false) {
+        return false;
+    }
     const grouped = items.some((m) => !!m.parentId);
     if (grouped) {
         const parentMap = items.reduce((acc, item) => {
@@ -997,6 +1018,7 @@ module.exports = BaseComponent.define('data-table', DataTable, {
         'error',
         'errors',
         'collapse',
+        'add-data-message',
         'no-data-message',
     ],
     bools: ['sortable', 'selectable', 'scrollable', 'clickable', 'perf', 'autoselect', 'zebra', 'loading'],

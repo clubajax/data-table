@@ -6,7 +6,7 @@ const Sortable = {
         this.classList.add('sortable');
         this.current = {};
         this.on('render-header', this.onHeaderRender.bind(this));
-        const {field, dir} = this.extsort || {};
+        const { field, dir } = this.extsort || {};
         this.setSort(field, dir);
     },
 
@@ -20,7 +20,6 @@ const Sortable = {
         }
     },
 
-
     setSort(sort, dir) {
         if (!sort) {
             sort = this.schema.sort;
@@ -28,9 +27,12 @@ const Sortable = {
             this.current.dir = sort;
         }
 
-        if (Array.isArray(sort)) {
-            const col = this.schema.columns.find(col => sort.includes(col.key));
-            sort = col.key;
+        sort = sort || '';
+        if (typeof sort === 'string') {
+            const col = this.schema.columns.find((col) => sort.includes(col.key) || sort.includes(col.sort));
+            if (col) {
+                sort = col.key;
+            }
         }
 
         this.current = {
@@ -60,14 +62,6 @@ const Sortable = {
         }
     },
 
-    onHeaderRender: function() {
-        if (this.clickHandle) {
-            this.clickHandle.remove();
-        }
-        this.clickHandle = this.on('header-click', this.onHeaderClick.bind(this));
-        this.displaySort();
-    },
-
     displaySort() {
         if (this.currentSortField) {
             this.currentSortField.classList.remove(this.currentSortClass);
@@ -81,10 +75,18 @@ const Sortable = {
         }
 
         const event = this.current.sort ? `${this.current.sort},${this.current.dir}` : null;
-        
+
         if (!this.extsort) {
-            this.fire('sort', {value: event});
+            this.fire('sort', { value: event });
         }
+    },
+
+    onHeaderRender: function () {
+        if (this.clickHandle) {
+            this.clickHandle.remove();
+        }
+        this.clickHandle = this.on('header-click', this.onHeaderClick.bind(this));
+        this.displaySort();
     },
 
     onHeaderClick(e) {
@@ -100,16 +102,16 @@ const Sortable = {
         } else {
             dir = 'desc';
         }
-        
+
         if (this.extsort) {
-            const col = this.schema.columns.find(col => field === col.key);
-            if (col.sortKeys) {
-                field = col.sortKeys;
+            const col = this.schema.columns.find((col) => field === col.key);
+            if (col.sortKeys || col.sort) {
+                field = col.sortKeys || col.sort;
             }
             this.fire('sort', {
                 field,
-                dir
-            })
+                dir,
+            });
         } else {
             this.setSort(field, dir);
         }
@@ -120,7 +122,7 @@ const Sortable = {
     },
 };
 
-module.exports = function() {
+module.exports = function () {
     if (!this.hasSortable) {
         util.bindMethods(Sortable, this);
         this.hasSortable = true;

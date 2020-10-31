@@ -350,12 +350,12 @@ data-table {
     .tbl-icon-button.cancel {
         display: none;
     }
-    &[data-rows='1'] {
-        .tbl-icon-button.remove {
-            opacity: 0;
-            pointer-events: none;
-        }
-    }
+    // &[data-rows='1'] {
+    //     .tbl-icon-button.remove {
+    //         opacity: 0;
+    //         pointer-events: none;
+    //     }
+    // }
 
     td {
         .td-editable {
@@ -481,10 +481,13 @@ data-table {
 // no data .message
 data-table{
     .no-data-container{
-        margin-top: 50px;
+        margin-top: 20px;
         text-align: center;
         .message{
-            margin-bottom: 10px;
+            margin: 10px;
+            i{
+                margin-right: 5px;
+            }
         }
         .ui-button{
             display: inline-block;
@@ -605,7 +608,7 @@ data-table {
 
 // loading spinner
 data-table {
-    .error {
+    .tbl-error {
         position: absolute;
         top: 90px;
         width: 100%;

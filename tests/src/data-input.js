@@ -70,6 +70,18 @@ function getInputData(options = {}) {
     };
 
     const inputData = {
+        getBlankItem() {
+            return {
+                id: (new Date()).getTime(),
+                typeId: null,
+                fromAmount: 0,
+                toAccount: 0,
+                downpaymentPercentage: 0,
+                monthlyPercentage: false,
+                months: 0,
+                name: 'Mike',
+            }
+        },
         schema,
         items: [
             {
@@ -79,7 +91,7 @@ function getInputData(options = {}) {
                 toAccount: 1500,
                 downpaymentPercentage: 60,
                 monthlyPercentage: 20,
-                months: 13,
+                months: 1,
                 name: 'Monthly Billing To',
             },
             {
@@ -88,8 +100,8 @@ function getInputData(options = {}) {
                 fromAmount: -1500,
                 toAccount: 3000,
                 downpaymentPercentage: 40,
-                monthlyPercentage: 15,
-                months: 20,
+                monthlyPercentage: false,
+                months: 2,
                 name: 'Monthly Billing To',
             },
             {

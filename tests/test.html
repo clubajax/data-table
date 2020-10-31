@@ -263,14 +263,14 @@
                         });
                     });
 
-                    it.only('should have a message when no data', function (done) {
+                    it('should have a message when no data', function (done) {
                         const data = copy(getData3());
                         const items = [];
                         const section = dom('section', {html: dom('label', {html: 'Message When No Data'})}, body);
                         const node = dom('data-table', {
                             schema: data.schema,
                             rows: items,
-                            'no-data-message': 'Would you like to add data?'
+                            'add-data-message': 'Would you like to add data?'
                         }, section);
                         const events = [];
                         onDomReady(node, function () {
@@ -319,9 +319,11 @@
                         });
                     });
 
-                    it('should add but not edit input rows', function (done) {
+                    it.only('should add but not edit input rows', function (done) {
                         const section = dom('section', {html: dom('label', {html: 'Add, not Edit Input Rows'})}, body);
-                        const data = getInputData({noEdit: true});
+                        const data = getInputData({noEdit: (item) => {
+                            return item.id < 100;
+                        }});
                         const items = data.items.slice(0, 4);
                         const node = dom('data-table', {
                             schema: data.schema,
@@ -331,6 +333,13 @@
                         onDomReady(node, function () {
                             node.on('change', function (e) {
                                 console.log('change', e.value);
+                            });
+                            node.on('create-row', function (e) {
+                                console.log('test.create', e.value.index);
+                                const rows = [...items];
+                                rows.splice(e.value.index + 1, 0, data.getBlankItem())
+                                console.log('rows', rows);
+                                node.rows = rows;
                             });
                             node.on('add-row', function (e) {
                                 console.log('change', e);
