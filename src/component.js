@@ -449,25 +449,33 @@ function createEditCell(col, item, dataTable, index) {
     });
 }
 
-function createActionButton(col, item) {
+function createEditButtons(col, item, dataTable, index) { 
     return dom('span', {
         class: 'add-remove',
-        html: [
-            dom('ui-actionbutton', {
-                icon: 'gear',
-                data: col.component.options,
-                'event-name': 'action-event',
-                class: 'tbl-icon-button icon-only',
-            }),
-            dom('button', {
+        html: col.component.buttons.filter(({display}) => { 
+            return display ? display(item) : true;
+        }).map(({ value, icon}) => {
+            return dom('button', {
                 onClick() {
-                    on.fire(this, 'action-event', { value: 'cancel' }, true);
+                    on.fire(this, 'action', {value, index, item}, true);
                 },
-                class: 'tbl-icon-button cancel',
+                class: `tbl-icon-button ${value}`,
                 type: 'button',
-                html: dom('span', { class: 'fas fa-ban' }),
-            }),
-        ],
+                html: dom('ui-icon', {type: icon}),
+            });
+        })
+    });
+}
+
+function createActionButton(col, item, index) {
+    return dom('span', {
+        class: 'add-remove',
+        html: dom('ui-actionbutton', {
+            icon: 'kebob',
+            data: col.component.options,
+            'event-name': 'action-event',
+            class: 'tbl-icon-button icon-only',
+        }),
     });
 }
 
@@ -490,9 +498,11 @@ function createComponent(col, item, index, dataTable) {
             return createTags(col, item, dataTable);
         case 'edit-rows':
             if (col.component.options) {
-                return createActionButton(col, item);
+                return createActionButton(col, item, index);
             }
             return createEditCell(col, item, dataTable, index);
+        case 'edit-buttons':
+            return createEditButtons(col, item, dataTable, index);
         default:
             return item[col.key];
     }

@@ -365,6 +365,12 @@ class DataTable extends BaseComponent {
                 case 'cancel':
                     this.cancelEdit();
                     break;
+                default:
+                    this.fire('action', {
+                        type,
+                        item: e.detail.item,
+                        index
+                    })
             }
         };
 

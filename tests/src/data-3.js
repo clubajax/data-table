@@ -1,4 +1,4 @@
-function getData3(options) {
+function getData3(options = {}) {
     const data = {
         getBlankItem() {
             return {
@@ -198,11 +198,14 @@ function getData3(options) {
     if (options.menus) {
         data.schema.columns[data.schema.columns.length - 1].component.options = [
             {
-                label: 'Add',
+                label: '<ui-icon type="calPlus"></ui-icon> Add',
                 value: 'add'
             },{
-                label: 'Remove',
+                label: '<ui-icon type="calMinus"></ui-icon> Remove',
                 value: 'remove'
+            },{
+                label: '<ui-icon type="editSquare"></ui-icon> Copy',
+                value: 'copy'
             }
         ];
     }

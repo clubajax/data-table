@@ -243,14 +243,14 @@
                     });
                 });
 
-                describe('custom menus', () => {
-                    it.only('should add/remove with custom menus', function (done) {
+                describe('custom menus/buttons', () => {
+                    it('should add/remove with action button', function (done) {
                         const data = copy(getData3({
                             menus: [
-                                
+
                             ]
                         }));
-                        const section = dom('section', {html: dom('label', {html: 'Add/Remove Rows'})}, body);
+                        const section = dom('section', {html: dom('label', {html: 'ActionButton with Copy'})}, body);
                         const node = dom('data-table', {
                             schema: data.schema,
                             rows: data.items,
@@ -262,6 +262,46 @@
                             });
                             node.on('remove-row', function (e) {
                                 console.log('remove-row', e);
+                            });
+                            node.on('add-row', function (e) {
+                                console.log('create-row', e);
+                            });
+                            node.on('action', function (e) {
+                                console.log('action', e.detail);
+                            });
+                            done();
+                        });
+                    });
+
+                    it.only('should have custom edit buttons', function (done) {
+                        const data = getData3();
+                        const col = data.schema.columns.find(c => c.icon === 'edit');
+                        col.component.type = 'edit-buttons';
+                        col.component.buttons = [
+                            {
+                                icon: 'plus',
+                                value: 'add'
+                            },{
+                                icon: 'trash',
+                                value: 'remove',
+                                display(item){
+                                    return item.id !== 2;
+                                }
+                            },{
+                                icon: 'copy',
+                                value: 'copy'
+                            }
+                        ]
+
+                        const section = dom('section', {html: dom('label', {html: 'Custom Edit Buttons'})}, body);
+                        const node = dom('data-table', {
+                            schema: data.schema,
+                            rows: data.items,
+                        }, section);
+                        const events = [];
+                        onDomReady(node, function () {
+                            node.on('action', function (e) {
+                                console.log('button.action', e.detail.value);
                             });
                             done();
                         });
