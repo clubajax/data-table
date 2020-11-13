@@ -98,7 +98,9 @@ data-table {
             &.unsortable {
                 pointer-events: none;
             }
-
+            &.toolbar{
+                cursor: default;
+            }
             .th-content {
                 white-space: nowrap;
                 display: block;

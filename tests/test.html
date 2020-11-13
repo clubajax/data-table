@@ -243,6 +243,31 @@
                     });
                 });
 
+                describe('custom menus', () => {
+                    it.only('should add/remove with custom menus', function (done) {
+                        const data = copy(getData3({
+                            menus: [
+                                
+                            ]
+                        }));
+                        const section = dom('section', {html: dom('label', {html: 'Add/Remove Rows'})}, body);
+                        const node = dom('data-table', {
+                            schema: data.schema,
+                            rows: data.items,
+                        }, section);
+                        const events = [];
+                        onDomReady(node, function () {
+                            node.on('change', function (e) {
+                                console.log('change', e);
+                            });
+                            node.on('remove-row', function (e) {
+                                console.log('remove-row', e);
+                            });
+                            done();
+                        });
+                    });
+                });
+
                 describe('add/remove', () => {
                     it('should add/remove rows', function (done) {
                         const data = copy(getData3());
@@ -319,7 +344,7 @@
                         });
                     });
 
-                    it.only('should add but not edit input rows', function (done) {
+                    it('should add but not edit input rows', function (done) {
                         const section = dom('section', {html: dom('label', {html: 'Add, not Edit Input Rows'})}, body);
                         const data = getInputData({noEdit: (item) => {
                             return item.id < 100;

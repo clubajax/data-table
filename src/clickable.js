@@ -58,7 +58,7 @@ const Clickable = {
 				cell: cell,
 				target: event.target
 			};
-		if (cell) {
+		if (cell && !cell.classList.contains('toolbar')) {
 			this.fire('header-click', emitEvent);
 		}
 	},

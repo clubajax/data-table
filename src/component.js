@@ -48,8 +48,8 @@ function createLink(col, item, dataTable) {
             e.stopPropagation();
             dataTable.emit('click-link', {
                 item,
-                value: item[col.component.url]
-            })
+                value: item[col.component.url],
+            });
         });
     }
     return node;
@@ -351,6 +351,7 @@ function createCheckbox(col, item, dataTable) {
     });
     if (editable) {
         input.on('change', (e) => {
+            on.fire(input.parentNode, 'pre-click', e, true);
             e.stopPropagation();
             if (!e || e.value == undefined) {
                 return;

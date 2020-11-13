@@ -1,5 +1,5 @@
-function getData3() {
-    return {
+function getData3(options) {
+    const data = {
         getBlankItem() {
             return {
                 id: (new Date()).getTime(),
@@ -194,4 +194,17 @@ function getData3() {
             },
         ],
     };
+
+    if (options.menus) {
+        data.schema.columns[data.schema.columns.length - 1].component.options = [
+            {
+                label: 'Add',
+                value: 'add'
+            },{
+                label: 'Remove',
+                value: 'remove'
+            }
+        ];
+    }
+    return data;
 }

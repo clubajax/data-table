@@ -42,6 +42,7 @@ class DataTable extends BaseComponent {
         this.nodeHolder = dom('div', { class: 'data-table-node-holder' }, document.body);
 
         this.makeExpandable();
+        
     }
 
     get editable() {
@@ -241,6 +242,25 @@ class DataTable extends BaseComponent {
         }
     }
 
+    getFocused() {
+        // the idea is to get focused before render
+        // and reset it after rendeer
+        // problem is getting the css-path...
+        // checkboxes for example do not have ids or other identifiers
+        const node = document.activeElement;
+        if (this.contains(node)) {
+            this.preRenderFocusNode = node;
+            console.log('prenode', node);
+        }
+    }
+    setFocused() {
+        // see above
+        if (this.preRenderFocusNode) {
+            setTimeout(() => {
+                console.log('postnode', this.preRenderFocusNode);
+            }, 30);
+        }
+    }
     domReady() {
         if (!this.items) {
             this.noDataTimer = setTimeout(() => {
@@ -437,7 +457,6 @@ class DataTable extends BaseComponent {
     }
 
     render() {
-        // @ts-ignore
         this.fire('pre-render');
         if (this.zebra) {
             this.classList.add('zebra');
@@ -452,8 +471,7 @@ class DataTable extends BaseComponent {
         PERF && console.time('render.table.body');
         this.renderBody(this.items, this.columns);
         PERF && console.timeEnd('render.table.body');
-        // @ts-ignore
-        this.fire('render', { table: this.table || this, thead: this.thead, tbody: this.tbody });
+        this.fire('render', {table: this.table || this, thead: this.thead, tbody: this.tbody});
     }
 
     // is overwritten by scrollable
@@ -518,12 +536,13 @@ class DataTable extends BaseComponent {
         this.headHasRendered = true;
         if (this.schema.toolbar) {
             const th = dom('th', {
+                class: 'toolbar',
                 colspan: columns.length,
             });
             const tr = dom(
                 'tr',
                 {
-                    class: 'toolbar',
+                    class: 'toolbar-row',
                     html: th,
                 },
                 this.thead,
