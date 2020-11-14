@@ -30,7 +30,7 @@
             margin: 5px;
         }
 
-        section > label {
+        section>label {
             display: block;
             padding: 5px;
             background-color: #eee;
@@ -44,6 +44,10 @@
         .drop-data {
             width: 500px;
             height: 500px;
+        }
+
+        data-table[scrollable] th {
+            border: 1px solid #ccc;
         }
     </style>
 </head>
@@ -273,7 +277,7 @@
                         });
                     });
 
-                    it.only('should have custom edit buttons', function (done) {
+                    it('should have custom edit buttons', function (done) {
                         const data = getData3();
                         const col = data.schema.columns.find(c => c.icon === 'edit');
                         col.component.type = 'edit-buttons';
@@ -281,13 +285,13 @@
                             {
                                 icon: 'plus',
                                 value: 'add'
-                            },{
+                            }, {
                                 icon: 'trash',
                                 value: 'remove',
-                                display(item){
+                                display(item) {
                                     return item.id !== 2;
                                 }
-                            },{
+                            }, {
                                 icon: 'copy',
                                 value: 'copy'
                             }
@@ -386,9 +390,11 @@
 
                     it('should add but not edit input rows', function (done) {
                         const section = dom('section', {html: dom('label', {html: 'Add, not Edit Input Rows'})}, body);
-                        const data = getInputData({noEdit: (item) => {
-                            return item.id < 100;
-                        }});
+                        const data = getInputData({
+                            noEdit: (item) => {
+                                return item.id < 100;
+                            }
+                        });
                         const items = data.items.slice(0, 4);
                         const node = dom('data-table', {
                             schema: data.schema,
@@ -753,13 +759,18 @@
                         });
                     });
 
-                    it('should be scrollable', function (done) {
+                    it.only('should be scrollable', function (done) {
                         const data = getData();
                         const section = dom('section', {class: 'sized', html: 'Scrollable'}, body);
                         const node = dom('data-table', {
-                            schema: {columns: data.columns},
+                            schema: {
+                                sort: 'company',
+                                desc: true, 
+                                columns: data.columns
+                            },
                             rows: data.items,
-                            scrollable: true
+                            scrollable: true,
+                            // extsort: true,
                         }, section);
                         onDomReady(node, function () {
                             done();
@@ -782,7 +793,7 @@
                 });
 
                 describe('sorting', function () {
-                    it('should sort', function (done) {
+                    it.only('should sort', function (done) {
                         const section = dom('section', {html: dom('label', {html: 'Sortable 1'})}, body);
                         const data = getGeneralData();
                         const node = dom('data-table', {
@@ -793,7 +804,7 @@
                         const events = [];
                         onDomReady(node, function () {
                             node.on('sort', function (e) {
-                                //console.log('sort.event', e);
+                                console.log('sort.event', e);
                                 events.push(e.detail.value);
                             });
 

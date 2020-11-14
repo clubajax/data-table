@@ -24,7 +24,7 @@ function getData3(options = {}) {
                     label: 'Full Name',
                     callback(event) {
                         // console.log('callback', event.item);
-                        return `${event.item.last}, ${event.item.first}`;
+                        return `<ui-icon type="file"></ui-icon> ${event.item.last}, ${event.item.first}`;
                     },
                 },
                 {

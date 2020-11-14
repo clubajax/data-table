@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Test Static Scroll</title>
+    <link rel="stylesheet" href="./dist/data-table.css" />
+    <script src="./dist/vendor.js"></script>
+    <script src="./dist/output.js"></script>
+    <script src="//localhost:35750/livereload.js"></script>
+
+    <style>
+        html,
+        body {
+            height: 100%;
+            overflow: hidden;
+        }
+
+        body {
+            padding: 20px;
+            font-family: sans-serif;
+        }
+
+        .wrap {
+            width: 90%;
+            border: 2px solid #333;
+
+            height: 200px;
+            max-width: 100vw;
+            overflow-x: auto;
+            overflow-y: auto;
+            position: relative;
+            margin-top: 10px;
+        }
+
+        table {
+            border-collapse: collapse;
+            table-layout: fixed;
+        }
+
+        th,
+        td {
+            padding: 20px 5vw;
+            border: 1px solid #ccc;
+            white-space: nowrap;
+        }
+
+        th {
+            position: sticky;
+            top: 0;
+            left: -100%;
+            z-index: 1;
+            background-color: #eee;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Test Static Scroll</h1>
+
+    <div class="wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>chapter 1</th>
+                    <th>chapter 2</th>
+                    <th>chapter 3</th>
+                    <th>chapter 4</th>
+                    <th>chapter 5</th>
+                    <th>chapter 6</th>
+                    <th>chapter 7</th>
+                    <th>chapter 8</th>
+                    <th>chapter 9</th>
+                    <th>chapter 10</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Sad</td>
+                    <td>Happy</td>
+                    <td>Happy Happy Joy Joy</td>
+                    <td>Happy</td>
+                    <td>Happy</td>
+                    <td>Happy</td>
+                    <td>Happy</td>
+                    <td>Happy</td>
+                    <td>Happy</td>
+                    <td>Happy</td>
+                </tr>
+                <tr>
+                    <td>Sad</td>
+                    <td>Happy</td>
+                    <td>Happy</td>
+                    <td>Happy</td>
+                    <td>Happy</td>
+                    <td>Happy</td>
+                    <td>Happy</td>
+                    <td>Happy</td>
+                    <td>Happy</td>
+                    <td>Happy</td>
+                </tr>
+                <tr>
+                    <td>Sad</td>
+                    <td>Happy</td>
+                    <td>Happy</td>
+                    <td>Happy</td>
+                    <td>Happy</td>
+                    <td>Happy</td>
+                    <td>Happy</td>
+                    <td>Happy</td>
+                    <td>Happy</td>
+                    <td>Happy</td>
+                </tr>
+                <tr>
+                    <td>Sad</td>
+                    <td>Happy</td>
+                    <td>Happy</td>
+                    <td>Happy</td>
+                    <td>Happy</td>
+                    <td>Happy</td>
+                    <td>Happy</td>
+                    <td>Happy</td>
+                    <td>Happy</td>
+                    <td>Happy</td>
+                </tr>
+                <tr>
+                    <td>Sad</td>
+                    <td>Happy</td>
+                    <td>Happy</td>
+                    <td>Happy</td>
+                    <td>Happy</td>
+                    <td>Happy</td>
+                    <td>Happy</td>
+                    <td>Happy</td>
+                    <td>Happy</td>
+                    <td>Happy</td>
+                </tr>
+                <tr>
+                    <td>Sad</td>
+                    <td>Happy</td>
+                    <td>Happy</td>
+                    <td>Happy</td>
+                    <td>Happy</td>
+                    <td>Happy</td>
+                    <td>Happy</td>
+                    <td>Happy</td>
+                    <td>Happy</td>
+                    <td>Happy</td>
+                </tr>
+                <tr>
+                    <td>Sad</td>
+                    <td>Happy</td>
+                    <td>Happy</td>
+                    <td>Happy</td>
+                    <td>Happy</td>
+                    <td>Happy</td>
+                    <td>Happy</td>
+                    <td>Happy</td>
+                    <td>Happy</td>
+                    <td>Happy</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</body>
+
+</html>

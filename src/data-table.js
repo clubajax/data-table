@@ -3,7 +3,6 @@ const dom = require('@clubajax/dom');
 const sortable = require('./sortable');
 const clickable = require('./clickable');
 const selectable = require('./selectable');
-const scrollable = require('./scrollable');
 const createComponent = require('./component');
 const formatters = require('@clubajax/format');
 const util = require('./util');
@@ -171,7 +170,7 @@ class DataTable extends BaseComponent {
                 this.grouped = this.schema.grouped;
             }
             this.expandable = this.schema.expandable;
-            dom.classList.toggle(this, 'has-grouped', this.grouped || this.expandable);
+            dom.classList.toggle(this, 'has-grouped', !!this.grouped || !!this.expandable);
 
             if (!items.length && !this.loading && !this.error) {
                 if (this.tbody) {
@@ -716,9 +715,6 @@ class DataTable extends BaseComponent {
         if (this.selectable) {
             clickable.call(this);
             selectable.call(this);
-        }
-        if (this.scrollable) {
-            scrollable.call(this);
         }
         this.mixPlugins = noop;
     }
