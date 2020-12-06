@@ -248,12 +248,11 @@
                 });
 
                 describe('custom menus/buttons', () => {
-                    it('should add/remove with action button', function (done) {
+                    it.only('should add/remove with action button', function (done) {
                         const data = copy(getData3({
-                            menus: [
-
-                            ]
+                            menus: true
                         }));
+                        console.log('data.schema', data.schema);
                         const section = dom('section', {html: dom('label', {html: 'ActionButton with Copy'})}, body);
                         const node = dom('data-table', {
                             schema: data.schema,
@@ -759,7 +758,7 @@
                         });
                     });
 
-                    it.only('should be scrollable', function (done) {
+                    it('should be scrollable', function (done) {
                         const data = getData();
                         const section = dom('section', {class: 'sized', html: 'Scrollable'}, body);
                         const node = dom('data-table', {
@@ -793,7 +792,7 @@
                 });
 
                 describe('sorting', function () {
-                    it.only('should sort', function (done) {
+                    it('should sort', function (done) {
                         const section = dom('section', {html: dom('label', {html: 'Sortable 1'})}, body);
                         const data = getGeneralData();
                         const node = dom('data-table', {

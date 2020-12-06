@@ -651,7 +651,7 @@ class DataTable extends BaseComponent {
 
     displayNoData(show) {
         const message = this['add-data-message'] || this['no-data-message'];
-        const addBtn = this['add-data-message'];
+        const addBtn = !!this['add-data-message'];
         if (!show) {
             this.classList.remove('no-data');
             if (this.noDataNode) {
@@ -675,7 +675,7 @@ class DataTable extends BaseComponent {
         }
         let btn = null;
         if (addBtn) {
-            const btn = dom('button', {
+            btn = dom('button', {
                 class: 'ui-button',
                 html: 'Add Row',
             });

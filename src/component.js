@@ -454,9 +454,10 @@ function createEditButtons(col, item, dataTable, index) {
         class: 'add-remove',
         html: col.component.buttons.filter(({display}) => { 
             return display ? display(item) : true;
-        }).map(({ value, icon}) => {
+        }).map(({value, icon}) => {
             return dom('button', {
                 onClick() {
+                    console.log('fire!');
                     on.fire(this, 'action', {value, index, item}, true);
                 },
                 class: `tbl-icon-button ${value}`,
