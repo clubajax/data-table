@@ -248,7 +248,7 @@
                 });
 
                 describe('custom menus/buttons', () => {
-                    it.only('should add/remove with action button', function (done) {
+                    it('should add/remove with action button', function (done) {
                         const data = copy(getData3({
                             menus: true
                         }));
@@ -545,7 +545,7 @@
                         const item2 = data.items.pop();
                         const schema = data.schemaExpandable;
                         schema.requestCollapse = true;
-                        const section = dom('section', {html: dom('label', {html: 'Expandable Rows'})}, body);
+                        const section = dom('section', {html: dom('label', {html: 'Request Collapse Expandable Rows'})}, body);
                         const node = dom('data-table', {
                             schema: schema,
                             rows: data.items,
@@ -579,7 +579,7 @@
 
                     it('should expand first row', (done) => {
                         const data = getGeneralData();
-                        const section = dom('section', {html: dom('label', {html: 'Expandable Rows'})}, body);
+                        const section = dom('section', {html: dom('label', {html: 'Expand First Row'})}, body);
                         const node = dom('data-table', {
                             schema: data.schemaExpandable,
                             rows: data.items,
@@ -591,6 +591,29 @@
                             newData[0].expanded = true;
                             node.rows = newData;
 
+                            node.on('expanded', function (e) {
+                                console.log('expanded', e.detail);
+                            });
+                            done();
+                        });
+                    });
+                });
+
+                describe('panels', () => {
+                    it.only('should create paneled data', (done) => {
+                        const data = getHeaderless();
+                        const schema = data.schema;
+                        const rows = data.items.slice(5)
+                        rows.forEach((item) => {
+                            delete item.childIds;
+                        });
+                        const section = dom('section', {html: dom('label', {html: 'Panel Data'})}, body);
+                        const node = dom('data-table', {
+                            schema,
+                            rows,
+                        }, section);
+                        const events = [];
+                        onDomReady(node, function () {
                             node.on('expanded', function (e) {
                                 console.log('expanded', e.detail);
                             });
@@ -764,7 +787,7 @@
                         const node = dom('data-table', {
                             schema: {
                                 sort: 'company',
-                                desc: true, 
+                                desc: true,
                                 columns: data.columns
                             },
                             rows: data.items,

@@ -43,6 +43,15 @@
     --tbl-edit-btn-hvr: #eee;
 
     --tbl-grp-parent: #eee;
+
+    --tbl-hless-bk: #f9f9f9;
+    --tbl-hless-brd: #e3e9eb;
+    --tbl-hless-caret-clr: #3597d2;
+    --tbl-hless-caret-size: 24px;
+    --tbl-hless-label-clr: #6b7682;
+    --tbl-hless-label-size: 18px;
+    --tbl-hless-text-clr: #393536;
+    --tbl-hless-text-size: 24px;
 }
 
 data-table {
@@ -56,7 +65,7 @@ data-table {
     min-height: 170px;
     outline: none;
 
-    tbody tr:not(.added-row):not(.selected):not(.unselectable):hover {
+    tbody tr:not(.added-row):not(.selected):not(.unselectable):not(.expanded-row):hover {
         background-color: var(--tbl-tr-hvr);
     }
     table {
@@ -216,7 +225,7 @@ data-table {
     }
     &.selectable {
     }
-    
+
     &[clickable] {
         tbody {
             tr {
@@ -226,6 +235,7 @@ data-table {
             }
         }
     }
+
     &.no-data {
         border: var(--tbl-brd);
         padding-bottom: 25px;
@@ -241,6 +251,50 @@ data-table {
         &.scrollable {
             &:after {
                 margin-top: 55px;
+            }
+        }
+    }
+}
+
+// headerless
+data-table.headerless {
+    table {
+        border-collapse: separate;
+        border-spacing: 0 10px;
+    }
+    tr {
+        &.expanded-row {
+            td {
+                border: 0;
+                background-color: transparent;
+                // background-color: red;
+            }
+        }
+    }
+    td {
+        background-color: var(--tbl-hless-bk);
+        border: 1px solid var(--tbl-hless-brd);
+        border-width: 1px 0;
+        vertical-align: top;
+        padding: 15px 10px;
+        // fixme
+        // cell label is not dependent on headerless
+        .tbl-cell-label {
+            font-size: var(--tbl-hless-label-size);
+            color: var(--tbl-hless-label-clr);
+        }
+        .tbl-cell-text {
+            font-size: var(--tbl-hless-text-size);
+            color: var(--tbl-hless-text-clr);
+        }
+        &:first-child {
+            // padding: 0;
+        }
+        &.expand-cell {
+            vertical-align: middle;
+            i.fas {
+                font-size: var(--tbl-hless-caret-size);
+                color: var(--tbl-hless-caret-clr);
             }
         }
     }

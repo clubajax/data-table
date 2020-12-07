@@ -21,9 +21,7 @@ formatters.checkbox = {
 };
 
 // TODO
-// widget / function for content (checkbox)
 // automatic virtual scroll after 100+ rows
-// filter / search
 // github.io demos
 // sticky column:
 // https://codepen.io/SimplyPhy/pen/oEZKZo
@@ -41,7 +39,6 @@ class DataTable extends BaseComponent {
         this.nodeHolder = dom('div', { class: 'data-table-node-holder' }, document.body);
 
         this.makeExpandable();
-        
     }
 
     get editable() {
@@ -169,7 +166,11 @@ class DataTable extends BaseComponent {
             if (this.grouped && this.schema.grouped) {
                 this.grouped = this.schema.grouped;
             }
-            this.expandable = this.schema.expandable;
+            if (this.schema.headerless) {
+                this.classList.add('headerless');
+            }
+
+            this.expandable = this.schema.expandable || this.schema.headerless;
             dom.classList.toggle(this, 'has-grouped', !!this.grouped || !!this.expandable);
 
             if (!items.length && !this.loading && !this.error) {
@@ -252,6 +253,7 @@ class DataTable extends BaseComponent {
             console.log('prenode', node);
         }
     }
+
     setFocused() {
         // see above
         if (this.preRenderFocusNode) {
@@ -260,6 +262,7 @@ class DataTable extends BaseComponent {
             }, 30);
         }
     }
+
     domReady() {
         if (!this.items) {
             this.noDataTimer = setTimeout(() => {
@@ -368,8 +371,8 @@ class DataTable extends BaseComponent {
                     this.fire('action', {
                         type,
                         item: e.detail.item,
-                        index
-                    })
+                        index,
+                    });
             }
         };
 
@@ -471,12 +474,15 @@ class DataTable extends BaseComponent {
         const columns = this.schema.columns;
         if (!util.isEqual(columns, this.columns)) {
             this.columns = columns;
-            this.renderHeader(this.columns);
+            this.colSizes = [];
+            if (!this.schema.headerless) {
+                this.renderHeader(this.columns);
+            }
         }
         PERF && console.time('render.table.body');
         this.renderBody(this.items, this.columns);
         PERF && console.timeEnd('render.table.body');
-        this.fire('render', {table: this.table || this, thead: this.thead, tbody: this.tbody});
+        this.fire('render', { table: this.table || this, thead: this.thead, tbody: this.tbody });
     }
 
     // is overwritten by scrollable
@@ -485,7 +491,9 @@ class DataTable extends BaseComponent {
             return;
         }
         this.table = dom('table', { tabindex: '1' }, this);
-        this.thead = dom('thead', {}, this.table);
+        if (!this.schema.headerless) {
+            this.thead = dom('thead', {}, this.table);
+        }
         this.tbody = dom('tbody', {}, this.table);
     }
 
@@ -750,6 +758,7 @@ function renderRow(item, { index, columns, colSizes, tbody, selectable, dataTabl
         rowOptions = { 'data-row-id': item.id },
         tr;
 
+    const headerless = dataTable.schema.headerless;
     const expandable = dataTable.expandable;
     const grouped = dataTable.grouped;
     const hasChildIds = item.childIds && item.childIds.length;
@@ -782,9 +791,16 @@ function renderRow(item, { index, columns, colSizes, tbody, selectable, dataTabl
 
     columns.forEach((col, i) => {
         let isExpanded;
+        let isExpandedEnd;
+        if (expandable && headerless && i === columns.length - 1) {
+            isExpandedEnd = !item.expanded ? 'off' : 'on';
+        }
         if ((expandable || (grouped && (item.subItemIds || hasChildIds))) && i === 0) {
             if (expandable) {
                 isExpanded = !item.expanded ? 'off' : 'on';
+                if (headerless) {
+                    isExpanded = false;
+                }
             } else {
                 isExpanded = item.expanded === undefined ? false : item.expanded === false ? 'off' : 'on';
             }
@@ -828,6 +844,12 @@ function renderRow(item, { index, columns, colSizes, tbody, selectable, dataTabl
 
             css('expand-cell');
         }
+        if (dataTable.schema.labeled) {
+            html = [
+                dom('div', { class: 'tbl-cell-label', html: col.label }),
+                dom('div', { class: 'tbl-cell-text', html }),
+            ];
+        }
         const cellOptions = { html, 'data-field': key, class: css() };
         if (isExpanded) {
             cellOptions['data-expanded'] = isExpanded;
@@ -836,6 +858,18 @@ function renderRow(item, { index, columns, colSizes, tbody, selectable, dataTabl
             cellOptions.style = { width: colSizes[i] };
         }
         dom('td', cellOptions, tr);
+
+        if (isExpandedEnd) {
+            dom(
+                'td',
+                {
+                    'data-expanded': isExpandedEnd,
+                    class: 'expand-cell',
+                    html: dom('i', { class: isExpandedEnd === 'off' ? 'fas fa-angle-down' : 'fas fa-angle-up' }),
+                },
+                tr,
+            );
+        }
     });
 
     if (item.expanded) {
