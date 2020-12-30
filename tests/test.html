@@ -600,7 +600,7 @@
                 });
 
                 describe('panels', () => {
-                    it.only('should create paneled data', (done) => {
+                    it('should create paneled data', (done) => {
                         const data = getHeaderless();
                         const schema = data.schema;
                         const rows = data.items.slice(5)

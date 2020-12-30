@@ -389,10 +389,7 @@ class DataTable extends BaseComponent {
     }
 
     makeExpandable() {
-        // @ts-ignore
-        this.on('click', '[data-expanded]', (e) => {
-            const td = e.target.closest('td');
-            const tr = e.target.closest('tr');
+        const handleExpand = (tr, td) => {
             const id = dom.attr(tr, 'data-row-id');
             const item = this.getItemById(id);
             const state = dom.attr(td, 'data-expanded');
@@ -453,7 +450,27 @@ class DataTable extends BaseComponent {
                     true,
                 );
             }
+        };
+
+        this.on('click', '[data-expanded]', (e) => {
+            const td = e.target.closest('td');
+            const tr = e.target.closest('tr');
+            handleExpand(tr, td);
         });
+
+        setTimeout(() => {
+            if (this.schema && this.schema.headerless) {
+                this.on('click', 'tr', (e) => {
+                    if (e.target.closest('.expanded-row')) {
+                        return;
+                    }
+                    const tr = e.target.closest('tr');
+                    const td = dom.query(tr, '[data-expanded]');
+
+                    handleExpand(tr, td);
+                });
+            }
+        }, 30);
     }
 
     refresh(all) {
@@ -873,6 +890,7 @@ function renderRow(item, { index, columns, colSizes, tbody, selectable, dataTabl
     });
 
     if (item.expanded) {
+        tr.classList.add('expanded-parent');
         if (expandable) {
             // empty contaner below row
             renderExpandedRow(item, index, columns, tbody, dataTable);

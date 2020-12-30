@@ -27,7 +27,7 @@ function getRemoveable(item, col, dataTable) {
     const editCell = dataTable.schema.columns.find((c) => c.component && c.component.type === 'edit-rows');
     let noRemove = editCell ? editCell.component.noRemove : false;
     if (typeof noRemove === 'function') {
-        return item.added || !noRemove(item);
+        return item.added || !noRemove(item, dataTable.items);
     }
     return item.added || (!noRemove && !(col.component || {}).noRemove);
 }
