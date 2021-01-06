@@ -25,12 +25,15 @@ module.exports = {
     // source-map: slow, org source, external
     devtool: DEV ? 'inline-source-map' : 'source-map',
     externals: [
-        // '@clubajax/custom-elements-polyfill',
-        '@clubajax/dom',
-        '@clubajax/on',
-        '@clubajax/base-component',
+        
+        // '@clubajax/dom',
+        // '@clubajax/on',
+        // '@clubajax/base-component',
         '@clubajax/form',
-        '@clubajax/format',
+        // '@clubajax/format',
+
+        // true imports:
+        // '@clubajax/custom-elements-polyfill',
         // '@clubajax/key-nav',
         // '@clubajax/no-dash'
     ],

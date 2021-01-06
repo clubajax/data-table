@@ -234,6 +234,8 @@ class DataTable extends BaseComponent {
     propCheck(disable) {
         if (!disable) {
             this.legacyTimer = setTimeout(() => {
+                console.log('(Note: schema should be loaded before rows)');
+                console.log('table info:', this.id, this.schema, this.rows);
                 throw new Error('a `rows` and a `schema` is required');
             }, 1000);
             return;

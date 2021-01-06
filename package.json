@@ -10,7 +10,8 @@
     "start": "grunt dev",
     "old-build": "grunt deploy",
     "build": "webpack --mode production --config ./webpack.config.js && node ./scripts/deploy.js",
-    "quick-build": "webpack --mode production --config ./webpack.config.js && node ./scripts/clean.js"
+    "quick-build": "webpack --mode production --config ./webpack.config.js && node ./scripts/clean.js",
+    "rtk-build": "webpack --mode production --config ./webpack.config.js && node ./scripts/rtk-copy.js"
   },
   "repository": {
     "type": "git",
