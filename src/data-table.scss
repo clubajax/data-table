@@ -310,13 +310,13 @@ data-table.headerless {
 // zebra striping
 data-table.zebra {
     tbody {
-        tr:not(.child-row):not(.row-error):nth-child(even) {
+        tr:not(.child-row):not(.row-error):not(.expanded-row):nth-child(even) {
             background-color: var(--tbl-tr-odd);
             &:hover {
                 background-color: var(--tbl-tr-hvr);
             }
         }
-        tr:not(.child-row):not(.row-error):nth-child(odd) {
+        tr:not(.child-row):not(.row-error):not(.expanded-row):nth-child(odd) {
             background-color: var(--tbl-tr-even);
             &:hover {
                 background-color: var(--tbl-tr-hvr);
@@ -529,7 +529,7 @@ data-table {
 // no data .message
 data-table {
     .no-data-container {
-        margin-top: 20px;
+        margin: 20px 0;
         text-align: center;
         .message {
             margin: 10px;
