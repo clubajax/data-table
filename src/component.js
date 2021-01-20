@@ -56,7 +56,7 @@ function createLink(col, item, dataTable) {
 }
 
 function create(col, item, dataTable, type, compType) {
-    const formatter = getFormatter(col, item);
+    const [formatter, options] = getFormatter(col, item);
     function edit(node, timerTriggered) {
         const parent = node.parentNode;
         on.emit(parent, 'cell-edit');
@@ -104,8 +104,8 @@ function create(col, item, dataTable, type, compType) {
                 return;
             }
             const changed = item[col.key] !== formatter.from(input.value);
-            item[col.key] = formatter.from(input.value);
-            node.innerHTML = formatter.to(input.value);
+            node.innerHTML = formatter.to(input.value, true, options);
+            item[col.key] = formatter.from(node.innerHTML);
             parent.appendChild(node);
             input.destroy();
             if (changed) {
