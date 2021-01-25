@@ -16,8 +16,12 @@ const Clickable = {
 			field,
 			row,
 			rowId,
-			cell = e.target.closest('td');
+            cell = e.target.closest('td'),
+            comp = e.target.closest('ui-checkbox,button');
 
+        if (comp) {
+            return;
+        }
 		if (cell) {
 			field = cell.getAttribute('data-field');
 		}
