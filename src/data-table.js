@@ -63,7 +63,7 @@ class DataTable extends BaseComponent {
                 if (!td) {
                     return;
                 }
-                const formatter = util.getFormatter(column, rowItem);
+                const formatter = util.getFormatter(column, rowItem)[0];
                 td.innerHTML = formatter.toHtml(rowItem[key]);
                 rowItem[key] = formatter.from(td.innerHTML);
                 changed = key;
@@ -174,9 +174,13 @@ class DataTable extends BaseComponent {
             dom.classList.toggle(this, 'has-grouped', !!this.grouped || !!this.expandable);
 
             if (!items.length && !this.loading && !this.error) {
-                if (this.tbody) {
-                    dom.clean(this.tbody, true);
-                }
+                
+                // fixes nav-away no-header bug in distribution
+                // if (this.tbody) {
+                //     dom.clean(this.tbody, true);
+                // }
+                // added:
+                this.render();
                 this.displayNoData(true);
             } else {
                 if (this.isExpanded()) {
