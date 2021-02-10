@@ -92,6 +92,7 @@
                 delete data.columns.birthday;
                 delete data.columns.address1;
                 delete data.columns.address2;
+                console.log(JSON.stringify(data, null, 4));
                 return data;
             }
 
@@ -781,7 +782,7 @@
                         });
                     });
 
-                    it('should be scrollable', function (done) {
+                    it.only('should be scrollable', function (done) {
                         const data = getData();
                         const section = dom('section', {class: 'sized', html: 'Scrollable'}, body);
                         const node = dom('data-table', {
@@ -792,6 +793,9 @@
                             },
                             rows: data.items,
                             scrollable: true,
+                            'static-column': 1,
+
+                            zebra: true,
                             // extsort: true,
                         }, section);
                         onDomReady(node, function () {

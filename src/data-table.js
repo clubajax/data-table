@@ -60,7 +60,8 @@ class DataTable extends BaseComponent {
                 rowItem[key] = item[key];
                 column = this.getColumn(key);
                 const td = dom.query(this, `tr[data-row-id="${item.id}"] td[data-field="${key}"]`);
-                if (!td) {
+                if (!td || /fa-caret/.test(td.innerHTML)) {
+                    // not a td or is a td with the expandable caret
                     return;
                 }
                 const formatter = util.getFormatter(column, rowItem)[0];
@@ -1119,6 +1120,7 @@ module.exports = BaseComponent.define('data-table', DataTable, {
         'collapse',
         'add-data-message',
         'no-data-message',
+        'static-column'
     ],
     bools: ['sortable', 'selectable', 'scrollable', 'clickable', 'perf', 'autoselect', 'zebra', 'loading'],
 });
