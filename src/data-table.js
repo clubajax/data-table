@@ -60,10 +60,11 @@ class DataTable extends BaseComponent {
                 rowItem[key] = item[key];
                 column = this.getColumn(key);
                 const td = dom.query(this, `tr[data-row-id="${item.id}"] td[data-field="${key}"]`);
-                if (!td) {
+                if (!td || /fa-caret/.test(td.innerHTML)) {
+                    // not a td or is a td with the expandable caret
                     return;
                 }
-                const formatter = util.getFormatter(column, rowItem);
+                const formatter = util.getFormatter(column, rowItem)[0];
                 td.innerHTML = formatter.toHtml(rowItem[key]);
                 rowItem[key] = formatter.from(td.innerHTML);
                 changed = key;
@@ -174,9 +175,13 @@ class DataTable extends BaseComponent {
             dom.classList.toggle(this, 'has-grouped', !!this.grouped || !!this.expandable);
 
             if (!items.length && !this.loading && !this.error) {
-                if (this.tbody) {
-                    dom.clean(this.tbody, true);
-                }
+                
+                // fixes nav-away no-header bug in distribution
+                // if (this.tbody) {
+                //     dom.clean(this.tbody, true);
+                // }
+                // added:
+                this.render();
                 this.displayNoData(true);
             } else {
                 if (this.isExpanded()) {
@@ -1117,6 +1122,7 @@ module.exports = BaseComponent.define('data-table', DataTable, {
         'collapse',
         'add-data-message',
         'no-data-message',
+        'static-column'
     ],
     bools: ['sortable', 'selectable', 'scrollable', 'clickable', 'perf', 'autoselect', 'zebra', 'loading'],
 });

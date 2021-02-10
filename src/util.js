@@ -42,12 +42,12 @@ function classnames (firstClass) {
 }
 
 const SPACE = '&nbsp;';
-function toHtml(value, formatter) {
+function toHtml(value, formatter, options) {
     value = typeof value === 'string' ? value.trim() : value;
     if (value === null || value === undefined || value === '') {
         return SPACE;
     }
-    return formatter.toHtml(value);
+    return formatter.toHtml(value, options);
 }
 
 function fromHtml(value, formatter) {
@@ -64,7 +64,14 @@ function getFormatter(col, item){
             fmt = item[prop];
         } 
     }
-    return formatters[fmt] || formatters.default;
+    const options = {};
+    if (col.min) {
+        options.min = col.min;
+    }
+    if (col.max) {
+        options.max = col.max;
+    }
+    return [formatters[fmt] || formatters.default, options];
 }
 
 function position(node, button, {align}) {

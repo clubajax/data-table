@@ -196,7 +196,19 @@ data-table {
             position: sticky;
             top: 0;
             left: -100%;
-            z-index: 1;
+            z-index: 2;
+        }
+
+        &[static-column] {
+            th:first-child,
+            td:first-child {
+                position: sticky;
+                left: 0;
+                z-index: 1;
+            }
+            th:first-child {
+                z-index: 3;
+            }
         }
     }
     &[borders='bottom'] {
@@ -271,8 +283,8 @@ data-table.headerless {
                 background-color: transparent;
             }
         }
-        &.expanded-parent{
-            td{
+        &.expanded-parent {
+            td {
                 background-color: white;
                 border-bottom: 0;
             }
@@ -310,16 +322,25 @@ data-table.headerless {
 // zebra striping
 data-table.zebra {
     tbody {
-        tr:not(.child-row):not(.row-error):nth-child(even) {
-            background-color: var(--tbl-tr-odd);
+        tr:not(.child-row):not(.row-error):not(.expanded-row):nth-child(even) {
+            td {
+                background-color: var(--tbl-tr-odd);
+            }
+
             &:hover {
-                background-color: var(--tbl-tr-hvr);
+                td {
+                    background-color: var(--tbl-tr-hvr);
+                }
             }
         }
-        tr:not(.child-row):not(.row-error):nth-child(odd) {
-            background-color: var(--tbl-tr-even);
+        tr:not(.child-row):not(.row-error):not(.expanded-row):nth-child(odd) {
+            td {
+                background-color: var(--tbl-tr-even);
+            }
             &:hover {
-                background-color: var(--tbl-tr-hvr);
+                td {
+                    background-color: var(--tbl-tr-hvr);
+                }
             }
         }
     }
@@ -529,7 +550,7 @@ data-table {
 // no data .message
 data-table {
     .no-data-container {
-        margin-top: 20px;
+        margin: 20px 0;
         text-align: center;
         .message {
             margin: 10px;

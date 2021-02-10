@@ -38,7 +38,12 @@ const Clickable = {
 			return;
 		}
 
-		item = this.getItemById(rowId);
+        item = this.getItemById(rowId);
+        
+        if (!item) {
+            // most likely a child table row
+            return;
+        }
 
 		emitEvent = {
 			index: index,
