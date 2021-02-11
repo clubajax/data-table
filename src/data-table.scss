@@ -13,7 +13,7 @@
 
     --tbl-nodata-clr: #aaa;
 
-    --tbl-head-txt: 11px;
+    --tbl-head-txt: 16px;
     --tbl-head-clr: #919191;
     --tbl-head-bk: #d5dee2;
     --tbl-head-brd: 2px solid #ccc;
@@ -85,7 +85,8 @@ data-table {
             border: var(--tbl-th-brd);
             font-weight: normal;
             text-align: var(--tbl-th-align);
-            padding: var(--tbl-th-pad);
+            padding: 0;
+            // padding: var(--tbl-th-pad);
             font-size: var(--tbl-head-txt);
             color: var(--tbl-head-clr);
             line-height: 1.2;
@@ -113,10 +114,11 @@ data-table {
                 white-space: nowrap;
                 display: block;
 
-                .ui-label {
+                .tbl-label {
                     display: inline-block;
                     vertical-align: text-top;
                     white-space: normal;
+                    padding: var(--tbl-th-pad);
                 }
                 .sort {
                     vertical-align: text-top;
@@ -131,13 +133,6 @@ data-table {
                         left: 0;
                         font-size: 15px;
                     }
-                }
-                .filter {
-                    // TODO: filter not yet enabled
-                    display: none;
-                    position: relative;
-                    top: 2px;
-                    left: 2px;
                 }
             }
             &.desc {
@@ -159,6 +154,30 @@ data-table {
                     }
                     .sort-up {
                         opacity: 1;
+                    }
+                }
+            }
+            &.filter{
+                padding: 0;
+                .th-content {
+                    padding: 0 45px 0 var(--tbl-th-pad);
+                }
+                .filter-btn {
+                    cursor: pointer;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    position: absolute;
+                    top: 0;
+                    right: 0;
+                    bottom: 0;
+                    height: auto;
+                    width: 32px;
+                    font-size: 13px;
+                    background-color: var(--tbl-head-bk);
+                    &:hover{
+                        // background-color: #999;
+                        color: yellow;
                     }
                 }
             }
@@ -187,7 +206,15 @@ data-table {
             color: var(--tbl-body-clr);
         }
     }
-
+    &[sortable],
+    &.sortable {
+        th .th-content {
+            cursor: pointer;
+            &:hover {
+                background-color: var(--tbl-th-hvr);
+            }
+        }
+    }
     &[scrollable] {
         overflow-x: auto;
         overflow-y: auto;
@@ -223,15 +250,6 @@ data-table {
         table {
             td {
                 border: 0;
-            }
-        }
-    }
-    &[sortable],
-    &.sortable {
-        th {
-            cursor: pointer;
-            &:hover {
-                background-color: var(--tbl-th-hvr);
             }
         }
     }

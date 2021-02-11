@@ -510,7 +510,6 @@
 
                     it('should format readonly checkboxes', function (done) {
                         const data = getDataFiltered(['firstName', 'lastName', 'has', 'is']);
-                        console.log('data', data);
                         const section = dom('section', {html: dom('label', {html: 'Readonly Checkboxes'})}, body);
                         const node = dom('data-table', {
                             schema: data.schema,

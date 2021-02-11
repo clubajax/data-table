@@ -14,10 +14,10 @@ function getDataFiltered(names) {
 function getData20() {
     return {
         columns: [
-            { key: 'firstName', label: 'First Name' },
-            { key: 'lastName', label: 'Last Name' },
-            { key: 'company', label: 'Company', width: '100%' },
-            { key: 'address1', label: 'Address' },
+            { key: 'firstName', label: 'First Name', filter: true },
+            { key: 'lastName', label: 'Last Name', filter: true },
+            { key: 'company', label: 'Company', width: '100%', filter: true },
+            { key: 'address1', label: 'Address', filter: true },
             { key: 'address2', label: 'Street' },
             { key: 'birthday', label: 'Birthday' },
             { key: 'email', label: 'Email' },

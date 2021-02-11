@@ -175,7 +175,6 @@ class DataTable extends BaseComponent {
             dom.classList.toggle(this, 'has-grouped', !!this.grouped || !!this.expandable);
 
             if (!items.length && !this.loading && !this.error) {
-                
                 // fixes nav-away no-header bug in distribution
                 // if (this.tbody) {
                 //     dom.clean(this.tbody, true);
@@ -542,21 +541,25 @@ class DataTable extends BaseComponent {
                     css('unsortable');
                 }
 
+                css(col.filter ? 'filter' : null);
+
                 options = {
-                    html: dom('span', {
-                        class: 'th-content',
-                        html: [
-                            dom('span', { html: label, class: 'ui-label' }),
-                            dom('span', {
-                                class: 'sort',
-                                html: [
-                                    dom('span', { class: 'sort-up fas fa-sort-up' }),
-                                    dom('span', { class: 'sort-dn fas fa-sort-down' }),
-                                ],
-                            }),
-                            dom('span', { class: 'filter fas fa-filter' }),
-                        ],
-                    }),
+                    html: [
+                        dom('span', {
+                            class: 'th-content',
+                            html: [
+                                dom('span', { html: label, class: 'tbl-label' }),
+                                dom('span', {
+                                    class: 'sort',
+                                    html: [
+                                        dom('span', { class: 'sort-up fas fa-sort-up' }),
+                                        dom('span', { class: 'sort-dn fas fa-sort-down' }),
+                                    ],
+                                }),
+                            ],
+                        }),
+                        col.filter ? dom('span', { class: 'filter-btn', html: dom('span', { class: 'fas fa-filter' }) }) : null,
+                    ],
                     class: css(),
                     'data-field': key,
                 };
@@ -1120,7 +1123,7 @@ module.exports = BaseComponent.define('data-table', DataTable, {
         'collapse',
         'add-data-message',
         'no-data-message',
-        'static-column'
+        'static-column',
     ],
     bools: ['sortable', 'selectable', 'scrollable', 'clickable', 'perf', 'autoselect', 'zebra', 'loading'],
 });
