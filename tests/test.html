@@ -782,6 +782,8 @@
                     });
 
                     it.only('should be scrollable', function (done) {
+                        // https://mvc-grid.azurewebsites.net/Column/CustomFilter
+                        // TODO: Make filter test, works with and without sorting
                         const data = getData();
                         const section = dom('section', {class: 'sized', html: 'Scrollable'}, body);
                         const node = dom('data-table', {
