@@ -45,9 +45,11 @@ const Sortable = {
 
         if (!this.extsort) {
             this.items.sort((a, b) => {
-                if (a[sort] < b[sort]) {
+                let word1 = (a[sort] || '').toString().toLowerCase();
+                let word2 = (b[sort] || '').toString().toLowerCase();
+                if (word1 < word2) {
                     return lt;
-                } else if (a[sort] > b[sort]) {
+                } else if (word1 > word2) {
                     return gt;
                 }
                 return 0;

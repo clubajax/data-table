@@ -7,8 +7,6 @@ const createComponent = require('./component');
 const formatters = require('@clubajax/format');
 const util = require('./util');
 
-const perf = localStorage.getItem('data-table-perf');
-const PERF = perf === 'true' || perf === '1';
 
 formatters.checkbox = {
     // for readonly checkbox
@@ -503,9 +501,7 @@ class DataTable extends BaseComponent {
                 this.renderHeader(this.columns);
             }
         }
-        PERF && console.time('render.table.body');
         this.renderBody(this.items, this.columns);
-        PERF && console.timeEnd('render.table.body');
         this.fire('render', { table: this.table || this, thead: this.thead, tbody: this.tbody });
     }
 
@@ -560,7 +556,7 @@ class DataTable extends BaseComponent {
                         ],
                     }),
                     class: css(),
-                    'data-field': key,
+                    'data-field': typeof key === 'string' ? key : key.sort,
                 };
             }
             if (col.width) {
@@ -597,6 +593,7 @@ class DataTable extends BaseComponent {
     }
 
     renderBody(items, columns) {
+        this.perf && console.time('render.table.body');
         const tbody = this.tbody;
 
         dom.queryAll(this, '.expanded-row').forEach((container) => {
@@ -620,6 +617,7 @@ class DataTable extends BaseComponent {
 
         render(items, columns, this.colSizes, tbody, this.selectable, this, () => {
             this.bodyHasRendered = true;
+            this.perf && console.timeEnd('render.table.body');
             this.fire('render-body', { tbody: this.tbody }, false);
         });
     }
@@ -830,7 +828,7 @@ function renderRow(item, { index, columns, colSizes, tbody, selectable, dataTabl
             }
         }
 
-        key = col.key || col.icon || col;
+        key = col.key || col.icon || col.sort;
         css = util.classnames(key);
         css(col.align);
         css(col.format);
@@ -839,7 +837,9 @@ function renderRow(item, { index, columns, colSizes, tbody, selectable, dataTabl
             css(col.component.type);
             css(col.component.format);
         } else {
+            
             html = key === 'index' ? index + 1 : item[key];
+
             const fmt = col.formatter || col.format;
             css(fmt);
             if (fmt) {
