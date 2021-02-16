@@ -7,7 +7,7 @@
     <!-- <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css"
         integrity="sha384-5sAR7xN1Nv6T6+dT2mhtzEpVJvfS3NScPQTrOxhwjIuvcA67KV2R5Jz6kr4abQsz" crossorigin="anonymous"> -->
 
-        <link rel="stylesheet" href="./src/fontawesome/css/all.css" />
+    <link rel="stylesheet" href="./src/fontawesome/css/all.css" />
     <script src="src/test-files.js"></script>
     <script src="//localhost:35750/livereload.js"></script>
 
@@ -765,13 +765,15 @@
                     });
                 });
 
-                describe('filtering', function(){
-                    it.only('should be scrollable', function (done) {
+                describe('filtering', function () {
+                    it.only('should be filterable', function (done) {
                         // https://mvc-grid.azurewebsites.net/Column/CustomFilter
                         // TODO: Make filter test, works with and without sorting
-                        
+
                         const data = copy(getData());
                         const schema = {
+                            sort: 'company',
+                            desc: true,
                             columns: data.columns
                         };
                         schema.columns[0].filter = true;

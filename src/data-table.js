@@ -547,18 +547,18 @@ class DataTable extends BaseComponent {
                     html: [
                         dom('span', {
                             class: 'th-content',
+                            html: dom('span', { html: label, class: 'tbl-label' }),
+                        }),
+                        dom('span', {
+                            class: 'sort',
                             html: [
-                                dom('span', { html: label, class: 'tbl-label' }),
-                                dom('span', {
-                                    class: 'sort',
-                                    html: [
-                                        dom('span', { class: 'sort-up fas fa-sort-up' }),
-                                        dom('span', { class: 'sort-dn fas fa-sort-down' }),
-                                    ],
-                                }),
+                                dom('span', { class: 'sort-up fas fa-sort-up' }),
+                                dom('span', { class: 'sort-dn fas fa-sort-down' }),
                             ],
                         }),
-                        col.filter ? dom('span', { class: 'filter-btn', html: dom('span', { class: 'fas fa-filter' }) }) : null,
+                        col.filter
+                            ? dom('span', { class: 'filter-btn', html: dom('span', { class: 'fas fa-filter' }) })
+                            : null,
                     ],
                     class: css(),
                     'data-field': key,
