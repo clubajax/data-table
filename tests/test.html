@@ -4,8 +4,10 @@
 <head>
     <title>Test Data Table</title>
     <meta charset="utf-8">
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css"
-        integrity="sha384-5sAR7xN1Nv6T6+dT2mhtzEpVJvfS3NScPQTrOxhwjIuvcA67KV2R5Jz6kr4abQsz" crossorigin="anonymous">
+    <!-- <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css"
+        integrity="sha384-5sAR7xN1Nv6T6+dT2mhtzEpVJvfS3NScPQTrOxhwjIuvcA67KV2R5Jz6kr4abQsz" crossorigin="anonymous"> -->
+
+        <link rel="stylesheet" href="./src/fontawesome/css/all.css" />
     <script src="src/test-files.js"></script>
     <script src="//localhost:35750/livereload.js"></script>
 
@@ -92,7 +94,7 @@
                 delete data.columns.birthday;
                 delete data.columns.address1;
                 delete data.columns.address2;
-                console.log(JSON.stringify(data, null, 4));
+                // console.log(JSON.stringify(data, null, 4));
                 return data;
             }
 
@@ -763,6 +765,35 @@
                     });
                 });
 
+                describe('filtering', function(){
+                    it.only('should be scrollable', function (done) {
+                        // https://mvc-grid.azurewebsites.net/Column/CustomFilter
+                        // TODO: Make filter test, works with and without sorting
+                        
+                        const data = copy(getData());
+                        const schema = {
+                            columns: data.columns
+                        };
+                        schema.columns[0].filter = true;
+                        schema.columns[1].filter = true;
+                        schema.columns[2].filter = true;
+                        schema.columns[3].filter = true;
+                        const section = dom('section', {class: 'sized', html: 'Filterable'}, body);
+                        const node = dom('data-table', {
+                            schema,
+                            rows: data.items,
+                            scrollable: true,
+                            'static-column': 1,
+
+                            zebra: true,
+                            // extsort: true,
+                        }, section);
+                        onDomReady(node, function () {
+                            done();
+                        });
+                    });
+                });
+
                 describe('scrolling', function () {
 
                     it('should be scrollable with minimal columns', function (done) {
@@ -781,9 +812,7 @@
                         });
                     });
 
-                    it.only('should be scrollable', function (done) {
-                        // https://mvc-grid.azurewebsites.net/Column/CustomFilter
-                        // TODO: Make filter test, works with and without sorting
+                    it('should be scrollable', function (done) {
                         const data = getData();
                         const section = dom('section', {class: 'sized', html: 'Scrollable'}, body);
                         const node = dom('data-table', {
