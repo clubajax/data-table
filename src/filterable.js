@@ -34,7 +34,7 @@ const Filterable = {
         col.filter.close = () => { 
             tooltip.close();
         }
-        col.filter.emit = (data) => { 
+        col.filter.send = (data) => { 
             this.fire('filter', {
                 name: col.key,
                 value: data
