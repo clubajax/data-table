@@ -5,7 +5,7 @@ const Sortable = {
     init() {
         this.classList.add('sortable');
         this.current = {};
-        this.on('render-header', this.onHeaderRender.bind(this));
+        this.on('render-header', this.onHeaderSortRender.bind(this));
         const { field, dir } = this.extsort || {};
         this.setSort(field, dir);
     },
@@ -14,9 +14,9 @@ const Sortable = {
         // does not fire on init - only on updates
         // data-table.onExtsort fires on init, but use sortable.init instead
         this.setSort(sort.field, sort.dir);
-        clearTimeout(this.clickHandleTimer);
-        if (this.clickHandle) {
-            this.clickHandle.resume();
+        clearTimeout(this.clickSortHandleTimer);
+        if (this.clickSortHandle) {
+            this.clickSortHandle.resume();
         }
     },
 
@@ -83,20 +83,21 @@ const Sortable = {
         }
     },
 
-    onHeaderRender: function () {
-        if (this.clickHandle) {
-            this.clickHandle.remove();
+    onHeaderSortRender () {
+        if (this.clickSortHandle) {
+            this.clickSortHandle.remove();
         }
-        this.clickHandle = this.on('header-click', this.onHeaderClick.bind(this));
+        this.clickSortHandle = this.on('header-click', this.onHeaderSortClick.bind(this));
         this.displaySort();
     },
 
-    onHeaderClick(e) {
+    onHeaderSortClick(e) {
         let dir,
             field = e.detail.field,
             target = e.detail.cell;
 
-        if (!target || target.className.indexOf('no-sort') > -1) {
+        
+        if (!target || e.detail.isFilter || target.className.indexOf('no-sort') > -1) {
             return;
         }
         if (field === this.current.sort) {
@@ -117,9 +118,9 @@ const Sortable = {
         } else {
             this.setSort(field, dir);
         }
-        this.clickHandle.pause();
-        this.clickHandleTimer = setTimeout(() => {
-            this.clickHandle.resume();
+        this.clickSortHandle.pause();
+        this.clickSortHandleTimer = setTimeout(() => {
+            this.clickSortHandle.resume();
         }, 1000);
     },
 };

@@ -3,6 +3,7 @@ const dom = require('@clubajax/dom');
 const sortable = require('./sortable');
 const clickable = require('./clickable');
 const selectable = require('./selectable');
+const filterable = require('./filterable');
 const createComponent = require('./component');
 const formatters = require('@clubajax/format');
 const util = require('./util');
@@ -32,6 +33,7 @@ class DataTable extends BaseComponent {
         this.sortable = false;
         this.selectable = false;
         this.scrollable = false;
+        this.filterable = false;
         this.propCheck();
 
         this.nodeHolder = dom('div', { class: 'data-table-node-holder' }, document.body);
@@ -173,7 +175,6 @@ class DataTable extends BaseComponent {
             dom.classList.toggle(this, 'has-grouped', !!this.grouped || !!this.expandable);
 
             if (!items.length && !this.loading && !this.error) {
-                
                 // fixes nav-away no-header bug in distribution
                 // if (this.tbody) {
                 //     dom.clean(this.tbody, true);
@@ -300,6 +301,11 @@ class DataTable extends BaseComponent {
 
     getBlankItem() {
         return getBlankItem(this.schema.columns, this.items[0]);
+    }
+
+    getIconFilter() { 
+        // to be overwritten by filterable
+        return dom('span', {class: 'fas fa-check'});
     }
 
     addRow(index = 0, item) {
@@ -540,21 +546,25 @@ class DataTable extends BaseComponent {
                     css('unsortable');
                 }
 
+                css(col.filter ? 'filter' : null);
+
                 options = {
-                    html: dom('span', {
-                        class: 'th-content',
-                        html: [
-                            dom('span', { html: label, class: 'ui-label' }),
-                            dom('span', {
-                                class: 'sort',
-                                html: [
-                                    dom('span', { class: 'sort-up fas fa-sort-up' }),
-                                    dom('span', { class: 'sort-dn fas fa-sort-down' }),
-                                ],
-                            }),
-                            dom('span', { class: 'filter fas fa-filter' }),
-                        ],
-                    }),
+                    html: [
+                        dom('span', {
+                            class: 'th-content',
+                            html: dom('span', { html: label, class: 'tbl-label' }),
+                        }),
+                        dom('span', {
+                            class: 'sort',
+                            html: [
+                                dom('span', { class: 'sort-up fas fa-sort-up' }),
+                                dom('span', { class: 'sort-dn fas fa-sort-down' }),
+                            ],
+                        }),
+                        col.filter
+                            ? dom('span', { class: 'filter-btn', html: this.getIconFilter(col) })
+                            : null,
+                    ],
                     class: css(),
                     'data-field': typeof key === 'string' ? key : key.sort,
                 };
@@ -745,6 +755,10 @@ class DataTable extends BaseComponent {
         if (this.selectable) {
             clickable.call(this);
             selectable.call(this);
+        }
+        if (this.schema.columns.find((c) => c.filter)) {
+            clickable.call(this);
+            filterable.call(this);
         }
         this.mixPlugins = noop;
     }
@@ -1122,7 +1136,7 @@ module.exports = BaseComponent.define('data-table', DataTable, {
         'collapse',
         'add-data-message',
         'no-data-message',
-        'static-column'
+        'static-column',
     ],
     bools: ['sortable', 'selectable', 'scrollable', 'clickable', 'perf', 'autoselect', 'zebra', 'loading'],
 });

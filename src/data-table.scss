@@ -13,7 +13,7 @@
 
     --tbl-nodata-clr: #aaa;
 
-    --tbl-head-txt: 11px;
+    --tbl-head-txt: 16px;
     --tbl-head-clr: #919191;
     --tbl-head-bk: #d5dee2;
     --tbl-head-brd: 2px solid #ccc;
@@ -85,7 +85,7 @@ data-table {
             border: var(--tbl-th-brd);
             font-weight: normal;
             text-align: var(--tbl-th-align);
-            padding: var(--tbl-th-pad);
+            padding: 0;
             font-size: var(--tbl-head-txt);
             color: var(--tbl-head-clr);
             line-height: 1.2;
@@ -113,36 +113,41 @@ data-table {
                 white-space: nowrap;
                 display: block;
 
-                .ui-label {
+                .tbl-label {
                     display: inline-block;
                     vertical-align: text-top;
                     white-space: normal;
+                    padding: var(--tbl-th-pad);
                 }
-                .sort {
-                    vertical-align: text-top;
-                    position: relative;
-                    margin-left: 5px;
-                    width: 9px; // used to line up with td text
-                    display: none;
-                    .sort-up,
-                    .sort-dn {
-                        position: absolute;
-                        top: 1px;
-                        left: 0;
-                        font-size: 15px;
-                    }
-                }
-                .filter {
-                    // TODO: filter not yet enabled
-                    display: none;
-                    position: relative;
-                    top: 2px;
-                    left: 2px;
+            }
+            .sort {
+                vertical-align: text-top;
+                position: absolute;
+                top: 0;
+                right: 0;
+                bottom: 0;
+                height: auto;
+                width: 16px;
+                display: none;
+                // flex-direction: column;
+                // align-items: center;
+                // justify-content: center;
+                // margin-left: 5px;
+                // width: 9px; // used to line up with td text
+                // display: none;
+                .sort-up,
+                .sort-dn {
+                    position: absolute;
+                    top: 50%;
+                    left: 50%;
+                    margin-left: -5px;
+                    transform: translateY(-7px);
+                    font-size: 15px;
                 }
             }
             &.desc {
                 .sort {
-                    display: inline-block;
+                    display: flex;
                     .sort-dn {
                         opacity: 1;
                     }
@@ -160,6 +165,36 @@ data-table {
                     .sort-up {
                         opacity: 1;
                     }
+                }
+            }
+            &.filter {
+                padding: 0;
+                .th-content {
+                    padding: 0 45px 0 var(--tbl-th-pad);
+                }
+                .filter-btn {
+                    cursor: pointer;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    position: absolute;
+                    top: 0;
+                    right: 0;
+                    bottom: 0;
+                    height: auto;
+                    width: 32px;
+                    font-size: 13px;
+                    background-color: var(--tbl-head-bk);
+                    &:hover {
+                        // background-color: #999;
+                        color: yellow;
+                    }
+                }
+            }
+            &.filter.desc,
+            &.filter.asc{
+                .sort{
+                    right: 32px;
                 }
             }
         }
@@ -188,6 +223,15 @@ data-table {
         }
     }
 
+    &[sortable],
+    &.sortable {
+        th {
+            cursor: pointer;
+            &:hover {
+                background-color: var(--tbl-th-hvr);
+            }
+        }
+    }
     &[scrollable] {
         overflow-x: auto;
         overflow-y: auto;
@@ -223,15 +267,6 @@ data-table {
         table {
             td {
                 border: 0;
-            }
-        }
-    }
-    &[sortable],
-    &.sortable {
-        th {
-            cursor: pointer;
-            &:hover {
-                background-color: var(--tbl-th-hvr);
             }
         }
     }
