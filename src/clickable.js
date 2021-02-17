@@ -54,17 +54,19 @@ const Clickable = {
 		this.fire('row-click', emitEvent);
 	},
 
-	handleHeaderClick (event) {
+    handleHeaderClick(event) {
+        const isFilter = !!event.target.closest('.filter-btn');
 		let
 			cell = event.target.closest('th'),
 			field = cell && cell.getAttribute('data-field'),
 			emitEvent = {
 				field: field,
 				cell: cell,
-				target: event.target
+                target: event.target,
+                isFilter
 			};
 		if (cell && !cell.classList.contains('toolbar')) {
-			this.fire('header-click', emitEvent);
+			this.fire('header-click', emitEvent, true, true);
 		}
 	},
 

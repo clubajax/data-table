@@ -3,6 +3,7 @@ const dom = require('@clubajax/dom');
 const sortable = require('./sortable');
 const clickable = require('./clickable');
 const selectable = require('./selectable');
+const filterable = require('./filterable');
 const createComponent = require('./component');
 const formatters = require('@clubajax/format');
 const util = require('./util');
@@ -34,6 +35,7 @@ class DataTable extends BaseComponent {
         this.sortable = false;
         this.selectable = false;
         this.scrollable = false;
+        this.filterable = false;
         this.propCheck();
 
         this.nodeHolder = dom('div', { class: 'data-table-node-holder' }, document.body);
@@ -301,6 +303,11 @@ class DataTable extends BaseComponent {
         return getBlankItem(this.schema.columns, this.items[0]);
     }
 
+    getIconFilter() { 
+        // to be overwritten by filterable
+        return dom('span', {class: 'fas fa-check'});
+    }
+
     addRow(index = 0, item) {
         // index is 1-based
         if (!item) {
@@ -557,7 +564,7 @@ class DataTable extends BaseComponent {
                             ],
                         }),
                         col.filter
-                            ? dom('span', { class: 'filter-btn', html: dom('span', { class: 'fas fa-filter' }) })
+                            ? dom('span', { class: 'filter-btn', html: this.getIconFilter(col) })
                             : null,
                     ],
                     class: css(),
@@ -748,6 +755,10 @@ class DataTable extends BaseComponent {
         if (this.selectable) {
             clickable.call(this);
             selectable.call(this);
+        }
+        if (this.schema.columns.find((c) => c.filter)) {
+            clickable.call(this);
+            filterable.call(this);
         }
         this.mixPlugins = noop;
     }

@@ -9,6 +9,7 @@
 
     <link rel="stylesheet" href="./src/fontawesome/css/all.css" />
     <script src="src/test-files.js"></script>
+    <script src="src/filter-components.js"></script>
     <script src="//localhost:35750/livereload.js"></script>
 
     <style>
@@ -46,6 +47,14 @@
         .drop-data {
             width: 500px;
             height: 500px;
+        }
+
+        .tip-button-row{
+            text-align: right;
+            margin-top: 5px;
+        }
+        .tip-button-row .ui-button{
+            display: inline-block;
         }
 
         data-table[scrollable] th {
@@ -769,14 +778,14 @@
                     it.only('should be filterable', function (done) {
                         // https://mvc-grid.azurewebsites.net/Column/CustomFilter
                         // TODO: Make filter test, works with and without sorting
-
+                        const components = getFilterComponents();
                         const data = copy(getData());
                         const schema = {
                             sort: 'company',
                             desc: true,
                             columns: data.columns
                         };
-                        schema.columns[0].filter = true;
+                        schema.columns[0].filter = components.input;
                         schema.columns[1].filter = true;
                         schema.columns[2].filter = true;
                         schema.columns[3].filter = true;
@@ -791,6 +800,9 @@
                             // extsort: true,
                         }, section);
                         onDomReady(node, function () {
+                            node.on('filter', (e) => {
+                                console.log('filter.event', e);
+                            })
                             done();
                         });
                     });
