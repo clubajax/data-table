@@ -357,7 +357,7 @@ function createCheckbox(col, item, dataTable) {
                 return;
             }
             item[col.key] = e.value;
-            on.emit(input.parentNode, 'cell-change', { value: item, column: col });
+            on.emit(input.parentNode, 'cell-change', { value: item, column: col, selected: e.value });
         });
         return input;
     }

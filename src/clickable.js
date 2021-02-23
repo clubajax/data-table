@@ -60,6 +60,7 @@ const Clickable = {
 
     handleHeaderClick(event) {
         const isFilter = !!event.target.closest('.filter-btn');
+        const isShowCols = !!event.target.closest('.cols-btn');
 		let
 			cell = event.target.closest('th'),
 			field = cell && cell.getAttribute('data-field'),
@@ -67,7 +68,8 @@ const Clickable = {
 				field: field,
 				cell: cell,
                 target: event.target,
-                isFilter
+                isFilter,
+                isShowCols
 			};
 		if (cell && !cell.classList.contains('toolbar')) {
 			this.fire('header-click', emitEvent, true, true);

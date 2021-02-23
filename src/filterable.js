@@ -36,8 +36,9 @@ const Filterable = {
         }
         col.filter.send = (data) => { 
             this.fire('filter', {
-                name: col.key,
-                value: data
+                col: col,
+                value: data.value !== undefined ? data.value : data,
+                name: data.name !== undefined ? data.name : ''
             })
         }
         return dom('ui-icon', {

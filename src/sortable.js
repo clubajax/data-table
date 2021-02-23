@@ -31,7 +31,7 @@ const Sortable = {
         if (typeof sort === 'string') {
             const col = this.schema.columns.find((col) => sort.includes(col.key) || sort.includes(col.sort));
             if (col) {
-                sort = col.key;
+                sort = col.key || col.sort;
             }
         }
 
@@ -40,10 +40,9 @@ const Sortable = {
             dir,
         };
 
-        const lt = dir === 'asc' ? -1 : 1;
-        const gt = dir === 'desc' ? -1 : 1;
-
         if (!this.extsort) {
+            const lt = dir === 'asc' ? -1 : 1;
+            const gt = dir === 'desc' ? -1 : 1;
             this.items.sort((a, b) => {
                 let word1 = (a[sort] || '').toString().toLowerCase();
                 let word2 = (b[sort] || '').toString().toLowerCase();
@@ -95,9 +94,9 @@ const Sortable = {
         let dir,
             field = e.detail.field,
             target = e.detail.cell;
-
         
-        if (!target || e.detail.isFilter || target.className.indexOf('no-sort') > -1) {
+        
+        if (!target || e.detail.isFilter || e.detail.isShowCols || target.className.indexOf('no-sort') > -1) {
             return;
         }
         if (field === this.current.sort) {
@@ -107,7 +106,7 @@ const Sortable = {
         }
 
         if (this.extsort) {
-            const col = this.schema.columns.find((col) => field === col.key);
+            const col = this.schema.columns.find((col) => field === col.key || field === col.sort);
             if (col.sortKeys || col.sort) {
                 field = col.sortKeys || col.sort;
             }
@@ -121,7 +120,7 @@ const Sortable = {
         this.clickSortHandle.pause();
         this.clickSortHandleTimer = setTimeout(() => {
             this.clickSortHandle.resume();
-        }, 1000);
+        }, 500);
     },
 };
 

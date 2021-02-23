@@ -197,7 +197,6 @@ function equal(a, b, exclude = []) {
     return a === b;
 }
 
-
 function getType(item) {
     if (item === null) {
         return 'null';
@@ -258,8 +257,29 @@ function getUniqueKeys(...args) {
     return keys;
 }
 
+function storage (key, value) {
+    if (value === undefined) {
+        const item = localStorage.getItem(key);
+        if (item) {
+            try {
+                return JSON.parse(item);
+            } catch (e) {
+                return item;
+            }
+        }
+        return dom.normalize(item);
+    }
+    if (value === null) {
+        localStorage.removeItem(key);
+    } else {
+        localStorage.setItem(key, JSON.stringify(value));
+    }
+    return value;
+}
+
 module.exports = {
-	bindMethods,
+    bindMethods,
+    storage,
     isEqual,
     classnames,
     getFormatter,

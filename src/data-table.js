@@ -8,7 +8,6 @@ const createComponent = require('./component');
 const formatters = require('@clubajax/format');
 const util = require('./util');
 
-
 formatters.checkbox = {
     // for readonly checkbox
     toHtml(value) {
@@ -157,6 +156,33 @@ class DataTable extends BaseComponent {
             return;
         }
 
+        if (!this.hiddenHandled) {
+            this.hiddenHandled = true;
+            const storageKey = this.schema.columns
+                .reduce((acc, col) => {
+                    const key = col.key || col.sort;
+                    acc.push(key);
+                    return acc;
+                }, [])
+                .join('-');
+            let hidden = storage(storageKey);
+            if (hidden) {
+                this.schema.columns.forEach((col) => {
+                    const key = col.key || col.sort;
+                    col.hidden = hidden.includes(key);
+                });
+            } else {
+
+
+                // TODO - add hidden 
+                // check for a prop that doesnt save
+
+
+
+                // hidden = 
+            }
+        }
+
         this.propCheck(true);
         this.displayNoData(false);
         this.items = [...items];
@@ -278,7 +304,7 @@ class DataTable extends BaseComponent {
         this.on(
             'cell-change',
             (e) => {
-                const event = { value: e.value, column: e.column };
+                const event = { value: e.value, column: e.column, selected: e.selected };
                 if (e.searchItem) {
                     event.searchItem = e.searchItem;
                 }
@@ -303,9 +329,37 @@ class DataTable extends BaseComponent {
         return getBlankItem(this.schema.columns, this.items[0]);
     }
 
-    getIconFilter() { 
+    getIconFilter() {
         // to be overwritten by filterable
-        return dom('span', {class: 'fas fa-check'});
+        return dom('span', { class: 'fas fa-check' });
+    }
+
+    getColumnMenu() {
+        const cols = this.schema.columns;
+        const node = dom('div', {
+            class: 'col-filter',
+            html: cols.map((col) => {
+                return dom('ui-checkbox', { name: col.key || col.sort, value: !col.hidden, label: col.label });
+            }),
+        });
+        const tooltip = dom('ui-tooltip', {
+            value: node,
+            'use-click': true,
+            'is-button': true,
+        });
+
+        this.on(node, 'change', (e) => {
+            const column = cols.find((c) => c.key === e.name || c.sort === e.name);
+            column.hidden = !e.value;
+
+            this.columnChange = true;
+            this.fire('column-change', { column });
+            this.render();
+        });
+        return dom('ui-icon', {
+            type: 'fas fa-ellipsis-v',
+            html: tooltip,
+        });
     }
 
     addRow(index = 0, item) {
@@ -500,7 +554,8 @@ class DataTable extends BaseComponent {
         this.renderTemplate();
         this.renderFooter();
         const columns = this.schema.columns;
-        if (!util.isEqual(columns, this.columns)) {
+        if (this.columnChange || !util.isEqual(columns, this.columns)) {
+            this.columnChange = false;
             this.columns = columns;
             this.colSizes = [];
             if (!this.schema.headerless) {
@@ -527,7 +582,12 @@ class DataTable extends BaseComponent {
         dom.clean(this.thead, true);
         const tr = dom('tr', {}, this.thead);
         const colSizes = [];
+        const lastCol = [...columns].reverse().find((c) => !c.hidden);
         (columns || []).forEach((col, i) => {
+            if (col.hidden) {
+                return;
+            }
+            const hasHideShowCols = this['show-hide-columns'] && col === lastCol;
             let options;
             if (!col.key && col.icon) {
                 options = {
@@ -547,6 +607,9 @@ class DataTable extends BaseComponent {
                 }
 
                 css(col.filter ? 'filter' : null);
+                if (hasHideShowCols) {
+                    css('hide-show-col');
+                }
 
                 options = {
                     html: [
@@ -561,9 +624,8 @@ class DataTable extends BaseComponent {
                                 dom('span', { class: 'sort-dn fas fa-sort-down' }),
                             ],
                         }),
-                        col.filter
-                            ? dom('span', { class: 'filter-btn', html: this.getIconFilter(col) })
-                            : null,
+                        col.filter ? dom('span', { class: 'filter-btn', html: this.getIconFilter(col) }) : null,
+                        hasHideShowCols ? dom('span', { class: 'cols-btn', html: this.getColumnMenu() }) : null,
                     ],
                     class: css(),
                     'data-field': typeof key === 'string' ? key : key.sort,
@@ -826,6 +888,9 @@ function renderRow(item, { index, columns, colSizes, tbody, selectable, dataTabl
     tr = dom('tr', rowOptions, tbody);
 
     columns.forEach((col, i) => {
+        if (col.hidden) {
+            return true;
+        }
         let isExpanded;
         let isExpandedEnd;
         if (expandable && headerless && i === columns.length - 1) {
@@ -851,7 +916,6 @@ function renderRow(item, { index, columns, colSizes, tbody, selectable, dataTabl
             css(col.component.type);
             css(col.component.format);
         } else {
-            
             html = key === 'index' ? index + 1 : item[key];
 
             const fmt = col.formatter || col.format;
@@ -1138,5 +1202,15 @@ module.exports = BaseComponent.define('data-table', DataTable, {
         'no-data-message',
         'static-column',
     ],
-    bools: ['sortable', 'selectable', 'scrollable', 'clickable', 'perf', 'autoselect', 'zebra', 'loading'],
+    bools: [
+        'sortable',
+        'selectable',
+        'scrollable',
+        'clickable',
+        'perf',
+        'autoselect',
+        'zebra',
+        'loading',
+        'show-hide-columns',
+    ],
 });
