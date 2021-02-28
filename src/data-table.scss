@@ -65,8 +65,13 @@ data-table {
     min-height: 170px;
     outline: none;
 
-    tbody tr:not(.added-row):not(.selected):not(.unselectable):not(.expanded-row):hover {
-        background-color: var(--tbl-tr-hvr);
+    tbody tr:not(.added-row):not(.selected):not(.unselectable):not(.expanded-row) {
+        background-color: white;
+        &:hover {
+            td {
+                background-color: var(--tbl-tr-hvr);
+            }
+        }
     }
     table {
         width: 100%;
@@ -192,8 +197,8 @@ data-table {
                 }
             }
             &.filter.desc,
-            &.filter.asc{
-                .sort{
+            &.filter.asc {
+                .sort {
                     right: 32px;
                 }
             }
