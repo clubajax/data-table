@@ -248,6 +248,7 @@ data-table {
         tbody {
             tr {
                 outline: 0;
+                background-color: white;
                 &.selected {
                     background-color: var(--tbl-tr-sel-bk);
                     color: var(--tbl-tr-sel-txt);
