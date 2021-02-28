@@ -158,28 +158,22 @@ class DataTable extends BaseComponent {
 
         if (!this.hiddenHandled) {
             this.hiddenHandled = true;
-            const storageKey = this.schema.columns
+            this.storageKey = this.id || this.schema.columns
                 .reduce((acc, col) => {
                     const key = col.key || col.sort;
                     acc.push(key);
                     return acc;
                 }, [])
                 .join('-');
-            let hidden = storage(storageKey);
+            let hidden = storage(this.storageKey);
             if (hidden) {
                 this.schema.columns.forEach((col) => {
                     const key = col.key || col.sort;
                     col.hidden = hidden.includes(key);
                 });
-            } else {
-
-
-                // TODO - add hidden 
-                // check for a prop that doesnt save
-
-
-
-                // hidden = 
+            } else if (!this['no-save-columns']){
+                hidden = this.schema.columns.filter(c => c.hidden).map(c => c.key || c.sort);
+                storage(this.storageKey, hidden);
             }
         }
 
@@ -355,6 +349,11 @@ class DataTable extends BaseComponent {
             this.columnChange = true;
             this.fire('column-change', { column });
             this.render();
+
+            if (!this['no-save-columns']){
+                const hidden = this.schema.columns.filter(c => c.hidden).map(c => c.key || c.sort);
+                storage(this.storageKey, hidden);
+            }
         });
         return dom('ui-icon', {
             type: 'fas fa-ellipsis-v',
@@ -1212,5 +1211,6 @@ module.exports = BaseComponent.define('data-table', DataTable, {
         'zebra',
         'loading',
         'show-hide-columns',
+        'no-save-columns'
     ],
 });
