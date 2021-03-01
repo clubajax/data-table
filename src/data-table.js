@@ -165,7 +165,7 @@ class DataTable extends BaseComponent {
                     return acc;
                 }, [])
                 .join('-');
-            let hidden = storage(this.storageKey);
+            let hidden = util.storage(this.storageKey);
             if (hidden) {
                 this.schema.columns.forEach((col) => {
                     const key = col.key || col.sort;
@@ -173,7 +173,7 @@ class DataTable extends BaseComponent {
                 });
             } else if (!this['no-save-columns']){
                 hidden = this.schema.columns.filter(c => c.hidden).map(c => c.key || c.sort);
-                storage(this.storageKey, hidden);
+                util.storage(this.storageKey, hidden);
             }
         }
 
@@ -352,7 +352,7 @@ class DataTable extends BaseComponent {
 
             if (!this['no-save-columns']){
                 const hidden = this.schema.columns.filter(c => c.hidden).map(c => c.key || c.sort);
-                storage(this.storageKey, hidden);
+                util.storage(this.storageKey, hidden);
             }
         });
         return dom('ui-icon', {
