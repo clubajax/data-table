@@ -775,7 +775,7 @@
                 });
 
                 describe('filtering', function () {
-                    it.only('should be filterable', function (done) {
+                    it('should be filterable', function (done) {
                         // https://mvc-grid.azurewebsites.net/Column/CustomFilter
                         // TODO: Make filter test, works with and without sorting
                         const components = getFilterComponents();
@@ -1137,6 +1137,23 @@
                     });
                 });
 
+                describe('totals', function(){
+                    it.only('should render a total row', (done) => {
+                        // TODO
+                        // make readonly + checkable checboxes
+                        const data = getTotals();
+                        const section = dom('section', {html: dom('label', {html: 'Total Row'})}, body);
+                        const node = dom('data-table', {
+                            schema: data.schema,
+                            rows: data.items,
+                            zebra: true
+                        }, section);
+                        onDomReady(node, function () {
+
+                            done();
+                        });
+                    })
+                })
             });
 
         });

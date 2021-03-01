@@ -158,21 +158,23 @@ class DataTable extends BaseComponent {
 
         if (!this.hiddenHandled) {
             this.hiddenHandled = true;
-            this.storageKey = this.id || this.schema.columns
-                .reduce((acc, col) => {
-                    const key = col.key || col.sort;
-                    acc.push(key);
-                    return acc;
-                }, [])
-                .join('-');
+            this.storageKey =
+                this.id ||
+                this.schema.columns
+                    .reduce((acc, col) => {
+                        const key = col.key || col.sort;
+                        acc.push(key);
+                        return acc;
+                    }, [])
+                    .join('-');
             let hidden = util.storage(this.storageKey);
             if (hidden) {
                 this.schema.columns.forEach((col) => {
                     const key = col.key || col.sort;
                     col.hidden = hidden.includes(key);
                 });
-            } else if (!this['no-save-columns']){
-                hidden = this.schema.columns.filter(c => c.hidden).map(c => c.key || c.sort);
+            } else if (!this['no-save-columns']) {
+                hidden = this.schema.columns.filter((c) => c.hidden).map((c) => c.key || c.sort);
                 util.storage(this.storageKey, hidden);
             }
         }
@@ -350,8 +352,8 @@ class DataTable extends BaseComponent {
             this.fire('column-change', { column });
             this.render();
 
-            if (!this['no-save-columns']){
-                const hidden = this.schema.columns.filter(c => c.hidden).map(c => c.key || c.sort);
+            if (!this['no-save-columns']) {
+                const hidden = this.schema.columns.filter((c) => c.hidden).map((c) => c.key || c.sort);
                 util.storage(this.storageKey, hidden);
             }
         });
@@ -599,6 +601,7 @@ class DataTable extends BaseComponent {
                 const label = col.label === undefined ? col : col.label;
 
                 const css = util.classnames(col.css || col.className);
+                css(col.bordered ? 'bordered' : undefined);
                 css(col.align);
                 css(col.format || (col.component ? col.component.format : ''));
                 if (col.unsortable) {
@@ -908,6 +911,7 @@ function renderRow(item, { index, columns, colSizes, tbody, selectable, dataTabl
 
         key = col.key || col.icon || col.sort;
         css = util.classnames(key);
+        css(col.bordered ? 'bordered' : undefined);
         css(col.align);
         css(col.format);
         if (col.component) {
@@ -1045,6 +1049,35 @@ function renderExpandedRow(item, index, columns, tbody, dataTable) {
     }
 }
 
+function renderTotals(items, columns, tbody, dataTable) {
+    const rowOptions = {
+        class: 'totals-row',
+    };
+    const tr = dom('tr', rowOptions, tbody);
+    const totals = dataTable.schema.totals;
+    columns.forEach((col, i) => {
+        const ttl = totals[i] || {};
+        let html = ttl.label ? ttl.label : ttl.callback ? ttl.callback(items, col) : '';
+        if (col.format && col.format !== 'checkbox') {
+            html = formatters[col.format].toHtml(html);
+        }
+        const css = util.classnames();
+        css(col.bordered ? 'bordered' : undefined);
+        css(ttl.align || col.align);
+        css(col.format);
+        css(ttl.class);
+
+        dom(
+            'td',
+            {
+                html,
+                class: css(),
+            },
+            tr,
+        );
+    });
+}
+
 function render(items, columns, colSizes, tbody, selectable, dataTable, callback) {
     items.forEach((item, index) => {
         if (!item.isSubitem) {
@@ -1060,6 +1093,12 @@ function render(items, columns, colSizes, tbody, selectable, dataTable, callback
             });
         }
     });
+
+    if (dataTable.schema.totals) {
+        console.log('TOTAL!');
+        renderTotals(items, columns, tbody, dataTable);
+    }
+
     callback();
 }
 
@@ -1211,6 +1250,6 @@ module.exports = BaseComponent.define('data-table', DataTable, {
         'zebra',
         'loading',
         'show-hide-columns',
-        'no-save-columns'
+        'no-save-columns',
     ],
 });

@@ -6,7 +6,7 @@
     --tbl-error: #962025;
     --tbl-row-error: #ffc3c5;
 
-    --tbl-brd: 0px solid #ccc;
+    --tbl-brd: 0px solid #b6b9bb;
     --tbl-body-txt: 16px;
     --tbl-body-clr: #231f20;
     --tbl-child-clr: #6b7682;
@@ -33,7 +33,7 @@
     --tbl-tr-added: rgb(236, 246, 255);
     --tbl-tr-bg: #eee;
 
-    --tbl-td-brd: #c7c7c7;
+    --tbl-td-brd: #b6b9bb;
     --tbl-td-pad: 10px;
     --tbl-td-focus: #ccc;
 
@@ -52,6 +52,8 @@
     --tbl-hless-label-size: 18px;
     --tbl-hless-text-clr: #393536;
     --tbl-hless-text-size: 24px;
+
+    --tbl-total-total: #64BB49;
 }
 
 data-table {
@@ -99,6 +101,11 @@ data-table {
 
             &[data-field='edit'] {
                 pointer-events: none;
+            }
+
+            &.bordered {
+                border-left: 1px solid var(--tbl-td-brd);
+                border-right: 1px solid var(--tbl-td-brd);
             }
 
             &.center {
@@ -270,10 +277,15 @@ data-table {
         }
 
         td {
-            border: 1px solid var(--tbl-td-brd);
+            border: 0;
+            // border-bottom: 1px solid var(--tbl-td-brd);
             padding: var(--tbl-td-pad);
             font-size: var(--tbl-body-txt);
             color: var(--tbl-body-clr);
+            &.bordered {
+                border-left: 1px solid var(--tbl-td-brd);
+                border-right: 1px solid var(--tbl-td-brd);
+            }
         }
     }
 
@@ -357,6 +369,48 @@ data-table {
     }
 }
 
+// totals
+data-table {
+    tr.totals-row {
+        // background-color: white;
+        td {
+            border-top: 1px solid #666;
+            border-bottom: 1px solid var(--tbl-td-brd);
+            &.total{
+                color: var(--tbl-total-total);
+            }
+        }
+    }
+}
+
+
+// zebra striping
+data-table.zebra {
+    tbody {
+        tr:not(.child-row):not(.row-error):not(.expanded-row):not(.totals-row):nth-child(even) {
+            td {
+                background-color: var(--tbl-tr-odd);
+            }
+
+            &:hover {
+                td {
+                    background-color: var(--tbl-tr-hvr);
+                }
+            }
+        }
+        tr:not(.child-row):not(.row-error):not(.expanded-row):nth-child(odd) {
+            td {
+                background-color: var(--tbl-tr-even);
+            }
+            &:hover {
+                td {
+                    background-color: var(--tbl-tr-hvr);
+                }
+            }
+        }
+    }
+}
+
 // headerless
 data-table.headerless {
     table {
@@ -403,33 +457,6 @@ data-table.headerless {
             i.fas {
                 font-size: var(--tbl-hless-caret-size);
                 color: var(--tbl-hless-caret-clr);
-            }
-        }
-    }
-}
-
-// zebra striping
-data-table.zebra {
-    tbody {
-        tr:not(.child-row):not(.row-error):not(.expanded-row):nth-child(even) {
-            td {
-                background-color: var(--tbl-tr-odd);
-            }
-
-            &:hover {
-                td {
-                    background-color: var(--tbl-tr-hvr);
-                }
-            }
-        }
-        tr:not(.child-row):not(.row-error):not(.expanded-row):nth-child(odd) {
-            td {
-                background-color: var(--tbl-tr-even);
-            }
-            &:hover {
-                td {
-                    background-color: var(--tbl-tr-hvr);
-                }
             }
         }
     }
