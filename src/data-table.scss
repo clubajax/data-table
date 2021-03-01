@@ -66,7 +66,9 @@ data-table {
     outline: none;
 
     tbody tr:not(.added-row):not(.selected):not(.unselectable):not(.expanded-row) {
-        background-color: white;
+        td {
+            background-color: white;
+        }
         &:hover {
             td {
                 background-color: var(--tbl-tr-hvr);
@@ -195,8 +197,8 @@ data-table {
                     }
                 }
             }
-            &.hide-show-col{
-                .cols-btn{
+            &.hide-show-col {
+                .cols-btn {
                     cursor: pointer;
                     display: flex;
                     align-items: center;
@@ -210,7 +212,7 @@ data-table {
                     font-size: 13px;
                     background-color: var(--tbl-head-bk);
                     &:hover {
-                        color:var(--tbl-primary);
+                        color: var(--tbl-primary);
                     }
                 }
             }
@@ -221,27 +223,27 @@ data-table {
                 }
             }
             &.hide-show-col.desc,
-            &.hide-show-col.asc{
+            &.hide-show-col.asc {
                 .th-content {
                     padding: 0 77px 0 var(--tbl-th-pad);
                 }
-                .sort{
+                .sort {
                     right: 32px;
                 }
             }
             &.hide-show-col.filter.desc,
-            &.hide-show-col.filter.asc{
+            &.hide-show-col.filter.asc {
                 .th-content {
                     padding: 0 109px 0 var(--tbl-th-pad);
                 }
-                .sort{
+                .sort {
                     right: 64px;
                 }
                 .filter-btn {
                     right: 32px;
                 }
             }
-            &.hide-show-col.filter{
+            &.hide-show-col.filter {
                 .th-content {
                     padding: 0 77px 0 var(--tbl-th-pad);
                 }
