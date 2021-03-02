@@ -9,6 +9,7 @@
     --tbl-brd: 0px solid #b6b9bb;
     --tbl-body-txt: 16px;
     --tbl-body-clr: #231f20;
+    --tbl-body-disabled: #B6B9BB;
     --tbl-child-clr: #6b7682;
 
     --tbl-nodata-clr: #aaa;
@@ -53,7 +54,7 @@
     --tbl-hless-text-clr: #393536;
     --tbl-hless-text-size: 24px;
 
-    --tbl-total-total: #64BB49;
+    --tbl-total-total: #64bb49;
 }
 
 data-table {
@@ -273,6 +274,11 @@ data-table {
                 &:focus {
                     box-shadow: 0 0 20px var(--tbl-tr-focus) inset;
                 }
+                &[disabled] {
+                    td {
+                        color: var(--tbl-body-disabled);
+                    }
+                }
             }
         }
 
@@ -376,13 +382,12 @@ data-table {
         td {
             border-top: 1px solid #666;
             border-bottom: 1px solid var(--tbl-td-brd);
-            &.total{
+            &.total {
                 color: var(--tbl-total-total);
             }
         }
     }
 }
-
 
 // zebra striping
 data-table.zebra {

@@ -9,24 +9,32 @@ function getTotals() {
                     align: 'right',
                 },
                 {
-                    callback(items, item, col) {
-                        return 100;
+                    callback(items, col) {
+                        return items.reduce((a, m) => { 
+                            return a + m.invoices;
+                        }, 0);
                     },
                 },
                 {
-                    callback(items, item, col) {
-                        return 200;
+                    callback(items, col) {
+                        return items.reduce((a, m) => { 
+                            return a + m.amount;
+                        }, 0);
                     },
                 },
                 {
-                    callback(items, item, col) {
-                        return 300;
+                    callback(items, col) {
+                        return items.reduce((a, m) => { 
+                            return a + m.tax;
+                        }, 0);
                     },
                 },
                 {
                     class: 'total',
-                    callback(items, item, col) {
-                        return 400;
+                    callback(items, col) {
+                        return items.reduce((a, m) => { 
+                            return a + m.total;
+                        }, 0);
                     },
                 },
             ],
@@ -111,8 +119,21 @@ function getTotals() {
                 amount: 20,
                 tax: 5,
                 total: 25,
-                status: 'Broke',
-                checked: true
+                status: 'Done',
+                checked: true,
+                disabled: true
+            },
+            {
+                id: 4,
+                region: 'Chatanooga',
+                cpi: true,
+                invoices: 6,
+                amount: 45,
+                tax: 10,
+                total: 55,
+                status: 'Done',
+                checked: true,
+                disabled: true
             },
         ],
     };

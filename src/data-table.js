@@ -924,6 +924,10 @@ function renderRow(item, { index, columns, colSizes, tbody, selectable, dataTabl
         }
     }
 
+    if (item.disabled) {
+        rowOptions.disabled = true;
+    }
+
     if (Array.isArray(dataTable.errors) && dataTable.errors.find((e) => e.errors.index === index)) {
         itemCss('row-error');
     }
@@ -958,7 +962,11 @@ function renderRow(item, { index, columns, colSizes, tbody, selectable, dataTabl
         css(col.align);
         css(col.format);
         if (col.component) {
-            html = createComponent(col, item, index, dataTable);
+            if (item.disabled && col.component.type === 'ui-checkbox') {
+                html = formatters.checkbox.toHtml(item[key]);
+            } else {
+                html = createComponent(col, item, index, dataTable);
+            }
             css(col.component.type);
             css(col.component.format);
         } else {
