@@ -3,6 +3,7 @@ function getTotals() {
         schema: {
             totals: [
                 {},
+                {},
                 {
                     label: 'Total',
                     align: 'right',
@@ -30,6 +31,14 @@ function getTotals() {
                 },
             ],
             columns: [
+                {
+                    label: '',
+                    key: 'checked',
+                    component: {
+                        type: 'ui-checkbox',
+                        all: true
+                    }
+                },
                 {
                     label: 'Region',
                     key: 'region',
@@ -92,6 +101,7 @@ function getTotals() {
                 tax: 15,
                 total: 235,
                 status: 'Broke',
+                checked: true
             },
             {
                 id: 3,
@@ -102,6 +112,7 @@ function getTotals() {
                 tax: 5,
                 total: 25,
                 status: 'Broke',
+                checked: true
             },
         ],
     };

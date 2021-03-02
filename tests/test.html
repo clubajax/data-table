@@ -1149,7 +1149,19 @@
                             zebra: true
                         }, section);
                         onDomReady(node, function () {
-
+                            node.on('check-all', (e) => {
+                                const items = data.items.map((item) => {
+                                    item.checked = e.value;
+                                    return item;
+                                })
+                                node.rows = items;
+                            })
+                            node.on('change', (e) => {
+                                const index = data.items.findIndex(m => m.id === e.value.id);
+                                const items = [...data.items];
+                                items.splice(index, 1, data.items[index]);
+                                node.rows = items;
+                            })
                             done();
                         });
                     })

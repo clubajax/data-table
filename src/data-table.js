@@ -74,6 +74,7 @@ class DataTable extends BaseComponent {
             this.updateTimer = setTimeout(() => {
                 const event = { value: rowItem, column };
                 this.emit('change', event);
+                this.setCheckAll();
             }, 400);
         }
     }
@@ -214,6 +215,7 @@ class DataTable extends BaseComponent {
             }
 
             this.orgItems = util.copy(items);
+            this.setCheckAll();
         });
     }
 
@@ -450,6 +452,33 @@ class DataTable extends BaseComponent {
         this.actionEventsSet = true;
     }
 
+    toggleCheckAll(value) {
+        this.emit('check-all', {value});
+    }
+
+    setCheckAll() {
+        if (!this.checkboxToggle) {
+            return;
+        }
+        const prop = this.getCheckProperty();
+        if (this.items.every((m) => m[prop])) {
+            this.checkboxToggle.value = true;
+        } else if (!this.items.some((m) => m[prop])) {
+            this.checkboxToggle.value = false;
+        } else {
+            this.checkboxToggle.intermediate = true;
+        }
+    }
+
+    getCheckProperty() {
+        // gets the item property used to determine
+        // whether the item is selected
+        // there could be multiple checkboxes -
+        // assuming the first
+        const col = this.schema.columns.find((c) => c.component && c.component.type === 'ui-checkbox');
+        return col ? col.key || col.sort : null;
+    }
+
     isExpanded() {
         return !!dom.query(this, '.expanded-row');
     }
@@ -590,7 +619,21 @@ class DataTable extends BaseComponent {
             }
             const hasHideShowCols = this['show-hide-columns'] && col === lastCol;
             let options;
-            if (!col.key && col.icon) {
+            if (col.component && col.component.all) {
+                const input = dom('ui-checkbox', {intermediate: true});
+                input.on('change', (e) => {
+                    e.stopPropagation();
+                    if (!e || e.value == undefined) {
+                        return;
+                    }
+                    this.toggleCheckAll(input.value);
+                });
+                options = {
+                    class: 'ui-checkbox',
+                    html: input,
+                };
+                this.checkboxToggle = input;
+            } else if (!col.key && col.icon) {
                 options = {
                     html: dom('span', { class: 'fas fa-pencil-alt' }),
                     'data-field': 'edit',
@@ -1095,7 +1138,6 @@ function render(items, columns, colSizes, tbody, selectable, dataTable, callback
     });
 
     if (dataTable.schema.totals) {
-        console.log('TOTAL!');
         renderTotals(items, columns, tbody, dataTable);
     }
 
