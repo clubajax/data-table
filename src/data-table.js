@@ -153,12 +153,10 @@ class DataTable extends BaseComponent {
     loadData(rows) {
         const items = rows || [];
         if (util.equal(items, this.orgItems)) {
-            console.log('EQUAL');
             return;
         }
 
         if (!this.hiddenHandled) {
-            console.log('HANDLE HIDDEN');
             this.hiddenHandled = true;
             this.storageKey =
                 this.id ||
