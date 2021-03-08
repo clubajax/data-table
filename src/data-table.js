@@ -83,7 +83,6 @@ class DataTable extends BaseComponent {
         if (!this.schema) {
             return;
         }
-        this.isSchemaUpdate = true;
         this.loadData(rows);
     }
 
@@ -154,10 +153,12 @@ class DataTable extends BaseComponent {
     loadData(rows) {
         const items = rows || [];
         if (util.equal(items, this.orgItems)) {
+            console.log('EQUAL');
             return;
         }
 
         if (!this.hiddenHandled) {
+            console.log('HANDLE HIDDEN');
             this.hiddenHandled = true;
             this.storageKey =
                 this.id ||
@@ -332,32 +333,48 @@ class DataTable extends BaseComponent {
         return dom('span', { class: 'fas fa-check' });
     }
 
-    getColumnMenu() {
+    toggleColumns() { 
         const cols = this.schema.columns;
-        const node = dom('div', {
-            class: 'col-filter',
-            html: cols.map((col) => {
-                return dom('ui-checkbox', { name: col.key || col.sort, value: !col.hidden, label: col.label });
-            }),
-        });
+        cols.forEach((c, i) => { 
+            const cls = `h${i + 1}`; 
+            if (c.hidden) {
+                dom.classList.add(this, cls);
+            } else {
+                dom.classList.remove(this, cls);
+            }
+        })
+    }
+
+    getColumnMenu() {
+        if (!this.colMenu) {
+            const cols = this.schema.columns;
+            this.colMenu = dom('div', {
+                class: 'tbl-popup',
+                html: cols.map((col, i) => {
+                    const disabled = i === cols.length - 1;
+                    return dom('ui-checkbox', { disabled, name: col.key || col.sort, value: !col.hidden, label: col.label });
+                }),
+            });
+            if (cols.length > 20) {
+                console.warn('Not enough classes to handle the amount of columns');
+            }
+            this.on(this.colMenu, 'change', (e) => {
+                const column = cols.find((c) => c.key === e.name || c.sort === e.name);
+                column.hidden = !e.value;
+                this.toggleColumns();
+
+                this.fire('column-change', { column });
+
+                if (!this['no-save-columns']) {
+                    const hidden = this.schema.columns.filter((c) => c.hidden).map((c) => c.key || c.sort);
+                    util.storage(this.storageKey, hidden);
+                }
+            });
+        }
         const tooltip = dom('ui-tooltip', {
-            value: node,
+            value: this.colMenu,
             'use-click': true,
             'is-button': true,
-        });
-
-        this.on(node, 'change', (e) => {
-            const column = cols.find((c) => c.key === e.name || c.sort === e.name);
-            column.hidden = !e.value;
-
-            this.columnChange = true;
-            this.fire('column-change', { column });
-            this.render();
-
-            if (!this['no-save-columns']) {
-                const hidden = this.schema.columns.filter((c) => c.hidden).map((c) => c.key || c.sort);
-                util.storage(this.storageKey, hidden);
-            }
         });
         return dom('ui-icon', {
             type: 'fas fa-ellipsis-v',
@@ -453,7 +470,7 @@ class DataTable extends BaseComponent {
     }
 
     toggleCheckAll(value) {
-        this.emit('check-all', {value});
+        this.emit('check-all', { value });
     }
 
     setCheckAll() {
@@ -584,8 +601,7 @@ class DataTable extends BaseComponent {
         this.renderTemplate();
         this.renderFooter();
         const columns = this.schema.columns;
-        if (this.columnChange || !util.isEqual(columns, this.columns)) {
-            this.columnChange = false;
+        if (!util.isEqual(columns, this.columns)) {
             this.columns = columns;
             this.colSizes = [];
             if (!this.schema.headerless) {
@@ -593,6 +609,7 @@ class DataTable extends BaseComponent {
             }
         }
         this.renderBody(this.items, this.columns);
+        this.toggleColumns();
         this.fire('render', { table: this.table || this, thead: this.thead, tbody: this.tbody });
     }
 
@@ -613,14 +630,15 @@ class DataTable extends BaseComponent {
         const tr = dom('tr', {}, this.thead);
         const colSizes = [];
         const lastCol = [...columns].reverse().find((c) => !c.hidden);
+        const hideShow = this['show-hide-columns'];
         (columns || []).forEach((col, i) => {
-            if (col.hidden) {
-                return;
-            }
+            // if (col.hidden) {
+            //     return;
+            // }
             const hasHideShowCols = this['show-hide-columns'] && col === lastCol;
             let options;
             if (col.component && col.component.all) {
-                const input = dom('ui-checkbox', {intermediate: true});
+                const input = dom('ui-checkbox', { intermediate: true });
                 input.on('change', (e) => {
                     e.stopPropagation();
                     if (!e || e.value == undefined) {
@@ -670,7 +688,6 @@ class DataTable extends BaseComponent {
                             ],
                         }),
                         col.filter ? dom('span', { class: 'filter-btn', html: this.getIconFilter(col) }) : null,
-                        hasHideShowCols ? dom('span', { class: 'cols-btn', html: this.getColumnMenu() }) : null,
                     ],
                     class: css(),
                     'data-field': typeof key === 'string' ? key : key.sort,
@@ -705,6 +722,11 @@ class DataTable extends BaseComponent {
                 },
                 true,
             );
+        }
+
+        if (this['show-hide-columns']) {
+            dom('span', { class: 'cols-btn', html: this.getColumnMenu() }, dom.query(this.thead, 'tr th:last-child'));
+
         }
         this.fire('render-header', { thead: this.thead });
     }
@@ -937,9 +959,9 @@ function renderRow(item, { index, columns, colSizes, tbody, selectable, dataTabl
     tr = dom('tr', rowOptions, tbody);
 
     columns.forEach((col, i) => {
-        if (col.hidden) {
-            return true;
-        }
+        // if (col.hidden) {
+        //     return true;
+        // }
         let isExpanded;
         let isExpandedEnd;
         if (expandable && headerless && i === columns.length - 1) {
@@ -969,6 +991,7 @@ function renderRow(item, { index, columns, colSizes, tbody, selectable, dataTabl
             }
             css(col.component.type);
             css(col.component.format);
+            css('unsortable');
         } else {
             html = key === 'index' ? index + 1 : item[key];
 

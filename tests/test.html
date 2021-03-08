@@ -60,12 +60,15 @@
         data-table[scrollable] th {
             border: 1px solid #ccc;
         }
+        .test-table .batman{
+            background-color: red;
+            display: none;
+        }
     </style>
 </head>
 
 <body>
     <h1>Test Data Table</h1>
-
     <div id="mocha"></div>
     <div id="tests">
         <input autofocus />
@@ -1137,8 +1140,33 @@
                     });
                 });
 
+                describe('hide show columns', function(){
+                    it.only('should hide and show columns', (done) => {
+                        const section = dom('section', {html: dom('label', {html: 'Hide Show Cols'})}, body);
+                        const data = getData20();
+                        const node = dom('data-table', {
+                            schema: {
+                                sort: 'firstName',
+                                columns: data.columns
+                            },
+                            rows: data.items,
+                            scrollable: true,
+                            'show-hide-columns': true,
+                        }, section);
+                        onDomReady(node, function () {
+                            node.on('change', function (e) {
+                                console.log('change', e);
+                            });
+                            node.on('check-all', function(e){
+                                console.log('check-all', e.value);
+                            })
+
+                            done();
+                        });
+                    });
+                })
                 describe('totals', function(){
-                    it.only('should render a total row', (done) => {
+                    it('should render a total row', (done) => {
                         // TODO
                         // make readonly + checkable checboxes
                         const data = getTotals();

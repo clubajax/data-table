@@ -9,7 +9,7 @@
     --tbl-brd: 0px solid #b6b9bb;
     --tbl-body-txt: 16px;
     --tbl-body-clr: #231f20;
-    --tbl-body-disabled: #B6B9BB;
+    --tbl-body-disabled: #b6b9bb;
     --tbl-child-clr: #6b7682;
 
     --tbl-nodata-clr: #aaa;
@@ -201,61 +201,13 @@ data-table {
                     font-size: 13px;
                     background-color: var(--tbl-head-bk);
                     &:hover {
-                        color: var(--tbl-primary);
-                    }
-                }
-            }
-            &.hide-show-col {
-                .cols-btn {
-                    cursor: pointer;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    position: absolute;
-                    top: 0;
-                    right: 0;
-                    bottom: 0;
-                    height: auto;
-                    width: 32px;
-                    font-size: 13px;
-                    background-color: var(--tbl-head-bk);
-                    &:hover {
-                        color: var(--tbl-primary);
+                        background-color: var(--tbl-th-hvr);
                     }
                 }
             }
             &.filter.desc,
             &.filter.asc {
                 .sort {
-                    right: 32px;
-                }
-            }
-            &.hide-show-col.desc,
-            &.hide-show-col.asc {
-                .th-content {
-                    padding: 0 77px 0 var(--tbl-th-pad);
-                }
-                .sort {
-                    right: 32px;
-                }
-            }
-            &.hide-show-col.filter.desc,
-            &.hide-show-col.filter.asc {
-                .th-content {
-                    padding: 0 109px 0 var(--tbl-th-pad);
-                }
-                .sort {
-                    right: 64px;
-                }
-                .filter-btn {
-                    right: 32px;
-                }
-            }
-            &.hide-show-col.filter {
-                .th-content {
-                    padding: 0 77px 0 var(--tbl-th-pad);
-                }
-                .filter-btn {
                     right: 32px;
                 }
             }
@@ -337,7 +289,7 @@ data-table {
     }
     &[borders='none'] {
         table {
-            td {
+            td:not(.bordered) {
                 border: 0;
             }
         }
@@ -381,7 +333,7 @@ data-table {
         // background-color: white;
         td {
             border-top: 1px solid #666;
-            border-bottom: 1px solid var(--tbl-td-brd);
+            // border-bottom: 1px solid var(--tbl-td-brd);
             &.total {
                 color: var(--tbl-total-total);
             }
@@ -463,6 +415,66 @@ data-table.headerless {
                 font-size: var(--tbl-hless-caret-size);
                 color: var(--tbl-hless-caret-clr);
             }
+        }
+    }
+}
+
+// hide show cols
+data-table[show-hide-columns] {
+    thead {
+        position: relative;
+        tr {
+            th:last-child {
+                padding-right: 32px;
+                &.filter{
+                    .filter-btn{
+                        right: 32px;
+                    }
+                    .sort{
+                        right: 64px;
+                    }
+                    &:hover{
+                        background-color: var(--tbl-head-bk);
+                    }
+                    .th-content:hover{
+                        background-color: var(--tbl-th-hvr);
+                    }
+                }
+            }
+            .cols-btn {
+                position: absolute;
+                top: 0;
+                right: 0;
+                width: 32px;
+                height: 100%;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 13px;
+                z-index: 3;
+                background-color: var(--tbl-head-bk);
+                &:hover{
+                    background-color: var(--tbl-th-hvr);
+                }
+            }
+        }
+    }
+
+    @for $i from 1 through 20 {
+        &.h#{$i} tr {
+            th:nth-child(#{$i}), td:nth-child(#{$i}) {
+                display: none;
+            }
+        }
+    }
+}
+
+ui-popup .tbl-popup {
+    ui-checkbox {
+        display: block;
+        &.has-label {
+            display: flex;
         }
     }
 }
@@ -630,6 +642,10 @@ data-table {
     .ui-checkbox {
         text-align: center;
         ui-checkbox {
+            // position: absolute;
+            // top: 50%;
+            // left: 50%;
+            // transform: translate(-50%, -50%);
             margin: 0;
             background-color: white;
             width: 20px;
@@ -639,11 +655,17 @@ data-table {
                 height: 20px;
                 margin: 0;
                 &::before {
-                    // padding-bottom: 5px;
-
                     font-size: 16px;
                 }
             }
+        }
+    }
+    th.ui-checkbox {
+        ui-checkbox {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
         }
     }
 

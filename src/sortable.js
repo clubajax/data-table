@@ -107,6 +107,9 @@ const Sortable = {
 
         if (this.extsort) {
             const col = this.schema.columns.find((col) => field === col.key || field === col.sort);
+            if (!col) {
+                return;
+            }
             if (col.sortKeys || col.sort) {
                 field = col.sortKeys || col.sort;
             }
