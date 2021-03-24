@@ -270,6 +270,7 @@ function storage (key, value) {
         return dom.normalize(item);
     }
     if (value === null) {
+        console.log('REMOVE.STORAGE', key);
         localStorage.removeItem(key);
     } else {
         localStorage.setItem(key, JSON.stringify(value));

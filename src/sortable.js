@@ -3,10 +3,18 @@ const dom = require('@clubajax/dom');
 
 const Sortable = {
     init() {
+        this.storageSortKey = this.storageKey ? `${this.storageKey}-sort` : null;
         this.classList.add('sortable');
         this.current = {};
         this.on('render-header', this.onHeaderSortRender.bind(this));
-        const { field, dir } = this.extsort || {};
+        const {field, dir} = this.extsort || {};
+        if (this.storageSortKey) {
+            const sortData = util.storage(this.storageSortKey);
+            if (sortData) {
+                this.setSort(sortData.field, sortData.dir);
+                return;
+            }
+        }
         this.setSort(field, dir);
     },
 
@@ -99,10 +107,15 @@ const Sortable = {
         if (!target || e.detail.isFilter || e.detail.isShowCols || target.className.indexOf('no-sort') > -1) {
             return;
         }
+
         if (field === this.current.sort) {
             dir = this.current.dir === 'asc' ? 'desc' : 'asc';
         } else {
             dir = 'desc';
+        }
+
+        if (this.storageSortKey) {
+            util.storage(this.storageSortKey, {field, dir});
         }
 
         if (this.extsort) {

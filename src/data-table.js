@@ -155,28 +155,27 @@ class DataTable extends BaseComponent {
         if (util.equal(items, this.orgItems)) {
             return;
         }
-
-        if (!this.hiddenHandled) {
-            this.hiddenHandled = true;
-            this.storageKey =
-                this.id ||
-                this.schema.columns
-                    .reduce((acc, col) => {
-                        const key = col.key || col.sort;
-                        acc.push(key);
-                        return acc;
-                    }, [])
-                    .join('-');
-            let hidden = util.storage(this.storageKey);
-            if (hidden) {
-                this.schema.columns.forEach((col) => {
+        // this needs to be run on every data update
+        // because the schema gets updated as well
+        this.hiddenHandled = true;
+        this.storageKey =
+            this.id ||
+            this.schema.columns
+                .reduce((acc, col) => {
                     const key = col.key || col.sort;
-                    col.hidden = hidden.includes(key);
-                });
-            } else if (!this['no-save-columns']) {
-                hidden = this.schema.columns.filter((c) => c.hidden).map((c) => c.key || c.sort);
-                util.storage(this.storageKey, hidden);
-            }
+                    acc.push(key);
+                    return acc;
+                }, [])
+                .join('-');
+        let hidden = util.storage(this.storageKey);
+        if (hidden) {
+            this.schema.columns.forEach((col) => {
+                const key = col.key || col.sort;
+                col.hidden = hidden.includes(key);
+            });
+        } else if (!this['no-save-columns']) {
+            hidden = this.schema.columns.filter((c) => c.hidden).map((c) => c.key || c.sort);
+            util.storage(this.storageKey, hidden);
         }
 
         this.propCheck(true);
@@ -264,7 +263,7 @@ class DataTable extends BaseComponent {
                 console.log('(Note: schema should be loaded before rows)');
                 console.log('table info:', this.id, this.schema, this.rows);
                 throw new Error('a `rows` and a `schema` is required');
-            }, 1000);
+            }, 2000);
             return;
         } else {
             clearTimeout(this.legacyTimer);
@@ -331,16 +330,19 @@ class DataTable extends BaseComponent {
         return dom('span', { class: 'fas fa-check' });
     }
 
-    toggleColumns() { 
+    toggleColumns() {
+        if (!this['show-hide-columns']) {
+            return;
+        }
         const cols = this.schema.columns;
-        cols.forEach((c, i) => { 
-            const cls = `h${i + 1}`; 
+        cols.forEach((c, i) => {
+            const cls = `h${i + 1}`;
             if (c.hidden) {
                 dom.classList.add(this, cls);
             } else {
                 dom.classList.remove(this, cls);
             }
-        })
+        });
     }
 
     getColumnMenu() {
@@ -350,23 +352,29 @@ class DataTable extends BaseComponent {
                 class: 'tbl-popup',
                 html: cols.map((col, i) => {
                     const disabled = i === cols.length - 1;
-                    return dom('ui-checkbox', { disabled, name: col.key || col.sort, value: !col.hidden, label: col.label });
+                    return dom('ui-checkbox', {
+                        disabled,
+                        name: col.key || col.sort,
+                        value: !col.hidden,
+                        label: col.label,
+                    });
                 }),
             });
             if (cols.length > 20) {
                 console.warn('Not enough classes to handle the amount of columns');
             }
             this.on(this.colMenu, 'change', (e) => {
+                const cols = this.schema.columns;
                 const column = cols.find((c) => c.key === e.name || c.sort === e.name);
                 column.hidden = !e.value;
-                this.toggleColumns();
-
-                this.fire('column-change', { column });
 
                 if (!this['no-save-columns']) {
                     const hidden = this.schema.columns.filter((c) => c.hidden).map((c) => c.key || c.sort);
                     util.storage(this.storageKey, hidden);
                 }
+
+                this.toggleColumns();
+                this.fire('column-change', { column });
             });
         }
         const tooltip = dom('ui-tooltip', {
@@ -624,6 +632,9 @@ class DataTable extends BaseComponent {
     }
 
     renderHeader(columns) {
+        if (this.columnButton) {
+            this.columnButton.parentNode.removeChild(this.columnButton);
+        }
         dom.clean(this.thead, true);
         const tr = dom('tr', {}, this.thead);
         const colSizes = [];
@@ -662,6 +673,7 @@ class DataTable extends BaseComponent {
                 const css = util.classnames(col.css || col.className);
                 css(col.bordered ? 'bordered' : undefined);
                 css(col.align);
+                css(col.class);
                 css(col.format || (col.component ? col.component.format : ''));
                 if (col.unsortable) {
                     css('unsortable');
@@ -723,8 +735,12 @@ class DataTable extends BaseComponent {
         }
 
         if (this['show-hide-columns']) {
-            dom('span', { class: 'cols-btn', html: this.getColumnMenu() }, dom.query(this.thead, 'tr th:last-child'));
-
+            const parent = dom.query(this.thead, 'tr th:last-child');
+            if (this.columnButton) {
+                parent.appendChild(this.columnButton);
+            } else {
+                this.columnButton = dom('span', { class: 'cols-btn', html: this.getColumnMenu() }, parent);
+            }
         }
         this.fire('render-header', { thead: this.thead });
     }
@@ -980,6 +996,7 @@ function renderRow(item, { index, columns, colSizes, tbody, selectable, dataTabl
         css = util.classnames(key);
         css(col.bordered ? 'bordered' : undefined);
         css(col.align);
+        css(col.class);
         css(col.format);
         if (col.component) {
             if (item.disabled && col.component.type === 'ui-checkbox') {
