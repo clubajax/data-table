@@ -721,19 +721,19 @@
     lodash "^4.17.13"
     to-fast-properties "^2.0.0"
 
-"@clubajax/base-component@2.3.2":
-  version "2.3.2"
-  resolved "https://registry.yarnpkg.com/@clubajax/base-component/-/base-component-2.3.2.tgz#482a306cc3213ff89c13e4b0758a589a3cc70f8f"
-  integrity sha512-EuFtNULn8JCkoAsfVCBwdGNH0kZGcgzfI0ovfE8FrwN2KZj+VgG5xZ2qNzmOsJ+tnnHUXEu7ialkvWyCAOjSAQ==
-  dependencies:
-    "@clubajax/on" "^2.2.0"
-
 "@clubajax/base-component@2.4.2":
   version "2.4.2"
   resolved "https://registry.yarnpkg.com/@clubajax/base-component/-/base-component-2.4.2.tgz#921498d03930fad3ca090a5dcf5f003d40f6fe89"
   integrity sha512-kL8a73mGZkGhmVasjz13ZtC/wLGXjdApGHz6WYi7/FCVgus/HBSdSnAuIs1DkEXpNgyHwAxbrheUL5eQe5rzVw==
   dependencies:
     "@clubajax/on" "^2.2.0"
+
+"@clubajax/base-component@2.4.5":
+  version "2.4.5"
+  resolved "https://registry.yarnpkg.com/@clubajax/base-component/-/base-component-2.4.5.tgz#c9adaa43cde3db2c43e827ebf398256c60197e92"
+  integrity sha512-qhyjaJVPXI4JthLzbPOPqIfrkP4eDzprvJZwWPVMvytbD8Lw+ToKihz8Ie8gwlv8rwj0tLwaHNe2zER0gmSfOA==
+  dependencies:
+    "@clubajax/on" "^2.2.2"
 
 "@clubajax/custom-elements-polyfill@^0.9.4":
   version "0.9.4"
@@ -750,6 +750,11 @@
   resolved "https://registry.yarnpkg.com/@clubajax/dom/-/dom-2.8.5.tgz#1d8893d9956f500d5354f248e5e553576cd55a64"
   integrity sha512-uDj2meNcvcrGE/mC1Jfzuq5mDRqydBLseFR9TSlH1529wYFWfqwvAl5lV22uXngIJerBFPcbULwZFDoeqkIU+g==
 
+"@clubajax/dom@2.8.6":
+  version "2.8.6"
+  resolved "https://registry.yarnpkg.com/@clubajax/dom/-/dom-2.8.6.tgz#9b2c9c4efebaa44a0d0b6032c29d9771bc5ee10d"
+  integrity sha512-VOvVjDT4eEdFtr5F9ba69slMwiG5w1+i1I59YeeNj1QaBh4YFbVWCpi5LaCoU+O7lZYo1IqlmctI18fXZUantA==
+
 "@clubajax/form@0.9.5":
   version "0.9.5"
   resolved "https://registry.yarnpkg.com/@clubajax/form/-/form-0.9.5.tgz#2c81015eff5301fa823381ec23fe14fd7bb62f8b"
@@ -762,10 +767,10 @@
     "@clubajax/no-dash" "0.6.1"
     "@clubajax/on" "2.2.0"
 
-"@clubajax/format@^0.5.28":
-  version "0.5.28"
-  resolved "https://registry.yarnpkg.com/@clubajax/format/-/format-0.5.28.tgz#d237016900dcdf3695c2c43a8182a6b8460ed629"
-  integrity sha512-UmX7NGZhPEAr8vNOejH0FDKF6Y31GjdK8UEh6Ec4EMS3opw8hlnFRRaZirk+gltxDrV4Ts5ogSC25coKWhLXxA==
+"@clubajax/format@^0.5.29":
+  version "0.5.29"
+  resolved "https://registry.yarnpkg.com/@clubajax/format/-/format-0.5.29.tgz#66dedad1d5c396afd5d0b7ede8c55c57918805b5"
+  integrity sha512-FIkoUhA6FR0EZxT2qw4picCQLZcvU99C1sURP87lwgizN1oIVK9u+oKXh6CRrz9OWl/poJcmg9wcyrJvR+4zfw==
   dependencies:
     "@clubajax/node-file-managment" "^0.1.3"
     chai "^4.2.0"
@@ -795,6 +800,11 @@
   dependencies:
     grunt "^1.0.1"
     grunt-contrib-uglify "^2.3.0"
+
+"@clubajax/on@2.2.2", "@clubajax/on@^2.2.2":
+  version "2.2.2"
+  resolved "https://registry.yarnpkg.com/@clubajax/on/-/on-2.2.2.tgz#f28b5abe1e65421bbaba45495f31c78838feb3ad"
+  integrity sha512-LBrDE55RfirpORs1Lus3AIS+XNvUo/3ao4sVb8lTQHFOFWlYheltApWeDE2yzEwQxLjYpgFS3gpX72IVPbaVRQ==
 
 "@types/color-name@^1.1.1":
   version "1.1.1"
@@ -1653,6 +1663,14 @@ cached-path-relative@^1.0.0, cached-path-relative@^1.0.2:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/cached-path-relative/-/cached-path-relative-1.0.2.tgz#a13df4196d26776220cc3356eb147a52dba2c6db"
   integrity sha512-5r2GqsoEb4qMTTN9J+WzXfjov+hjxT+j3u5K+kIVNIwAd99DLCJE9pBIMP1qVeybV6JiijL385Oz0DcYxfbOIg==
+
+call-bind@^1.0.0:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/call-bind/-/call-bind-1.0.2.tgz#b1d4e89e688119c3c9a903ad30abb2f6a919be3c"
+  integrity sha512-7O+FbCihrB5WGbFYesctwmTKae6rOiIzmz1icreWJ+0aA7LJfuqhEso2T9ncpcFtzMQtzXf2QGGueWJGTYsqrA==
+  dependencies:
+    function-bind "^1.1.1"
+    get-intrinsic "^1.0.2"
 
 callsites@^3.0.0:
   version "3.1.0"
@@ -3039,6 +3057,15 @@ get-func-name@^2.0.0:
   resolved "https://registry.yarnpkg.com/get-func-name/-/get-func-name-2.0.0.tgz#ead774abee72e20409433a066366023dd6887a41"
   integrity sha1-6td0q+5y4gQJQzoGY2YCPdaIekE=
 
+get-intrinsic@^1.0.2:
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/get-intrinsic/-/get-intrinsic-1.1.1.tgz#15f59f376f855c446963948f0d24cd3637b4abc6"
+  integrity sha512-kWZrnVM42QCiEA2Ig1bG8zjoIMOgxWwYCEeNdwY6Tv/cOSeGpcoX4pXHfKUxNKVoArnrEr2e9srnAxxGIraS9Q==
+  dependencies:
+    function-bind "^1.1.1"
+    has "^1.0.3"
+    has-symbols "^1.0.1"
+
 get-stdin@^4.0.1:
   version "4.0.1"
   resolved "https://registry.yarnpkg.com/get-stdin/-/get-stdin-4.0.1.tgz#b968c6b0a04384324902e8bf1a5df32579a450fe"
@@ -3382,10 +3409,15 @@ has-flag@^4.0.0:
   resolved "https://registry.yarnpkg.com/has-flag/-/has-flag-4.0.0.tgz#944771fd9c81c81265c4d6941860da06bb59479b"
   integrity sha512-EykJT/Q1KjTWctppgIAgfSO0tKVuZUjhgMr17kqTumMl6Afv3EISleU7qZUzoXDFTAHTDC4NOoG/ZxU3EvlMPQ==
 
-has-symbols@^1.0.0, has-symbols@^1.0.1:
+has-symbols@^1.0.0:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/has-symbols/-/has-symbols-1.0.1.tgz#9f5214758a44196c406d9bd76cebf81ec2dd31e8"
   integrity sha512-PLcsoqu++dmEIZB+6totNFKq/7Do+Z0u4oT0zKOJNl3lYK6vGwwu2hjHs+68OEZbTjiUE9bgOABXbP/GvrS0Kg==
+
+has-symbols@^1.0.1:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/has-symbols/-/has-symbols-1.0.2.tgz#165d3070c00309752a1236a479331e3ac56f1423"
+  integrity sha512-chXa79rL/UC2KlX17jo3vRGz0azaWEx5tGqZg5pO3NUyEJVB17dMruQlzCCOfUvElghKcm5194+BCRvi2Rv/Gw==
 
 has-unicode@^2.0.0:
   version "2.0.1"
@@ -4822,7 +4854,7 @@ object-visit@^1.0.0:
   dependencies:
     isobject "^3.0.0"
 
-object.assign@4.1.0, object.assign@^4.0.4, object.assign@^4.1.0:
+object.assign@4.1.0:
   version "4.1.0"
   resolved "https://registry.yarnpkg.com/object.assign/-/object.assign-4.1.0.tgz#968bf1100d7956bb3ca086f006f846b3bc4008da"
   integrity sha512-exHJeq6kBKj58mqGyTQ9DFvrZC/eR6OwxzoM9YRoGBqrXYonaFyGiFMuc9VZrXf7DarreEwMpurG3dd+CNyW5w==
@@ -4831,6 +4863,16 @@ object.assign@4.1.0, object.assign@^4.0.4, object.assign@^4.1.0:
     function-bind "^1.1.1"
     has-symbols "^1.0.0"
     object-keys "^1.0.11"
+
+object.assign@^4.0.4, object.assign@^4.1.0:
+  version "4.1.2"
+  resolved "https://registry.yarnpkg.com/object.assign/-/object.assign-4.1.2.tgz#0ed54a342eceb37b38ff76eb831a0e788cb63940"
+  integrity sha512-ixT2L5THXsApyiUPYKmW+2EHpXXe5Ii3M+f4e+aJFAHao5amFRW6J0OO6c/LU8Be47utCx2GL89hxGB6XSmKuQ==
+  dependencies:
+    call-bind "^1.0.0"
+    define-properties "^1.1.3"
+    has-symbols "^1.0.1"
+    object-keys "^1.1.1"
 
 object.getownpropertydescriptors@^2.0.3:
   version "2.1.0"
@@ -6996,7 +7038,7 @@ yallist@^3.0.2:
   resolved "https://registry.yarnpkg.com/yallist/-/yallist-3.1.1.tgz#dbb7daf9bfd8bac9ab45ebf602b8cbad0d5d08fd"
   integrity sha512-a4UGQaWPH59mOXUYnAG2ewncQS4i4F43Tv3JoAM+s2VDAmS9NsK8GpDMLrCHPksFT7h3K6TOoUNn2pb7RoXx4g==
 
-yargs-parser@13.1.1, yargs-parser@^13.1.0, yargs-parser@^13.1.1:
+yargs-parser@13.1.1:
   version "13.1.1"
   resolved "https://registry.yarnpkg.com/yargs-parser/-/yargs-parser-13.1.1.tgz#d26058532aa06d365fe091f6a1fc06b2f7e5eca0"
   integrity sha512-oVAVsHz6uFrg3XQheFII8ESO2ssAf9luWuAd6Wexsu4F3OtIW0o8IribPXYrD4WC24LWtPrJlGy87y5udK+dxQ==
@@ -7004,7 +7046,7 @@ yargs-parser@13.1.1, yargs-parser@^13.1.0, yargs-parser@^13.1.1:
     camelcase "^5.0.0"
     decamelize "^1.2.0"
 
-yargs-parser@13.1.2, yargs-parser@^13.1.2:
+yargs-parser@13.1.2, yargs-parser@^13.1.0, yargs-parser@^13.1.1, yargs-parser@^13.1.2:
   version "13.1.2"
   resolved "https://registry.yarnpkg.com/yargs-parser/-/yargs-parser-13.1.2.tgz#130f09702ebaeef2650d54ce6e3e5706f7a4fb38"
   integrity sha512-3lbsNRf/j+A4QuSZfDRA7HRSfWrzO0YjqTJd5kjAq37Zep1CEgaYmrH9Q3GwPiB9cHyd1Y1UwggGhJGoxipbzg==
@@ -7013,11 +7055,12 @@ yargs-parser@13.1.2, yargs-parser@^13.1.2:
     decamelize "^1.2.0"
 
 yargs-parser@^5.0.0:
-  version "5.0.0"
-  resolved "https://registry.yarnpkg.com/yargs-parser/-/yargs-parser-5.0.0.tgz#275ecf0d7ffe05c77e64e7c86e4cd94bf0e1228a"
-  integrity sha1-J17PDX/+Bcd+ZOfIbkzZS/DhIoo=
+  version "5.0.1"
+  resolved "https://registry.yarnpkg.com/yargs-parser/-/yargs-parser-5.0.1.tgz#7ede329c1d8cdbbe209bd25cdb990e9b1ebbb394"
+  integrity sha512-wpav5XYiddjXxirPoCTUPbqM0PXvJ9hiBMvuJgInvo4/lAOTZzUprArw17q2O1P2+GHhbBr18/iQwjL5Z9BqfA==
   dependencies:
     camelcase "^3.0.0"
+    object.assign "^4.1.0"
 
 yargs-parser@^8.1.0:
   version "8.1.0"
