@@ -33,6 +33,8 @@ class DataTable extends BaseComponent {
         this.selectable = false;
         this.scrollable = false;
         this.filterable = false;
+        this.schemaLoaded = false;
+
         this.propCheck();
 
         this.nodeHolder = dom('div', { class: 'data-table-node-holder' }, document.body);
@@ -52,18 +54,22 @@ class DataTable extends BaseComponent {
         if (!rowItem) {
             return;
         }
+        console.log('update', item);
         let changed = '';
         let column;
         Object.keys(item).forEach((key) => {
             if (rowItem[key] !== item[key]) {
                 rowItem[key] = item[key];
                 column = this.getColumn(key);
-                const td = dom.query(this, `tr[data-row-id="${item.id}"] td[data-field="${key}"]`);
-                if (!td || /fa-caret/.test(td.innerHTML)) {
+                let td = dom.query(this, `tr[data-row-id="${item.id}"] td[data-field="${key}"]`);
+                if (!td) {
                     // not a td or is a td with the expandable caret
                     return;
                 }
                 const formatter = util.getFormatter(column, rowItem)[0];
+                if (/fa-caret/.test(td.innerHTML)) {
+                    td = dom.query(td, '.content');
+                }
                 td.innerHTML = formatter.toHtml(rowItem[key]);
                 rowItem[key] = formatter.from(td.innerHTML);
                 changed = key;
