@@ -54,7 +54,6 @@ class DataTable extends BaseComponent {
         if (!rowItem) {
             return;
         }
-        console.log('update', item);
         let changed = '';
         let column;
         Object.keys(item).forEach((key) => {
