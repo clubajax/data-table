@@ -684,7 +684,7 @@ class DataTable extends BaseComponent {
 
                 const css = util.classnames(col.css || col.className);
                 css(col.bordered ? 'bordered' : undefined);
-                css(col.align);
+                css(typeof col.align === 'function' ? col.align({col}) : col.align);
                 css(col.class);
                 css(col.format || (col.component ? col.component.format : ''));
                 if (col.unsortable) {
@@ -1007,7 +1007,7 @@ function renderRow(item, { index, columns, colSizes, tbody, selectable, dataTabl
         key = col.key || col.icon || col.sort;
         css = util.classnames(key);
         css(col.bordered ? 'bordered' : undefined);
-        css(col.align);
+        css(typeof col.align === 'function' ? col.align({col, item}) : col.align);
         css(col.class);
         css(col.format);
         if (col.component) {
@@ -1164,7 +1164,7 @@ function renderTotals(items, columns, tbody, dataTable) {
         }
         const css = util.classnames();
         css(col.bordered ? 'bordered' : undefined);
-        css(ttl.align || col.align);
+        css(ttl.align || typeof col.align === 'function' ? col.align({col, item}) : col.align);
         css(col.format);
         css(ttl.class);
 
