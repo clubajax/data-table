@@ -24,6 +24,7 @@ formatters.checkbox = {
 // sticky column:
 // https://codepen.io/SimplyPhy/pen/oEZKZo
 // https://codepen.io/bjonesAlloy/pen/yLeydLL
+// https://codepen.io/paulobrien/full/LBrMxa
 
 class DataTable extends BaseComponent {
     constructor() {
@@ -195,6 +196,12 @@ class DataTable extends BaseComponent {
             }
             if (this.schema.headerless) {
                 this.classList.add('headerless');
+            }
+            if (this.schema.staticColumn) {
+                dom.attr(this, 'static-column', true);
+            }
+            if (this.schema.showHideColumns) {
+                dom.attr(this, 'show-hide-columns', true);
             }
 
             this.expandable = this.schema.expandable || this.schema.headerless;
@@ -644,12 +651,12 @@ class DataTable extends BaseComponent {
         const tr = dom('tr', {}, this.thead);
         const colSizes = [];
         const lastCol = [...columns].reverse().find((c) => !c.hidden);
-        const hideShow = this['show-hide-columns'];
+        const hideShow = this['show-hide-columns'] || this.schema.showHideColumns;
         (columns || []).forEach((col, i) => {
             // if (col.hidden) {
             //     return;
             // }
-            const hasHideShowCols = this['show-hide-columns'] && col === lastCol;
+            const hasHideShowCols = hideShow && col === lastCol;
             let options;
             if (col.component && col.component.all) {
                 const input = dom('ui-checkbox', { intermediate: true });
@@ -739,7 +746,7 @@ class DataTable extends BaseComponent {
             );
         }
 
-        if (this['show-hide-columns']) {
+        if (hideShow) {
             const parent = dom.query(this.thead, 'tr th:last-child');
             if (this.columnButton) {
                 parent.appendChild(this.columnButton);
