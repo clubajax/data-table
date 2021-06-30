@@ -1164,7 +1164,7 @@ function renderTotals(items, columns, tbody, dataTable) {
         }
         const css = util.classnames();
         css(col.bordered ? 'bordered' : undefined);
-        css(ttl.align || typeof col.align === 'function' ? col.align({col, item}) : col.align);
+        css(ttl.align || (typeof col.align === 'function' ? col.align({col}) : col.align));
         css(col.format);
         css(ttl.class);
 
