@@ -1,13 +1,50 @@
 const path = require('path');
+const args = require('minimist')(process.argv.slice(2));
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const CopyPlugin = require('copy-webpack-plugin');
 
-const DEV = false;
+const DEV = args.mode === 'development';
+const distFolder = DEV ? './dist' : './build';
+const ROOT = __dirname;
+const DIST = path.resolve(ROOT, distFolder);
+
+let plugins = [
+    new MiniCssExtractPlugin({
+        // Options similar to the same options in webpackOptions.output
+        // all options are optional
+        filename: 'data-table.css',
+        ignoreOrder: false, // Enable to remove warnings about conflicting order
+    }),
+];
+
+if (DEV) {
+    plugins = [
+        ...plugins,
+        new HtmlWebpackPlugin({
+            title: 'Data Table Library',
+            filename: 'index.html',
+            template: path.join(ROOT, 'index.html'),
+        }),
+        new CopyPlugin({
+            patterns: [
+                { from: 'tests', to: 'tests' },
+                { from: 'assets', to: 'assets/src' },
+                { from: './node_modules/mocha/mocha.css', to: 'assets/mocha.css' },
+                { from: './node_modules/mocha/mocha.js', to: 'assets/mocha.js' },
+                { from: './node_modules/chai/chai.js', to: 'assets/chai.js' },
+                { from: './node_modules/chai-spies/chai-spies.js', to: 'assets/chai-spies.js' },
+            ],
+        }),
+    ];
+}
+
 
 module.exports = {
-    mode: 'production',
+    mode: DEV ? 'development' : 'production',
     entry: './build-profiles/all.js',
     output: {
-        path: path.resolve(__dirname, './build'),
+        path: DIST,
         filename: 'index.js',
         libraryTarget: 'umd',
         globalObject: 'this',
@@ -68,13 +105,14 @@ module.exports = {
             },
         ],
     },
-    plugins: [
-        new MiniCssExtractPlugin({
-            // Options similar to the same options in webpackOptions.output
-            // all options are optional
-            filename: 'data-table.css',
-            // chunkFilename: '[id].css',
-            ignoreOrder: false, // Enable to remove warnings about conflicting order
-        }),
-    ],
+    plugins,
+    devServer: {
+        contentBase: DIST,
+        compress: false,
+        progress: false,
+        hot: true,
+        index: 'index.html',
+        port: 8200,
+        publicPath: 'http://localhost:8200/',
+    },
 };

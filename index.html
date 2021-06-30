@@ -1,0 +1,76 @@
+<!DOCTYPE HTML>
+<html lang="en">
+
+<head>
+    <title>Data Table Tests</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' />
+    <link rel="stylesheet" href="assets/src/fontawesome/css/all.css" />
+    <link rel="stylesheet" href="assets/mocha.css" />
+    <script src="assets/src/test-shim.js"></script>
+    <script src="assets/mocha.js"></script>
+    <script src="assets/chai.js"></script>
+    <script src="assets/chai-spies.js"></script>
+    <style>
+        html,
+        body {
+            height: 100%;
+        }
+
+        body {
+            padding: 20px 20px 100px 20px;
+            margin-bottom: 100px;
+            font-family: sans-serif;
+        }
+        
+        * {
+            box-sizing: border-box;
+        }
+
+        section {
+            border: 1px solid #ccc;
+            padding: 3px;
+            margin: 5px;
+        }
+
+        section>label {
+            display: block;
+            padding: 5px;
+            background-color: #eee;
+        }
+
+        .sized {
+            height: 300px;
+            padding: 30px;
+        }
+
+        .drop-data {
+            width: 500px;
+            height: 500px;
+        }
+
+        .tip-button-row{
+            text-align: right;
+            margin-top: 5px;
+        }
+        .tip-button-row .ui-button{
+            display: inline-block;
+        }
+
+        data-table[scrollable] th {
+            border: 1px solid #ccc;
+        }
+        .test-table .batman{
+            background-color: red;
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Tests</h1>
+    <nav></nav>
+    <div id="mocha"></div>
+    <div id="tests"></div>
+</body>
+
+</html>
