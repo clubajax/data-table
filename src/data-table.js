@@ -663,6 +663,7 @@ class DataTable extends BaseComponent {
             const hasHideShowCols = hideShow && col === lastCol;
             let options;
             if (col.component && col.component.all) {
+                // check-all
                 const input = dom('ui-checkbox', { intermediate: true });
                 input.on('change', (e) => {
                     e.stopPropagation();
@@ -677,6 +678,7 @@ class DataTable extends BaseComponent {
                 };
                 this.checkboxToggle = input;
             } else if (!col.key && col.icon) {
+                // edit column
                 options = {
                     html: dom('span', { class: 'fas fa-pencil-alt' }),
                     'data-field': 'edit',
@@ -688,14 +690,16 @@ class DataTable extends BaseComponent {
 
                 const css = util.classnames(col.css || col.className);
                 css(col.bordered ? 'bordered' : undefined);
-                css(typeof col.align === 'function' ? col.align({col}) : col.align);
+                css(typeof col.align === 'function' ? col.align({ col }) : col.align);
                 css(col.class);
                 css(col.format || (col.component ? col.component.format : ''));
                 if (col.unsortable) {
                     css('unsortable');
                 }
 
-                css(col.filter ? 'filter' : null);
+                const hasFilter = dom.isNode(col.filter);
+
+                css(hasFilter ? 'filter' : null);
                 if (hasHideShowCols) {
                     css('hide-show-col');
                 }
@@ -713,11 +717,16 @@ class DataTable extends BaseComponent {
                                 dom('span', { class: 'sort-dn fas fa-sort-down' }),
                             ],
                         }),
-                        col.filter ? dom('span', { class: 'filter-btn', html: this.getIconFilter(col) }) : false,
+                        hasFilter ? dom('span', { class: 'filter-btn', html: this.getIconFilter(col) }) : false,
                     ],
                     class: css(),
                     'data-field': typeof key === 'string' ? key : key.sort,
                 };
+
+                if (hasFilter) {
+                    console.log('col.filter', i, col.filter);
+                    console.log('options', options);
+                }
             }
             if (col.width) {
                 colSizes[i] = col.width;
@@ -1011,7 +1020,7 @@ function renderRow(item, { index, columns, colSizes, tbody, selectable, dataTabl
         key = col.key || col.icon || col.sort;
         css = util.classnames(key);
         css(col.bordered ? 'bordered' : undefined);
-        css(typeof col.align === 'function' ? col.align({col, item}) : col.align);
+        css(typeof col.align === 'function' ? col.align({ col, item }) : col.align);
         css(col.class);
         css(col.format);
         if (col.component) {
@@ -1168,7 +1177,7 @@ function renderTotals(items, columns, tbody, dataTable) {
         }
         const css = util.classnames();
         css(col.bordered ? 'bordered' : undefined);
-        css(ttl.align || (typeof col.align === 'function' ? col.align({col}) : col.align));
+        css(ttl.align || (typeof col.align === 'function' ? col.align({ col }) : col.align));
         css(col.format);
         css(ttl.class);
 

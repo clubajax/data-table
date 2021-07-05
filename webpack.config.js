@@ -30,6 +30,7 @@ if (DEV) {
             patterns: [
                 { from: 'tests', to: 'tests' },
                 { from: 'assets', to: 'assets/src' },
+                { from: './node_modules/@clubajax/form/form.css', to: 'assets/form.css' },
                 { from: './node_modules/mocha/mocha.css', to: 'assets/mocha.css' },
                 { from: './node_modules/mocha/mocha.js', to: 'assets/mocha.js' },
                 { from: './node_modules/chai/chai.js', to: 'assets/chai.js' },

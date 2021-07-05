@@ -832,9 +832,9 @@ describe('DataTable', function () {
                     columns: data.columns,
                 };
                 schema.columns[0].filter = components.input;
-                schema.columns[1].filter = true;
-                schema.columns[2].filter = true;
-                schema.columns[3].filter = true;
+                // schema.columns[1].filter = true;
+                // schema.columns[2].filter = true;
+                // schema.columns[3].filter = true;
                 console.log('schema', schema);
                 const section = dom('section', { class: 'sized', html: 'Filterable' }, body);
                 const node = dom(
