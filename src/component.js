@@ -1,4 +1,3 @@
-require('@clubajax/form');
 const dom = require('@clubajax/dom');
 const on = require('@clubajax/on');
 const { getFormatter, fromHtml, isNull } = require('./util');

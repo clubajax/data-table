@@ -1,26 +1,20 @@
 const isIE = false;
 window['no-native-shim'] = !isIE;
 
-const files = '<link rel="stylesheet" href="../node_modules/mocha/mocha.css">' +
-    // '<link rel="stylesheet" href="./dist/data-table.css" />' +
-    '<link rel="stylesheet" href="../node_modules/@clubajax/form/form.css" />' +
-    '<script src="../node_modules/mocha/mocha.js"></script>' +
-    '<script src="../node_modules/chai/chai.js"></script>' +
-    '<script src="./src/data-20.js"></script>' +
-    '<script src="./src/data-drops.js"></script>' +
-    '<script src="./src/data-grouped.js"></script>' +
-    '<script src="./src/data-search.js"></script>' +
-    '<script src="./src/data-3.js"></script>' +
-    '<script src="./src/data-4.js"></script>' +
-    '<script src="./src/data-dynamic.js"></script>' +
-    '<script src="./src/data-input.js"></script>' +
-    '<script src="./src/data-format.js"></script>' +
-    '<script src="./src/data-childIds.js"></script>' +
-    '<script src="./src/data-headerless.js"></script>' +
-    '<script src="./src/data-general.js"></script>' +
-    '<script src="./src/data-totals.js"></script>' +
-    '<script src="./dist/vendor.js"></script>' +
-    '<script src="./dist/output.js"></script>';
+const files =
+    '<script src="/assets/src/data/data-20.js"></script>' +
+    '<script src="/assets/src/data/data-drops.js"></script>' +
+    '<script src="/assets/src/data/data-grouped.js"></script>' +
+    '<script src="/assets/src/data/data-search.js"></script>' +
+    '<script src="/assets/src/data/data-3.js"></script>' +
+    '<script src="/assets/src/data/data-4.js"></script>' +
+    '<script src="/assets/src/data/data-dynamic.js"></script>' +
+    '<script src="/assets/src/data/data-input.js"></script>' +
+    '<script src="/assets/src/data/data-format.js"></script>' +
+    '<script src="/assets/src/data/data-childIds.js"></script>' +
+    '<script src="/assets/src/data/data-headerless.js"></script>' +
+    '<script src="/assets/src/data/data-general.js"></script>' +
+    '<script src="/assets/src/data/data-totals.js"></script>';
 
 document.write(files);
 

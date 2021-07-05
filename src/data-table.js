@@ -1,3 +1,4 @@
+require('@clubajax/form');
 const BaseComponent = require('@clubajax/base-component');
 const dom = require('@clubajax/dom');
 const sortable = require('./sortable');
@@ -88,6 +89,9 @@ class DataTable extends BaseComponent {
     onRows(rows) {
         if (!this.schema) {
             return;
+        }
+        if (!this.schema.columns) {
+            this.schema.columns = [];
         }
         this.loadData(rows);
     }
@@ -709,7 +713,7 @@ class DataTable extends BaseComponent {
                                 dom('span', { class: 'sort-dn fas fa-sort-down' }),
                             ],
                         }),
-                        col.filter ? dom('span', { class: 'filter-btn', html: this.getIconFilter(col) }) : null,
+                        col.filter ? dom('span', { class: 'filter-btn', html: this.getIconFilter(col) }) : false,
                     ],
                     class: css(),
                     'data-field': typeof key === 'string' ? key : key.sort,

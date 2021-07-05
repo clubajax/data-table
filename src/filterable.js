@@ -20,17 +20,13 @@ const Filterable = {
     // },
 
     getIconFilter(col) {
-        if (!col.filter) {
+        if (!col.filter || typeof col.filter === 'object' && !Object.keys(col.filter).length) {
             return null;
         }
         if (typeof col.filter === 'boolean') {
             return dom('span', {class: 'fas fa-filter'});
         }
-        const tooltip = dom('ui-tooltip', {
-            value: col.filter,
-            'use-click': true,
-            'is-button': true
-        })
+        
         col.filter.close = () => { 
             tooltip.close();
         }
@@ -41,6 +37,14 @@ const Filterable = {
                 name: data.name !== undefined ? data.name : ''
             })
         }
+
+        const tooltip = dom('ui-tooltip', {
+            value: col.filter,
+            'use-click': true,
+            'is-button': true
+        })
+        console.log('col.filter', col.filter);
+
         return dom('ui-icon', {
             type: 'fas fa-filter',
             html: tooltip

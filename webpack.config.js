@@ -43,6 +43,7 @@ if (DEV) {
 module.exports = {
     mode: DEV ? 'development' : 'production',
     entry: './build-profiles/all.js',
+    entry: DEV ? './tests/index.js' : './build-profiles/all.js',
     output: {
         path: DIST,
         filename: 'index.js',
@@ -61,8 +62,7 @@ module.exports = {
     // eval-source-map: has wrong line numbers, fastest
     // source-map: slow, org source, external
     devtool: DEV ? 'inline-source-map' : 'source-map',
-    externals: [
-        
+    externals: DEV ? [] : [
         // '@clubajax/dom',
         // '@clubajax/on',
         // '@clubajax/base-component',

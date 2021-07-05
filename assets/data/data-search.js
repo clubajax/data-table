@@ -15,7 +15,7 @@ function getSearchData() {
 
 let nameData;
 function loadNames() {
-    fetch('./src/names.json')
+    fetch('/assets/src/data/names.json')
         .then((data) => data.json())
         .then((data) => {
             nameData = data;
