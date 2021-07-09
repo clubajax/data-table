@@ -44,8 +44,6 @@ const Filterable = {
             'is-button': true,
         });
 
-        console.log('col.filter', col.filter);
-
         return dom('ui-icon', {
             type: 'fas fa-filter',
             html: tooltip,

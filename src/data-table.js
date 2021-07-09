@@ -42,6 +42,13 @@ class DataTable extends BaseComponent {
         this.nodeHolder = dom('div', { class: 'data-table-node-holder' }, document.body);
 
         this.makeExpandable();
+        // this.error = undefined;
+        // this.loading = undefined;
+        // this.errors = undefined;
+        // this.zebra = undefined;
+        // this.perf = undefined;
+        // this.extsort = undefined;
+        // this.rows = undefined;
     }
 
     get editable() {
@@ -341,7 +348,7 @@ class DataTable extends BaseComponent {
         return getBlankItem(this.schema.columns, this.items[0]);
     }
 
-    getIconFilter() {
+    getIconFilter(col) {
         // to be overwritten by filterable
         return dom('span', { class: 'fas fa-check' });
     }
@@ -524,6 +531,7 @@ class DataTable extends BaseComponent {
 
     makeExpandable() {
         const handleExpand = (tr, td) => {
+            console.log('handleExpand');
             const id = dom.attr(tr, 'data-row-id');
             const item = this.getItemById(id);
             const state = dom.attr(td, 'data-expanded');
@@ -587,6 +595,11 @@ class DataTable extends BaseComponent {
         };
 
         this.on('click', '[data-expanded]', (e) => {
+            console.log('click', e);
+            const radio = e.target.closest('ui-radio');
+            if (radio) {
+                return
+            }
             const td = e.target.closest('td');
             const tr = e.target.closest('tr');
             handleExpand(tr, td);
@@ -651,15 +664,14 @@ class DataTable extends BaseComponent {
         if (this.columnButton) {
             this.columnButton.parentNode.removeChild(this.columnButton);
         }
+        
         dom.clean(this.thead, true);
         const tr = dom('tr', {}, this.thead);
         const colSizes = [];
         const lastCol = [...columns].reverse().find((c) => !c.hidden);
         const hideShow = this['show-hide-columns'] || this.schema.showHideColumns;
+
         (columns || []).forEach((col, i) => {
-            // if (col.hidden) {
-            //     return;
-            // }
             const hasHideShowCols = hideShow && col === lastCol;
             let options;
             if (col.component && col.component.all) {
@@ -722,11 +734,6 @@ class DataTable extends BaseComponent {
                     class: css(),
                     'data-field': typeof key === 'string' ? key : key.sort,
                 };
-
-                if (hasFilter) {
-                    console.log('col.filter', i, col.filter);
-                    console.log('options', options);
-                }
             }
             if (col.width) {
                 colSizes[i] = col.width;
@@ -954,6 +961,7 @@ function renderRow(item, { index, columns, colSizes, tbody, selectable, dataTabl
     if (!item) {
         return;
     }
+    
     item.index = index;
     let itemCss = util.classnames(item.css || item.class || item.className);
     let html,
@@ -1056,6 +1064,7 @@ function renderRow(item, { index, columns, colSizes, tbody, selectable, dataTabl
         if (isExpanded) {
             html = dom('div', {
                 html: [
+                    dom('ui-radio'),
                     dom('span', { class: isExpanded === 'on' ? 'fas fa-caret-down' : 'fas fa-caret-right' }),
                     dom('span', { html, class: 'content' }),
                 ],
@@ -1092,6 +1101,7 @@ function renderRow(item, { index, columns, colSizes, tbody, selectable, dataTabl
     });
 
     if (item.expanded) {
+        console.log('item.expanded:', item);
         tr.classList.add('expanded-parent');
         if (expandable) {
             // empty contaner below row
@@ -1132,6 +1142,8 @@ function renderRow(item, { index, columns, colSizes, tbody, selectable, dataTabl
 }
 
 function renderExpandedRow(item, index, columns, tbody, dataTable) {
+    // row that contains a form or content other than hidden rows
+
     let node = dom.query(dataTable.nodeHolder, `[data-row-id="ex-${item.id}"]`);
     if (node) {
         tbody.appendChild(node);

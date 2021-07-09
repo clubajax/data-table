@@ -671,6 +671,30 @@ describe('DataTable', function () {
                 });
             });
 
+            it.only('should group with radio buttons', () => {
+                groupedSchema.radios = true;
+                console.log('groupedSchema', groupedSchema);
+                const section = dom('section', { html: dom('label', { html: 'Group by Parent IDs' }) }, body);
+                const node = dom(
+                    'data-table',
+                    {
+                        schema: groupedSchema,
+                        rows: groupedItems,
+                        zebra: true,
+                    },
+                    section,
+                );
+            });
+
+            it('should render form components', () => {
+                setTimeout(() => {
+                    dom('ui-input', {}, body);
+                    dom('ui-checkbox', {}, body);
+                    dom('ui-radio', {}, body);
+                    dom('ui-dropdown', { label: 'drop' }, body);
+                }, 30);
+            });
+
             it('should group based on child ids', (done) => {
                 const data = getChildIdData();
                 const section = dom('section', { html: dom('label', { html: 'Group by Child IDs' }) }, body);
@@ -821,7 +845,7 @@ describe('DataTable', function () {
         });
 
         describe('filtering', function () {
-            it.only('should be filterable', function (done) {
+            it('should be filterable', function (done) {
                 // https://mvc-grid.azurewebsites.net/Column/CustomFilter
                 // TODO: Make filter test, works with and without sorting
                 const components = getFilterComponents();
@@ -1254,6 +1278,7 @@ describe('DataTable', function () {
                 });
             });
         });
+
         describe('totals', function () {
             it('should render a total row', (done) => {
                 // TODO

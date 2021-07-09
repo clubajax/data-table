@@ -1,7 +1,6 @@
 const btn = dom('button', { class: 'ui-button', html: 'Ok' });
 const input = dom('ui-input', { label: 'Enter Code', value: '321' });
 on(btn, 'click', () => {
-    console.log('CLICK!');
     component.send({ value: input.value });
     component.close();
 });

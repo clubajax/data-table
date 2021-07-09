@@ -106,6 +106,36 @@ const groupedItems = [
         credit: 200,
         amount: -150,
     },
+
+
+    {
+        id: 11,
+        parentId: null,
+        accountId: '005',
+        accountName: 'JoCo',
+    },
+    {
+        id: 12,
+        parentId: 11,
+        franchiseeId: '005',
+        franchiseeName: 'Wilco',
+        customerName: 'Mikemax',
+        customerId: '1003',
+        debit: 0,
+        credit: 100,
+        amount: -100,
+    },
+    {
+        id: 13,
+        parentId: 11,
+        franchiseeId: '006',
+        franchiseeName: 'Rightway',
+        customerName: 'MJW Asso',
+        customerId: '1004',
+        debit: 50,
+        credit: 200,
+        amount: -150,
+    },
 ];
 
 const groupedSchema = {
