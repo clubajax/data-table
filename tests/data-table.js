@@ -684,6 +684,29 @@ describe('DataTable', function () {
                     },
                     section,
                 );
+
+                onDomReady(node, function () {
+                    node.on('change', function (e) {
+                        console.log('change', e);
+                    });
+                    node.on('select', function (e) {
+                        console.log('select', e);
+                        groupedItems.forEach((m) => {
+                            m.selected = false;
+                        })
+                        const index = groupedItems.findIndex(m => m.id === e.value)
+                        groupedItems[index].selected = true;
+
+                        // TODO
+                        // How to update selected?
+                        // don't want to pass in data again... that will force a rerender
+                        // might be better to maintain state within the table
+                        //
+                        // Also
+                        // error if using checks/radio + selectable
+
+                    });
+                });
             });
 
             it('should render form components', () => {

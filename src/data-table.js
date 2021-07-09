@@ -597,11 +597,15 @@ class DataTable extends BaseComponent {
         this.on('click', '[data-expanded]', (e) => {
             console.log('click', e);
             const radio = e.target.closest('ui-radio');
-            if (radio) {
-                return
-            }
             const td = e.target.closest('td');
             const tr = e.target.closest('tr');
+            if (radio) {
+                const id = dom.attr(tr, 'data-row-id');
+                const item = this.getItemById(id);
+                this.emit('select', {value: item.id, item});
+                return
+            }
+            
             handleExpand(tr, td);
         });
 
