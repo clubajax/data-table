@@ -702,7 +702,7 @@ describe('DataTable', function () {
                         // don't want to pass in data again... that will force a rerender
                         // might be better to maintain state within the table
                         //
-                        // Also
+                        // Also:
                         // error if using checks/radio + selectable
 
                     });
