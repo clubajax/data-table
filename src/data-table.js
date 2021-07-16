@@ -499,6 +499,9 @@ class DataTable extends BaseComponent {
     }
 
     toggleCheckAll(value) {
+        dom.queryAll(this, 'tbody td.ui-checkbox ui-checkbox').forEach((check) => {
+            check.checked = value;
+        });
         this.emit('check-all', { value });
     }
 
@@ -531,7 +534,6 @@ class DataTable extends BaseComponent {
 
     makeExpandable() {
         const handleExpand = (tr, td) => {
-            console.log('handleExpand');
             const id = dom.attr(tr, 'data-row-id');
             const item = this.getItemById(id);
             const state = dom.attr(td, 'data-expanded');
@@ -581,6 +583,10 @@ class DataTable extends BaseComponent {
 
             const afterTR = dom.query(this, `[data-row-id="${id}"]`);
             if (item.expanded) {
+                if (!afterTR.nextElementSibling) {
+                    console.warn('Parent has no children');
+                    return;
+                }
                 // non-request expand
                 this.fire(
                     'expand',
@@ -595,17 +601,25 @@ class DataTable extends BaseComponent {
         };
 
         this.on('click', '[data-expanded]', (e) => {
-            console.log('click', e);
             const radio = e.target.closest('ui-radio');
             const td = e.target.closest('td');
             const tr = e.target.closest('tr');
             if (radio) {
                 const id = dom.attr(tr, 'data-row-id');
-                const item = this.getItemById(id);
-                this.emit('select', {value: item.id, item});
-                return
+                dom.queryAll(this, 'td > div > ui-radio').forEach((radio) => {
+                    radio.checked = `${radio.id}` === `${id}`;
+                });
+                this.items.forEach((item) => {
+                    if (`${item.id}` === `${id}`) {
+                        item.selected = true;
+                        this.emit('select', { value: item.id, item });
+                    } else {
+                        item.selected = false;
+                    }
+                });
+                return;
             }
-            
+
             handleExpand(tr, td);
         });
 
@@ -668,7 +682,7 @@ class DataTable extends BaseComponent {
         if (this.columnButton) {
             this.columnButton.parentNode.removeChild(this.columnButton);
         }
-        
+
         dom.clean(this.thead, true);
         const tr = dom('tr', {}, this.thead);
         const colSizes = [];
@@ -965,7 +979,7 @@ function renderRow(item, { index, columns, colSizes, tbody, selectable, dataTabl
     if (!item) {
         return;
     }
-    
+
     item.index = index;
     let itemCss = util.classnames(item.css || item.class || item.className);
     let html,
@@ -1068,7 +1082,7 @@ function renderRow(item, { index, columns, colSizes, tbody, selectable, dataTabl
         if (isExpanded) {
             html = dom('div', {
                 html: [
-                    dom('ui-radio'),
+                    dataTable.schema.radios ? dom('ui-radio', { checked: item.selected, id: item.id }) : null,
                     dom('span', { class: isExpanded === 'on' ? 'fas fa-caret-down' : 'fas fa-caret-right' }),
                     dom('span', { html, class: 'content' }),
                 ],
@@ -1105,7 +1119,6 @@ function renderRow(item, { index, columns, colSizes, tbody, selectable, dataTabl
     });
 
     if (item.expanded) {
-        console.log('item.expanded:', item);
         tr.classList.add('expanded-parent');
         if (expandable) {
             // empty contaner below row

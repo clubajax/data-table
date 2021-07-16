@@ -648,7 +648,7 @@ describe('DataTable', function () {
         });
 
         describe('grouping', () => {
-            it('should group based on parentIds', (done) => {
+            it.only('should group based on parentIds', (done) => {
                 const section = dom('section', { html: dom('label', { html: 'Group by Parent IDs' }) }, body);
                 const node = dom(
                     'data-table',
@@ -672,9 +672,11 @@ describe('DataTable', function () {
             });
 
             it.only('should group with radio buttons', () => {
+                const groupedSchema = copy(window.groupedSchema);
+                const groupedItems = copy(window.groupedItems);
                 groupedSchema.radios = true;
-                console.log('groupedSchema', groupedSchema);
-                const section = dom('section', { html: dom('label', { html: 'Group by Parent IDs' }) }, body);
+                groupedItems[0].selected = true;
+                const section = dom('section', { html: dom('label', { html: 'Grouped with Radios' }) }, body);
                 const node = dom(
                     'data-table',
                     {
@@ -691,11 +693,11 @@ describe('DataTable', function () {
                     });
                     node.on('select', function (e) {
                         console.log('select', e);
-                        groupedItems.forEach((m) => {
-                            m.selected = false;
-                        })
-                        const index = groupedItems.findIndex(m => m.id === e.value)
-                        groupedItems[index].selected = true;
+                        // groupedItems.forEach((m) => {
+                        //     m.selected = false;
+                        // })
+                        // const index = groupedItems.findIndex(m => m.id === e.value)
+                        // groupedItems[index].selected = true;
 
                         // TODO
                         // How to update selected?

@@ -1,4 +1,4 @@
-const groupedItems = [
+window.groupedItems = [
     {
         id: 1,
         parentId: null,
@@ -138,7 +138,7 @@ const groupedItems = [
     },
 ];
 
-const groupedSchema = {
+window.groupedSchema = {
     columns: [
         { key: 'accountId', label: 'Acct#' },
         { key: 'accountName', label: 'Name' },
