@@ -426,17 +426,17 @@ data-table[show-hide-columns] {
         tr {
             th:last-child {
                 padding-right: 32px;
-                &.filter{
-                    .filter-btn{
+                &.filter {
+                    .filter-btn {
                         right: 32px;
                     }
-                    .sort{
+                    .sort {
                         right: 64px;
                     }
-                    &:hover{
+                    &:hover {
                         background-color: var(--tbl-head-bk);
                     }
-                    .th-content:hover{
+                    .th-content:hover {
                         background-color: var(--tbl-th-hvr);
                     }
                 }
@@ -454,7 +454,7 @@ data-table[show-hide-columns] {
                 font-size: 13px;
                 z-index: 3;
                 background-color: var(--tbl-head-bk);
-                &:hover{
+                &:hover {
                     background-color: var(--tbl-th-hvr);
                 }
             }
@@ -463,7 +463,8 @@ data-table[show-hide-columns] {
 
     @for $i from 1 through 20 {
         &.h#{$i} tr {
-            th:nth-child(#{$i}), td:nth-child(#{$i}) {
+            th:nth-child(#{$i}),
+            td:nth-child(#{$i}) {
                 display: none;
             }
         }
@@ -590,6 +591,9 @@ data-table {
         &.currency,
         &.accounting {
             text-align: right;
+            input {
+                text-align: right;
+            }
         }
     }
 

@@ -648,7 +648,7 @@ describe('DataTable', function () {
         });
 
         describe('grouping', () => {
-            it.only('should group based on parentIds', (done) => {
+            it('should group based on parentIds', (done) => {
                 const section = dom('section', { html: dom('label', { html: 'Group by Parent IDs' }) }, body);
                 const node = dom(
                     'data-table',
@@ -671,7 +671,7 @@ describe('DataTable', function () {
                 });
             });
 
-            it.only('should group with radio buttons', () => {
+            it('should group with radio buttons', () => {
                 const groupedSchema = copy(window.groupedSchema);
                 const groupedItems = copy(window.groupedItems);
                 groupedSchema.radios = true;
@@ -870,7 +870,7 @@ describe('DataTable', function () {
         });
 
         describe('filtering', function () {
-            it('should be filterable', function (done) {
+            it.only('should be filterable', function (done) {
                 // https://mvc-grid.azurewebsites.net/Column/CustomFilter
                 // TODO: Make filter test, works with and without sorting
                 const components = getFilterComponents();

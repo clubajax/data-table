@@ -155,6 +155,14 @@ function copy(data) {
     }
     return data;
 }
+function equalUids(a, b) {
+    if (!a || !b || !a.length || !b.length || a.length !== b.length) {
+        return false;
+    }
+    return a.every((aItem, i) => {
+        return aItem.uid === b[i].uid;
+    })
+}
 
 function equal(a, b, exclude = []) {
     const typeA = getType(a);
@@ -290,5 +298,6 @@ module.exports = {
     isNull,
     uid,
     copy,
-    equal
+    equal,
+    equalUids
 };

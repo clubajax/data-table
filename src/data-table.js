@@ -75,6 +75,13 @@ class DataTable extends BaseComponent {
                     return;
                 }
                 const formatter = util.getFormatter(column, rowItem)[0];
+                if (td.querySelector('.data-table-field')) {
+                    const input = td.querySelector('input');
+                    if (input) {
+                        input.value = formatter.to(rowItem[key])
+                    }
+                    return;
+                }
                 if (/fa-caret/.test(td.innerHTML)) {
                     td = dom.query(td, '.content');
                 }
@@ -169,11 +176,24 @@ class DataTable extends BaseComponent {
 
     loadData(rows) {
         const items = rows || [];
+        if (!util.equal(this.schema, this.orgSchema)) {
+            this.orgSchema = util.copy(this.schema);
+        }
+
         if (util.equal(items, this.orgItems)) {
             return;
         }
-        // this needs to be run on every data update
-        // because the schema gets updated as well
+
+        if (util.equalUids(items, this.orgItems)) {
+            items.forEach((item) => {
+                this.onUpdate(item);
+            });
+            return;
+        }
+
+        // check for hidden columns
+        //  This needs to be run on every data update
+        //  because the schema gets updated as well
         this.hiddenHandled = true;
         this.storageKey =
             this.id ||
@@ -236,6 +256,7 @@ class DataTable extends BaseComponent {
             }
 
             this.orgItems = util.copy(items);
+            
             this.setCheckAll();
         });
     }

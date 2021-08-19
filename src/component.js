@@ -1,6 +1,6 @@
 const dom = require('@clubajax/dom');
 const on = require('@clubajax/on');
-const { getFormatter, fromHtml, isNull } = require('./util');
+const { getFormatter, fromHtml, toHtml, isNull } = require('./util');
 //
 // helpers
 //
@@ -56,8 +56,10 @@ function createLink(col, item, dataTable) {
 
 function create(col, item, dataTable, type, compType) {
     const [formatter, options] = getFormatter(col, item);
+    const persist = col.component.persist;
+
     function edit(node, timerTriggered) {
-        const parent = node.parentNode;
+        const parent = node.parentNode || dataTable;
         on.emit(parent, 'cell-edit');
         let hadWidth = true;
         if (!parent.style.width) {
@@ -65,8 +67,8 @@ function create(col, item, dataTable, type, compType) {
             dom.style(parent, 'width', dom.box(parent).w);
         }
         parent.removeChild(node);
-        let exitTimer;
-        const val = fromHtml(item[col.key], formatter);
+        const val =
+            persist && item[col.key] > 0 ? toHtml(item[col.key], formatter) : fromHtml(item[col.key], formatter);
         const input = dom(
             compType,
             {
@@ -79,32 +81,52 @@ function create(col, item, dataTable, type, compType) {
             parent,
         );
 
-        input.onDomReady(() => {
+        if (!persist) {
             // in case all fields are editable, get the first
-            const row = timerTriggered ? parent.closest('tr.added-row') : parent.closest('tr');
-            if (row && item.added === 'start') {
-                clearTimeout(focusTimeout);
-                focusTimeout = setTimeout(() => {
-                    const inp = dom.query(row, 'input');
-                    if (inp) {
-                        inp.focus();
-                    }
-                    item.added = true;
-                }, 100);
-            } else {
-                setTimeout(() => {
-                    input.focus();
-                }, 1);
-            }
-        });
+            input.onDomReady(() => {
+                const row = timerTriggered ? parent.closest('tr.added-row') : parent.closest('tr');
+                if (row && item.added === 'start') {
+                    clearTimeout(focusTimeout);
+                    focusTimeout = setTimeout(() => {
+                        const inp = dom.query(row, 'input');
+                        if (inp) {
+                            inp.focus();
+                        }
+                        item.added = true;
+                    }, 100);
+                } else {
+                    setTimeout(() => {
+                        input.focus();
+                    }, 1);
+                }
+            });
+        } else {
+            input.onDomReady(() => {
+                input.on('focus', () => {
+                    input.value = formatter.from(input.value);
+                });
+            });
+        }
 
         const destroy = () => {
-            if (window.keepPopupsOpen) {
-                return;
-            }
             const changed = item[col.key] !== formatter.from(input.value);
-            node.innerHTML = formatter.to(input.value, true, options);
+            if (window.keepPopupsOpen || persist) {
+                item = { ...item };
+                item[col.key] = formatter.from(input.value);
+                if (col.component.update) {
+                    item = col.component.update(item, col);
+                    dataTable.onUpdate(item);
+                }
+                on.emit(dataTable, 'cell-change', { value: item, column: col });
+                setTimeout(() => {
+                    input.value = formatter.to(input.value, true, options);
+                }, 30);
+
+                return
+            }
+
             item[col.key] = formatter.from(node.innerHTML);
+            node.innerHTML = formatter.to(input.value, true, options);
             parent.appendChild(node);
             input.destroy();
             if (changed) {
@@ -162,7 +184,7 @@ function create(col, item, dataTable, type, compType) {
             }
         });
 
-        if (isNull(item[col.key]) || item.added) {
+        if (isNull(item[col.key]) || item.added || col.component.persist) {
             setTimeout(() => {
                 edit(node, true);
             }, 1);
@@ -308,6 +330,7 @@ function createDropdown(col, item, dataTable) {
             data: () => col.component.options,
             value,
             class: 'data-table-field select',
+            icon: 'angleDown',
             placeholder: col.component.placeholder,
         });
         input.on('change', (e) => {
@@ -448,22 +471,24 @@ function createEditCell(col, item, dataTable, index) {
     });
 }
 
-function createEditButtons(col, item, dataTable, index) { 
+function createEditButtons(col, item, dataTable, index) {
     return dom('span', {
         class: 'add-remove',
-        html: col.component.buttons.filter(({display}) => { 
-            return display ? display(item) : true;
-        }).map(({value, icon}) => {
-            return dom('button', {
-                onClick() {
-                    console.log('fire!');
-                    on.fire(this, 'action', {value, index, item}, true);
-                },
-                class: `tbl-icon-button ${value}`,
-                type: 'button',
-                html: dom('ui-icon', {type: icon}),
-            });
-        })
+        html: col.component.buttons
+            .filter(({ display }) => {
+                return display ? display(item) : true;
+            })
+            .map(({ value, icon }) => {
+                return dom('button', {
+                    onClick() {
+                        console.log('fire!');
+                        on.fire(this, 'action', { value, index, item }, true);
+                    },
+                    class: `tbl-icon-button ${value}`,
+                    type: 'button',
+                    html: dom('ui-icon', { type: icon }),
+                });
+            }),
     });
 }
 
