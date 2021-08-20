@@ -1286,6 +1286,15 @@ function setGrouped(items, schema) {
                 item.isSubitem = true;
             }
         });
+
+        items.forEach((item) => {
+            if (item.subItemIds && !item.subItemIds.length) {
+                delete item.subItemIds;
+                item.childless = true;
+            }
+        })
+
+
     } else if (items.some((m) => !!m.childIds)) {
         items.forEach((item) => {
             if (item.childIds && item.childIds.length) {
