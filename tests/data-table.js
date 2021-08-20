@@ -671,6 +671,29 @@ describe('DataTable', function () {
                 });
             });
 
+            it.only('should group *some* rows', (done) => {
+                const section = dom('section', { html: dom('label', { html: 'Partial Groups' }) }, body);
+                const node = dom(
+                    'data-table',
+                    {
+                        schema: partialGroupedSchema,
+                        rows: partialGroupedItems,
+                        zebra: true,
+                    },
+                    section,
+                );
+                const events = [];
+                onDomReady(node, function () {
+                    node.on('change', function (e) {
+                        console.log('change', e);
+                    });
+                    node.on('remove-row', function (e) {
+                        console.log('remove-row', e);
+                    });
+                    done();
+                });
+            });
+
             it('should group with radio buttons', () => {
                 const groupedSchema = copy(window.groupedSchema);
                 const groupedItems = copy(window.groupedItems);
@@ -870,7 +893,7 @@ describe('DataTable', function () {
         });
 
         describe('filtering', function () {
-            it.only('should be filterable', function (done) {
+            it('should be filterable', function (done) {
                 // https://mvc-grid.azurewebsites.net/Column/CustomFilter
                 // TODO: Make filter test, works with and without sorting
                 const components = getFilterComponents();

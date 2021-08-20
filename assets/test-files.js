@@ -5,6 +5,7 @@ const files =
     '<script src="/assets/src/data/data-20.js"></script>' +
     '<script src="/assets/src/data/data-drops.js"></script>' +
     '<script src="/assets/src/data/data-grouped.js"></script>' +
+    '<script src="/assets/src/data/data-partial-group.js"></script>' +
     '<script src="/assets/src/data/data-search.js"></script>' +
     '<script src="/assets/src/data/data-3.js"></script>' +
     '<script src="/assets/src/data/data-4.js"></script>' +

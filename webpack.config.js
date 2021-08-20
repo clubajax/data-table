@@ -1,8 +1,10 @@
+// @ts-nocheck
 const path = require('path');
 const args = require('minimist')(process.argv.slice(2));
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
+const ProgressPlugin = require('webpack/lib/ProgressPlugin');
 
 const DEV = args.mode === 'development';
 const distFolder = DEV ? './dist' : './build';
@@ -19,8 +21,37 @@ let plugins = [
 ];
 
 if (DEV) {
+    function log(msg) {
+        //Doesn't exist in headless environment
+        if (process.stdout.clearLine) {
+            process.stdout.clearLine();
+            process.stdout.cursorTo(0);
+            process.stdout.write(msg);
+        }
+    }
+    let lastPct = 0;
+    const progress = new ProgressPlugin((percentage, msg, current, active, modulepath) => {
+        const pct = Math.floor(percentage * 100);
+        if (pct > lastPct) {
+            let moduleName = '';
+            if (modulepath) {
+                const dirs = modulepath.split('/');
+                moduleName = dirs[dirs.length - 1];
+            }
+            log(!pct ? '0%' : `${pct}% - ${msg} /${moduleName}`);
+            lastPct = pct;
+            if (percentage === 1) {
+                setTimeout(() => {
+                    if (DEV) {
+                        log('\n\npage is served from http://localhost:8200\nstarting server...');
+                    }
+                }, 30);
+            }
+        }
+    });
     plugins = [
         ...plugins,
+        progress,
         new HtmlWebpackPlugin({
             title: 'Data Table Library',
             filename: 'index.html',
@@ -40,10 +71,9 @@ if (DEV) {
     ];
 }
 
-
 module.exports = {
     mode: DEV ? 'development' : 'production',
-    entry: './build-profiles/all.js',
+    // entry: './build-profiles/all.js',
     entry: DEV ? './tests/index.js' : './build-profiles/all.js',
     output: {
         path: DIST,
@@ -63,18 +93,20 @@ module.exports = {
     // eval-source-map: has wrong line numbers, fastest
     // source-map: slow, org source, external
     devtool: DEV ? 'inline-source-map' : 'source-map',
-    externals: DEV ? [] : [
-        // '@clubajax/dom',
-        // '@clubajax/on',
-        // '@clubajax/base-component',
-        '@clubajax/form',
-        // '@clubajax/format',
+    externals: DEV
+        ? []
+        : [
+              // '@clubajax/dom',
+              // '@clubajax/on',
+              // '@clubajax/base-component',
+              '@clubajax/form',
+              // '@clubajax/format',
 
-        // true imports:
-        // '@clubajax/custom-elements-polyfill',
-        // '@clubajax/key-nav',
-        // '@clubajax/no-dash'
-    ],
+              // true imports:
+              // '@clubajax/custom-elements-polyfill',
+              // '@clubajax/key-nav',
+              // '@clubajax/no-dash'
+          ],
     module: {
         rules: [
             {
