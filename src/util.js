@@ -122,8 +122,14 @@ function copy(data) {
         });
     }
 
-    if (type === 'html' || type === 'window') {
-        throw new Error('HTMLElements and the window object cannot be copied');
+    if (type === 'html') {
+        // console.log('   no copy:', type, data);
+        // throw new Error('HTMLElements and the window object cannot be copied');
+        return data;
+    }
+
+    if (type === 'window') {
+        throw new Error('The window object cannot be copied');
     }
 
     if (type === 'date') {

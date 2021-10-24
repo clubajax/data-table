@@ -156,7 +156,7 @@ window.partialGroupedItems = [
     {
         // childless
         id: 15,
-        accountId: '006',
+        accountId: '006 <i class="fas fa-network-wired"></i>',
         accountName: 'Stacco',
         parentId: null,
         franchiseeId: '040',

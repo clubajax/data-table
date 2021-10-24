@@ -1,5 +1,6 @@
 const dom = require('@clubajax/dom');
 const on = require('@clubajax/on');
+const formatters = require('@clubajax/format');
 const { getFormatter, fromHtml, toHtml, isNull } = require('./util');
 //
 // helpers
@@ -122,19 +123,20 @@ function create(col, item, dataTable, type, compType) {
                     input.value = formatter.to(input.value, true, options);
                 }, 30);
 
-                return
+                return;
             }
 
-            item[col.key] = formatter.from(node.innerHTML);
+            // item[col.key] = formatter.from(node.innerHTML);
+            item[col.key] = formatter.from(input.value);
             node.innerHTML = formatter.to(input.value, true, options);
             parent.appendChild(node);
-            input.destroy();
             if (changed) {
                 on.emit(node, 'cell-change', { value: item, column: col });
             }
             if (!hadWidth) {
                 dom.style(parent, 'width', '');
             }
+            input.destroy();
         };
 
         setTimeout(() => {
@@ -504,7 +506,27 @@ function createActionButton(col, item, index) {
     });
 }
 
+function createReadonly(col, item, index, dataTable) {
+    const [formatter, options] = getFormatter(col, item);
+    const value = item[col.component.key] || item[col.key];
+    let html;
+    if (col.component.type === 'ui-dropdown') {
+        html = (col.component.options.find((o) => o.value === value) || {label: '&nbsp;'}).label;
+    } else if (col.component.type === 'ui-checkbox') {
+        html = formatters.checkbox.toHtml(value);
+    } else {
+        html = isNull(item[col.key]) ? '&nbsp;' : formatter.toHtml(item[col.key]);
+    }
+
+    return dom('div', {
+        html,
+    });
+}
+
 function createComponent(col, item, index, dataTable) {
+    if (col.component.readonly) {
+        return createReadonly(col, item, index, dataTable);
+    }
     switch (col.component.type) {
         case 'link':
         case 'click-link':

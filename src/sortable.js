@@ -3,11 +3,11 @@ const dom = require('@clubajax/dom');
 
 const Sortable = {
     init() {
-        this.storageSortKey = this.storageKey ? `${this.storageKey}-sort` : null;
+        this.storageSortKey = this.schema.noChacheSort ? null : this.storageKey ? `${this.storageKey}-sort` : null;
         this.classList.add('sortable');
         this.current = {};
         this.on('render-header', this.onHeaderSortRender.bind(this));
-        const {field, dir} = this.extsort || {};
+        const { field, dir } = this.extsort || {};
         if (this.storageSortKey) {
             const sortData = util.storage(this.storageSortKey);
             if (sortData) {
@@ -36,16 +36,19 @@ const Sortable = {
         }
 
         sort = sort || '';
+        let key;
         if (typeof sort === 'string') {
             const col = this.schema.columns.find((col) => sort.includes(col.key) || sort.includes(col.sort));
             if (col) {
-                sort = col.key || col.sort;
+                sort = col.sort || col.key;
+                key = col.key;
             }
         }
 
         this.current = {
             sort,
             dir,
+            key
         };
 
         if (!this.extsort) {
@@ -76,7 +79,7 @@ const Sortable = {
             this.currentSortField.classList.remove(this.currentSortClass);
         }
         if (this.current.dir) {
-            this.currentSortField = dom.query(this.thead, `[data-field="${this.current.sort}"]`);
+            this.currentSortField = dom.query(this.thead, `[data-field="${this.current.key}"]`);
             this.currentSortClass = this.current.dir === 'asc' ? 'asc' : 'desc';
             if (this.currentSortField) {
                 this.currentSortField.classList.add(this.currentSortClass);
@@ -84,13 +87,12 @@ const Sortable = {
         }
 
         const event = this.current.sort ? `${this.current.sort},${this.current.dir}` : null;
-
         if (!this.extsort) {
             this.fire('sort', { value: event });
         }
     },
 
-    onHeaderSortRender () {
+    onHeaderSortRender() {
         if (this.clickSortHandle) {
             this.clickSortHandle.remove();
         }
@@ -102,20 +104,19 @@ const Sortable = {
         let dir,
             field = e.detail.field,
             target = e.detail.cell;
-        
-        
+
         if (!target || e.detail.isFilter || e.detail.isShowCols || target.className.indexOf('no-sort') > -1) {
             return;
         }
 
-        if (field === this.current.sort) {
+        if (field === this.current.sort || field === this.current.key) {
             dir = this.current.dir === 'asc' ? 'desc' : 'asc';
         } else {
             dir = 'desc';
         }
 
         if (this.storageSortKey) {
-            util.storage(this.storageSortKey, {field, dir});
+            util.storage(this.storageSortKey, { field, dir });
         }
 
         if (this.extsort) {

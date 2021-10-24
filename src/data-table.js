@@ -49,6 +49,7 @@ class DataTable extends BaseComponent {
         // this.perf = undefined;
         // this.extsort = undefined;
         // this.rows = undefined;
+        console.log('DATA TABLE', this.readonly);
     }
 
     get editable() {
@@ -207,12 +208,26 @@ class DataTable extends BaseComponent {
         let hidden = util.storage(this.storageKey);
         if (hidden) {
             this.schema.columns.forEach((col) => {
-                const key = col.key || col.sort;
+                const key = col.key || col.sort || col.icon;
                 col.hidden = hidden.includes(key);
+                console.log('CHANGE', key, col.hidden);
             });
         } else if (!this['no-save-columns']) {
             hidden = this.schema.columns.filter((c) => c.hidden).map((c) => c.key || c.sort);
             util.storage(this.storageKey, hidden);
+        }
+
+        if (this.readonly) {
+            const cols = this.schema.columns;
+            const editIndex = cols.findIndex(c => c.icon === 'edit');
+            if (editIndex > -1) {
+                cols.splice(editIndex, 1);
+            }
+            cols.filter(c => c.component).forEach((col) => {
+                // delete col.component.type;
+                col.component.readonly = true;
+            })
+            console.log('this.schema', cols);
         }
 
         this.propCheck(true);
@@ -749,8 +764,8 @@ class DataTable extends BaseComponent {
                 }
 
                 const hasFilter = dom.isNode(col.filter);
-
                 css(hasFilter ? 'filter' : null);
+                
                 if (hasHideShowCols) {
                     css('hide-show-col');
                 }
@@ -1070,13 +1085,13 @@ function renderRow(item, { index, columns, colSizes, tbody, selectable, dataTabl
         css(typeof col.align === 'function' ? col.align({ col, item }) : col.align);
         css(col.class);
         css(col.format);
-        if (col.component) {
+        if (shouldRender(col.component, item)) {
             if (item.disabled && col.component.type === 'ui-checkbox') {
                 html = formatters.checkbox.toHtml(item[key]);
             } else {
                 html = createComponent(col, item, index, dataTable);
             }
-            css(col.component.type);
+            css(!col.component.readonly ? col.component.type : null);
             css(col.component.format);
             css('unsortable');
         } else {
@@ -1177,6 +1192,10 @@ function renderRow(item, { index, columns, colSizes, tbody, selectable, dataTabl
             });
         }
     }
+}
+
+function shouldRender(component, item) {
+    return component && (!component.noRender || component.noRender(item))
 }
 
 function renderExpandedRow(item, index, columns, tbody, dataTable) {
@@ -1421,6 +1440,7 @@ module.exports = BaseComponent.define('data-table', DataTable, {
         'autoselect',
         'zebra',
         'loading',
+        'readonly',
         'show-hide-columns',
         'no-save-columns',
     ],

@@ -6,19 +6,6 @@ const Filterable = {
         this.classList.add('filterable');
     },
 
-    // onHeaderFilterRender() {
-    //     if (this.clickFilterHandle) {
-    //         this.clickFilterHandle.remove();
-    //     }
-    //     this.clickFilterHandle = this.on('header-click', this.onHeaderFilterClick.bind(this));
-    // },
-
-    // onHeaderFilterClick(e) {
-    //     const field = e.detail.field;
-    //     const target = e.detail.cell;
-    //     const col = this.schema.columns.find((c) => c.key === field);
-    // },
-
     getIconFilter(col) {
         if (!dom.isNode(col.filter)) {
             return null;
@@ -42,6 +29,19 @@ const Filterable = {
             value: col.filter,
             'use-click': true,
             'is-button': true,
+        });
+
+        tooltip.onDomReady(() => {
+            tooltip.popup.on('popup-open', () => {
+                if (col.filter.onOpen) {
+                    col.filter.onOpen();
+                }
+            });
+            tooltip.popup.on('popup-close', () => {
+                if (col.filter.onClose) {
+                    col.filter.onClose();
+                }
+            });
         });
 
         return dom('ui-icon', {
