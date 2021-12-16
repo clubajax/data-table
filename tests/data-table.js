@@ -129,7 +129,7 @@ describe('DataTable', function () {
             });
         });
 
-        describe('new schema + components', function () {
+        describe.only('new schema + components', function () {
             it('should use components and date', function (done) {
                 const data = copy(getData4());
                 const section = dom('section', { html: dom('label', { html: 'Use All Components (Date)' }) }, body);
@@ -671,7 +671,7 @@ describe('DataTable', function () {
                 });
             });
 
-            it.only('should group *some* rows', (done) => {
+            it('should group *some* rows', (done) => {
                 const section = dom('section', { html: dom('label', { html: 'Partial Groups' }) }, body);
                 const node = dom(
                     'data-table',

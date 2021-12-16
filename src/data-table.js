@@ -17,6 +17,9 @@ formatters.checkbox = {
             html: !value ? null : dom('ui-icon', { type: 'check' }),
         });
     },
+    from(v) {
+        return v;
+    },
 };
 
 // TODO
@@ -46,20 +49,39 @@ class DataTable extends BaseComponent {
         // this.loading = undefined;
         // this.errors = undefined;
         // this.zebra = undefined;
-        // this.perf = undefined;
         // this.extsort = undefined;
         // this.rows = undefined;
-        console.log('DATA TABLE', this.readonly);
+
+        window.tablePerf = (enabled) => {
+            util.storage('data-table-perf', enabled);
+        };
+        this.isInit = true;
+    }
+
+    get isPerf() {
+        return util.storage('data-table-perf');
+    }
+
+    get isPerfInit() {
+        return this.isInit && util.storage('data-table-perf');
+    }
+
+    timeName(type) {
+        return `table-${type}-${this.name}`;
     }
 
     get editable() {
         return ((this.schema || {}).columns || []).find((col) => col.component && col.component.type === 'edit-rows');
     }
 
+    onConnected() {
+        console.log('table.connected');
+    }
     onUpdate(item) {
         if (!item) {
             return;
         }
+        // console.log('\nupdate', this.name);
         const rowItem = this.getItemById(item.id);
         if (!rowItem) {
             return;
@@ -67,7 +89,7 @@ class DataTable extends BaseComponent {
         let changed = '';
         let column;
         Object.keys(item).forEach((key) => {
-            if (rowItem[key] !== item[key]) {
+            if (typeof item[key] !== 'object' && rowItem[key] !== item[key]) {
                 rowItem[key] = item[key];
                 column = this.getColumn(key);
                 let td = dom.query(this, `tr[data-row-id="${item.id}"] td[data-field="${key}"]`);
@@ -79,15 +101,24 @@ class DataTable extends BaseComponent {
                 if (td.querySelector('.data-table-field')) {
                     const input = td.querySelector('input');
                     if (input) {
-                        input.value = formatter.to(rowItem[key])
+                        input.value = formatter.to(rowItem[key]);
                     }
                     return;
                 }
                 if (/fa-caret/.test(td.innerHTML)) {
                     td = dom.query(td, '.content');
                 }
-                td.innerHTML = formatter.toHtml(rowItem[key]);
-                rowItem[key] = formatter.from(td.innerHTML);
+
+                let val = formatter.toHtml(rowItem[key]);
+                if (typeof val === 'string' || typeof val === 'number') {
+                    if (column.callback) {
+                        val = column.callback({ value: val, item, index: 0, column, formatters });
+                    }
+                    td.innerHTML = val;
+                } else {
+                    td.innerHTML = '';
+                    td.appendChild(val);
+                }
                 changed = key;
             }
         });
@@ -109,6 +140,28 @@ class DataTable extends BaseComponent {
             this.schema.columns = [];
         }
         this.loadData(rows);
+    }
+
+    onSchema(schema) {
+        // console.log('on.schema', schema);
+        // only detects changes
+        // not for init
+        // only works if the is a key change
+        if (!this.orgSchema || !this.orgSchema.key) {
+            return;
+        }
+        if (this.orgSchema.key !== schema.key) {
+            // NOTE:
+            // This is not necessary
+            // rerender the whole grid with a new key
+            //
+            // console.log('schema.render');
+            // this.orgSchema = util.copy(schema);
+            // this.render();
+        }
+        if (!schema) {
+            console.error('schema not set', schema);
+        }
     }
 
     onLoading(loading) {
@@ -191,6 +244,7 @@ class DataTable extends BaseComponent {
             });
             return;
         }
+        this.isInit = false;
 
         // check for hidden columns
         //  This needs to be run on every data update
@@ -210,7 +264,6 @@ class DataTable extends BaseComponent {
             this.schema.columns.forEach((col) => {
                 const key = col.key || col.sort || col.icon;
                 col.hidden = hidden.includes(key);
-                console.log('CHANGE', key, col.hidden);
             });
         } else if (!this['no-save-columns']) {
             hidden = this.schema.columns.filter((c) => c.hidden).map((c) => c.key || c.sort);
@@ -219,15 +272,14 @@ class DataTable extends BaseComponent {
 
         if (this.readonly) {
             const cols = this.schema.columns;
-            const editIndex = cols.findIndex(c => c.icon === 'edit');
+            const editIndex = cols.findIndex((c) => c.icon === 'edit');
             if (editIndex > -1) {
                 cols.splice(editIndex, 1);
             }
-            cols.filter(c => c.component).forEach((col) => {
+            cols.filter((c) => c.component).forEach((col) => {
                 // delete col.component.type;
                 col.component.readonly = true;
-            })
-            console.log('this.schema', cols);
+            });
         }
 
         this.propCheck(true);
@@ -253,6 +305,7 @@ class DataTable extends BaseComponent {
             this.expandable = this.schema.expandable || this.schema.headerless;
             dom.classList.toggle(this, 'has-grouped', !!this.grouped || !!this.expandable);
 
+            // console.log('\ntable', this.name);
             if (!items.length && !this.loading && !this.error) {
                 // fixes nav-away no-header bug in distribution
                 // if (this.tbody) {
@@ -262,16 +315,19 @@ class DataTable extends BaseComponent {
                 this.render();
                 this.displayNoData(true);
             } else {
-                if (this.isExpanded()) {
+                // console.log('load.data...');
+                if (this.isExpanded() && this.hasRows()) {
+                    // console.log('   update...');
                     this.updateCells();
                 } else {
+                    // console.log('   render...');
                     this.render();
                     this.updateStatus();
                 }
             }
 
             this.orgItems = util.copy(items);
-            
+
             this.setCheckAll();
         });
     }
@@ -337,7 +393,6 @@ class DataTable extends BaseComponent {
         const node = document.activeElement;
         if (this.contains(node)) {
             this.preRenderFocusNode = node;
-            console.log('prenode', node);
         }
     }
 
@@ -565,7 +620,14 @@ class DataTable extends BaseComponent {
     }
 
     isExpanded() {
-        return !!dom.query(this, '.expanded-row');
+        // console.log('  is-expanded', !!dom.query(this, '.expanded-row') || this.items.some((m) => m.expanded));
+        // console.log('  rows', dom.queryAll(this, 'tr'));
+        // console.log('  this', this.items);
+        return !!dom.query(this, '.expanded-row') || this.items.some((m) => m.expanded);
+    }
+
+    hasRows() {
+        return !!dom.query(this, 'body tr');
     }
 
     makeExpandable() {
@@ -683,6 +745,16 @@ class DataTable extends BaseComponent {
     }
 
     render() {
+        if (!this.schema) {
+            this.rerenderCount = this.rerenderCount ? this.rerenderCount + 1 : 1;
+            if (this.rerenderCount > 10) {
+                console.error('After 10 rerenders, there is no schema');
+                return;
+            }
+            setTimeout(() => {
+                this.render();
+            }, 100);
+        }
         this.fire('pre-render');
         if (this.zebra) {
             this.classList.add('zebra');
@@ -704,7 +776,7 @@ class DataTable extends BaseComponent {
 
     // is overwritten by scrollable
     renderTemplate() {
-        if (this.table) {
+        if (this.table || !this.schema) {
             return;
         }
         this.table = dom('table', { tabindex: '1' }, this);
@@ -765,7 +837,7 @@ class DataTable extends BaseComponent {
 
                 const hasFilter = dom.isNode(col.filter);
                 css(hasFilter ? 'filter' : null);
-                
+
                 if (hasHideShowCols) {
                     css('hide-show-col');
                 }
@@ -832,7 +904,7 @@ class DataTable extends BaseComponent {
     }
 
     renderBody(items, columns) {
-        this.perf && console.time('render.table.body');
+        this.isPerf && console.time(this.timeName('body'));
         const tbody = this.tbody;
 
         dom.queryAll(this, '.expanded-row').forEach((container) => {
@@ -856,7 +928,7 @@ class DataTable extends BaseComponent {
 
         render(items, columns, this.colSizes, tbody, this.selectable, this, () => {
             this.bodyHasRendered = true;
-            this.perf && console.timeEnd('render.table.body');
+            this.isPerf && console.timeEnd(this.timeName('body'));
             this.fire('render-body', { tbody: this.tbody }, false);
         });
     }
@@ -943,10 +1015,12 @@ class DataTable extends BaseComponent {
             return;
         }
         let btn = null;
+        const btnCls = this['add-button-class'] ? `ui-button ${this['add-button-class']}` : 'ui-button';
+        const btnTxt = this['add-button-text'] || 'Add Row';
         if (addBtn) {
             btn = dom('button', {
-                class: 'ui-button',
-                html: 'Add Row',
+                class: btnCls,
+                html: btnTxt,
             });
             this.noDataHandle = this.on(btn, 'click', () => {
                 this.fire('action-event', { value: 'add' });
@@ -1008,6 +1082,7 @@ class DataTable extends BaseComponent {
         this.tfoot = null;
         dom.destroy(this.nodeHolder);
         super.destroy();
+        // console.log('***DESTROY***');
     }
 }
 
@@ -1024,9 +1099,10 @@ function renderRow(item, { index, columns, colSizes, tbody, selectable, dataTabl
         rowOptions = { 'data-row-id': item.id },
         tr;
 
-    const headerless = dataTable.schema.headerless;
-    const expandable = dataTable.expandable;
-    const grouped = dataTable.grouped;
+    const schema = dataTable.schema;
+    const headerless = schema.headerless;
+    const expandable = schema.expandable;
+    const grouped = schema.grouped;
     const hasChildIds = item.childIds && item.childIds.length;
     if (selectable) {
         rowOptions.tabindex = 1;
@@ -1037,7 +1113,7 @@ function renderRow(item, { index, columns, colSizes, tbody, selectable, dataTabl
     }
 
     if (grouped) {
-        if (item.subItemIds || hasChildIds) {
+        if (!item.parentId) {
             itemCss('parent-row');
         } else if (isChild) {
             itemCss('child-row');
@@ -1065,10 +1141,11 @@ function renderRow(item, { index, columns, colSizes, tbody, selectable, dataTabl
         // }
         let isExpanded;
         let isExpandedEnd;
-        if (expandable && headerless && i === columns.length - 1) {
+        const canExpand = schema.canExpand ? schema.canExpand(item) : true; 
+        if (expandable && headerless && canExpand && i === columns.length - 1) {
             isExpandedEnd = !item.expanded ? 'off' : 'on';
         }
-        if ((expandable || (grouped && (item.subItemIds || hasChildIds))) && i === 0) {
+        if (canExpand && (expandable || (grouped && (item.subItemIds || hasChildIds))) && i === 0) {
             if (expandable) {
                 isExpanded = !item.expanded ? 'off' : 'on';
                 if (headerless) {
@@ -1195,7 +1272,7 @@ function renderRow(item, { index, columns, colSizes, tbody, selectable, dataTabl
 }
 
 function shouldRender(component, item) {
-    return component && (!component.noRender || component.noRender(item))
+    return component && (!component.noRender || component.noRender(item));
 }
 
 function renderExpandedRow(item, index, columns, tbody, dataTable) {
@@ -1311,9 +1388,7 @@ function setGrouped(items, schema) {
                 delete item.subItemIds;
                 item.childless = true;
             }
-        })
-
-
+        });
     } else if (items.some((m) => !!m.childIds)) {
         items.forEach((item) => {
             if (item.childIds && item.childIds.length) {
@@ -1430,6 +1505,9 @@ module.exports = BaseComponent.define('data-table', DataTable, {
         'add-data-message',
         'no-data-message',
         'static-column',
+        'add-button-class',
+        'add-button-text',
+        'name',
     ],
     bools: [
         'sortable',

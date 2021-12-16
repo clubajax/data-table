@@ -1,7 +1,7 @@
 const dom = require('@clubajax/dom');
 const on = require('@clubajax/on');
 const formatters = require('@clubajax/format');
-const { getFormatter, fromHtml, toHtml, isNull } = require('./util');
+const { getFormatter, fromHtml, toHtml, isNull, classnames } = require('./util');
 //
 // helpers
 //
@@ -56,8 +56,10 @@ function createLink(col, item, dataTable) {
 }
 
 function create(col, item, dataTable, type, compType) {
+    // console.log('create...');
     const [formatter, options] = getFormatter(col, item);
     const persist = col.component.persist;
+    let input;
 
     function edit(node, timerTriggered) {
         const parent = node.parentNode || dataTable;
@@ -67,15 +69,32 @@ function create(col, item, dataTable, type, compType) {
             hadWidth = false;
             dom.style(parent, 'width', dom.box(parent).w);
         }
-        parent.removeChild(node);
+        if (node.parentNode) {
+            node.parentNode.removeChild(node);
+        } else if (input) {
+            // console.log(' ---- detroy.input');
+            input.parentNode.removeChild(input);
+            input.destroy();
+        }
         const val =
             persist && item[col.key] > 0 ? toHtml(item[col.key], formatter) : fromHtml(item[col.key], formatter);
-        const input = dom(
+
+        const cls = classnames(`data-table-field input`);
+        cls(type);
+        cls({
+            disabled: col.component.disabled,
+            readonly: col.component.readonly,
+        });
+
+        // console.log('create input');
+        input = dom(
             compType,
             {
                 type: col.component.subtype || 'text',
+                disabled: col.component.disabled,
+                readonly: col.component.readonly,
                 value: val,
-                class: `data-table-field input ${type}`,
+                class: cls(),
                 placeholder: col.component.placeholder,
                 autoselect: true,
             },
@@ -126,7 +145,6 @@ function create(col, item, dataTable, type, compType) {
                 return;
             }
 
-            // item[col.key] = formatter.from(node.innerHTML);
             item[col.key] = formatter.from(input.value);
             node.innerHTML = formatter.to(input.value, true, options);
             parent.appendChild(node);
@@ -186,18 +204,12 @@ function create(col, item, dataTable, type, compType) {
             }
         });
 
-        if (isNull(item[col.key]) || item.added || col.component.persist) {
+        if ((!input && isNull(item[col.key])) || item.added || col.component.persist) {
             setTimeout(() => {
                 edit(node, true);
             }, 1);
         }
     }
-
-    // const error = dataTable.getCellError(item.index, col.key);
-
-    // if (error) {
-    //     node.parentNode.appendChild(dom('div', {class: 'cell-error', html: error.message}));
-    // }
 
     return node;
 }
@@ -511,7 +523,7 @@ function createReadonly(col, item, index, dataTable) {
     const value = item[col.component.key] || item[col.key];
     let html;
     if (col.component.type === 'ui-dropdown') {
-        html = (col.component.options.find((o) => o.value === value) || {label: '&nbsp;'}).label;
+        html = (col.component.options.find((o) => o.value === value) || { label: '&nbsp;' }).label;
     } else if (col.component.type === 'ui-checkbox') {
         html = formatters.checkbox.toHtml(value);
     } else {
@@ -524,9 +536,9 @@ function createReadonly(col, item, index, dataTable) {
 }
 
 function createComponent(col, item, index, dataTable) {
-    if (col.component.readonly) {
-        return createReadonly(col, item, index, dataTable);
-    }
+    // if (col.component.readonly) {
+    //     return createReadonly(col, item, index, dataTable);
+    // }
     switch (col.component.type) {
         case 'link':
         case 'click-link':

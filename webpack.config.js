@@ -1,10 +1,14 @@
 // @ts-nocheck
 const path = require('path');
 const args = require('minimist')(process.argv.slice(2));
+const isRTK = args.env === 'rtk';
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
 const ProgressPlugin = require('webpack/lib/ProgressPlugin');
+
+
+console.log('args', isRTK, args);
 
 const DEV = args.mode === 'development';
 const distFolder = DEV ? './dist' : './build';
@@ -19,6 +23,22 @@ let plugins = [
         ignoreOrder: false, // Enable to remove warnings about conflicting order
     }),
 ];
+
+const getDeps = () => {
+    return isRTK ? [] :
+    [
+        '@clubajax/dom',
+        '@clubajax/on',
+        '@clubajax/base-component',
+        '@clubajax/form',
+        '@clubajax/format',
+
+        // true imports:
+        // '@clubajax/custom-elements-polyfill',
+        // '@clubajax/key-nav',
+        // '@clubajax/no-dash'
+    ]
+}
 
 if (DEV) {
     function log(msg) {
@@ -95,18 +115,7 @@ module.exports = {
     devtool: DEV ? 'inline-source-map' : 'source-map',
     externals: DEV
         ? []
-        : [
-              // '@clubajax/dom',
-              // '@clubajax/on',
-              // '@clubajax/base-component',
-              '@clubajax/form',
-              // '@clubajax/format',
-
-              // true imports:
-              // '@clubajax/custom-elements-polyfill',
-              // '@clubajax/key-nav',
-              // '@clubajax/no-dash'
-          ],
+        : getDeps(),
     module: {
         rules: [
             {

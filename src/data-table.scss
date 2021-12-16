@@ -57,6 +57,11 @@
     --tbl-total-total: #64bb49;
 }
 
+
+// TODO
+// contain
+// https://developer.mozilla.org/en-US/docs/Web/CSS/contain
+
 data-table {
     * {
         box-sizing: border-box;
@@ -754,8 +759,11 @@ data-table {
     }
 
     tr.expanded-row {
-        td {
+        & > td {
             padding: 0;
+            data-table{
+                min-height: auto;
+            }
         }
         .expanded-container {
             min-height: 50px;

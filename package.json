@@ -1,6 +1,6 @@
 {
   "name": "@clubajax/data-table",
-  "version": "0.9.68",
+  "version": "0.9.78",
   "description": "Data Table Web Component",
   "main": "src/data-table.js",
   "directories": {
@@ -11,7 +11,8 @@
     "start-x": "grunt dev",
     "build": "webpack --mode production --config ./webpack.config.js && node ./scripts/deploy.js",
     "quick-build": "webpack --mode production --config ./webpack.config.js && node ./scripts/clean.js",
-    "rtk-build": "webpack --mode production --config ./webpack.config.js && node ./scripts/rtk-copy.js"
+    "rtk-build": "webpack --env='rtk' --mode production --config ./webpack.config.js && node ./scripts/rtk-copy.js",
+    "jk-build": "webpack --mode production --config ./webpack.config.js && node ./scripts/jk-copy.js"
   },
   "repository": {
     "type": "git",
@@ -40,8 +41,8 @@
     "@clubajax/on": "2.2.2"
   },
   "peerDependencies": {
-    "@clubajax/form": "0.9.58",
-    "@clubajax/format": "^0.5.29"
+    "@clubajax/form": "0.9.72",
+    "@clubajax/format": "^0.5.36"
   },
   "devDependencies": {
     "@babel/core": "^7.8.4",

@@ -2,30 +2,35 @@ const formatters = require('@clubajax/format');
 const dom = require('@clubajax/dom');
 
 function bindMethods(object, context) {
-	Object.keys(object).forEach((key) => {
-		if (typeof object[key] === 'function') {
-			// console.log('bind', key);
-			// object[key] = object[key].bind(context);
-			context[key] = object[key];
-		}
-	});
+    Object.keys(object).forEach((key) => {
+        if (typeof object[key] === 'function') {
+            // console.log('bind', key);
+            // object[key] = object[key].bind(context);
+            context[key] = object[key];
+        }
+    });
 
-	if (object.init){
-		object.init.call(context);
-	}
+    if (object.init) {
+        object.init.call(context);
+    }
 }
 
-function isEqual (a, b) {
-	if (a === b) {
-		return true;
-	}
-	if (!a && b || a && !b) {
-		return false;
-	}
-	return JSON.stringify(a) === JSON.stringify(b);
+function isEqual(a, b) {
+    if (a === b) {
+        return true;
+    }
+    if ((!a && b) || (a && !b)) {
+        return false;
+    }
+    if (a.key !== b.key) {
+        return false;
+    }
+    // Yikes
+    // FIXME
+    return JSON.stringify(a) === JSON.stringify(b);
 }
 
-function classnames (firstClass) {
+function classnames(firstClass) {
     const css = [];
     if (firstClass) {
         css.push(firstClass);
@@ -35,9 +40,23 @@ function classnames (firstClass) {
             return css.join(' ');
         }
         if (cls) {
-            css.push(cls);
+            if (typeof cls === 'object') {
+                if (Array.isArray(cls)) {
+                    cls.forEach((c) => {
+                        css.push(c);
+                    });
+                } else {
+                    Object.keys(cls).forEach((key) => {
+                        if (cls[key]) {
+                            css.push(key);
+                        }
+                    });
+                }
+            } else {
+                css.push(cls);
+            }
         }
-    }
+    };
     return push;
 }
 
@@ -56,13 +75,13 @@ function fromHtml(value, formatter) {
     return formatter.from(value);
 }
 
-function getFormatter(col, item){
-    let fmt = col.format || (col.component ? (col.component.format || '') : '');
+function getFormatter(col, item) {
+    let fmt = col.format || (col.component ? col.component.format || '' : '');
     if (/property:/.test(fmt)) {
         const prop = (fmt.split(':')[1] || '').trim();
         if (prop) {
             fmt = item[prop];
-        } 
+        }
     }
     const options = {};
     if (col.min) {
@@ -74,7 +93,7 @@ function getFormatter(col, item){
     return [formatters[fmt] || formatters.default, options];
 }
 
-function position(node, button, {align}) {
+function position(node, button, { align }) {
     const btn = dom.box(button);
     const n = dom.box(node);
     const gapH = 20;
@@ -84,15 +103,13 @@ function position(node, button, {align}) {
         case 'left':
             dom.style(node, {
                 top: btn.y,
-                left: btn.x - n.w - gapH
-            })
+                left: btn.x - n.w - gapH,
+            });
             break;
         case 'right':
-
             break;
         case 'bottom':
         default:
-            
     }
 }
 
@@ -101,12 +118,11 @@ function isNull(item) {
 }
 
 const uidMap = {};
-function uid (prefix = 'uid') {
-	uidMap[prefix] = uidMap[prefix] || 0;
-	uidMap[prefix]++;
-	return `${prefix}-${uidMap[prefix]}`;
+function uid(prefix = 'uid') {
+    uidMap[prefix] = uidMap[prefix] || 0;
+    uidMap[prefix]++;
+    return `${prefix}-${uidMap[prefix]}`;
 }
-
 
 function copy(data) {
     if (!data) {
@@ -166,8 +182,8 @@ function equalUids(a, b) {
         return false;
     }
     return a.every((aItem, i) => {
-        return aItem.uid === b[i].uid;
-    })
+        return aItem.id === b[i].id;
+    });
 }
 
 function equal(a, b, exclude = []) {
@@ -271,7 +287,7 @@ function getUniqueKeys(...args) {
     return keys;
 }
 
-function storage (key, value) {
+function storage(key, value) {
     if (value === undefined) {
         const item = localStorage.getItem(key);
         if (item) {
@@ -305,5 +321,5 @@ module.exports = {
     uid,
     copy,
     equal,
-    equalUids
+    equalUids,
 };
