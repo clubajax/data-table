@@ -56,6 +56,7 @@ class DataTable extends BaseComponent {
             util.storage('data-table-perf', enabled);
         };
         this.isInit = true;
+
     }
 
     get isPerf() {
@@ -77,11 +78,13 @@ class DataTable extends BaseComponent {
     onConnected() {
         console.log('table.connected');
     }
+
     onUpdate(item) {
         if (!item) {
+            console.log('NO ITEM');
             return;
         }
-        // console.log('\nupdate', this.name);
+
         const rowItem = this.getItemById(item.id);
         if (!rowItem) {
             return;
@@ -128,7 +131,7 @@ class DataTable extends BaseComponent {
                 const event = { value: rowItem, column };
                 this.emit('change', event);
                 this.setCheckAll();
-            }, 400);
+            }, 100);
         }
     }
 
@@ -1141,7 +1144,7 @@ function renderRow(item, { index, columns, colSizes, tbody, selectable, dataTabl
         // }
         let isExpanded;
         let isExpandedEnd;
-        const canExpand = schema.canExpand ? schema.canExpand(item) : true; 
+        const canExpand = schema.canExpand ? schema.canExpand(item) : true;
         if (expandable && headerless && canExpand && i === columns.length - 1) {
             isExpandedEnd = !item.expanded ? 'off' : 'on';
         }
