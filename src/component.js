@@ -56,7 +56,6 @@ function createLink(col, item, dataTable) {
 }
 
 function create(col, item, dataTable, type, compType) {
-    // console.log('create...');
     const [formatter, options] = getFormatter(col, item);
     const persist = col.component.persist;
     let input;
@@ -72,7 +71,6 @@ function create(col, item, dataTable, type, compType) {
         if (node.parentNode) {
             node.parentNode.removeChild(node);
         } else if (input) {
-            // console.log(' ---- detroy.input');
             input.parentNode.removeChild(input);
             input.destroy();
         }
@@ -86,7 +84,6 @@ function create(col, item, dataTable, type, compType) {
             readonly: col.component.readonly,
         });
 
-        // console.log('create input');
         input = dom(
             compType,
             {
@@ -129,19 +126,22 @@ function create(col, item, dataTable, type, compType) {
         }
 
         const destroy = () => {
+            item = dataTable.getItemById(item.id);
             const changed = item[col.key] !== formatter.from(input.value);
+
             if (window.keepPopupsOpen || persist) {
-                item = { ...item };
-                item[col.key] = formatter.from(input.value);
-                if (col.component.update) {
-                    item = col.component.update(item, col);
-                    dataTable.onUpdate(item);
+                if (changed) {
+                    item = {...item};
+                    item[col.key] = formatter.from(input.value);
+                    if (col.component.update) {
+                        item = col.component.update(item, col);
+                        dataTable.onUpdate(item);
+                    }
+                    on.emit(dataTable, 'cell-change', {value: item, column: col});
                 }
-                on.emit(dataTable, 'cell-change', { value: item, column: col });
                 setTimeout(() => {
                     input.value = formatter.to(input.value, true, options);
                 }, 30);
-
                 return;
             }
 

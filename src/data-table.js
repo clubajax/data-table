@@ -81,7 +81,7 @@ class DataTable extends BaseComponent {
 
     onUpdate(item) {
         if (!item) {
-            console.log('NO ITEM');
+            // initializing
             return;
         }
 
@@ -89,6 +89,8 @@ class DataTable extends BaseComponent {
         if (!rowItem) {
             return;
         }
+
+
         let changed = '';
         let column;
         Object.keys(item).forEach((key) => {
@@ -125,14 +127,15 @@ class DataTable extends BaseComponent {
                 changed = key;
             }
         });
-        if (changed) {
-            clearTimeout(this.updateTimer);
-            this.updateTimer = setTimeout(() => {
-                const event = { value: rowItem, column };
-                this.emit('change', event);
-                this.setCheckAll();
-            }, 100);
-        }
+
+        // if (changed) {
+        //     clearTimeout(this.updateTimer);
+        //     this.updateTimer = setTimeout(() => {
+        //         const event = { value: rowItem, column };
+        //         this.emit('change', event);
+        //         this.setCheckAll();
+        //     }, 100);
+        // }
     }
 
     onRows(rows) {
@@ -748,10 +751,14 @@ class DataTable extends BaseComponent {
     }
 
     render() {
+        if (this.destroyed) {
+            console.log('not rendering a destroyed data-table', this.name);
+            return;
+        }
         if (!this.schema) {
             this.rerenderCount = this.rerenderCount ? this.rerenderCount + 1 : 1;
             if (this.rerenderCount > 10) {
-                console.error('After 10 rerenders, there is no schema');
+                console.error('After 10 rerenders, there is no schema', this.name, this.destroyed);
                 return;
             }
             setTimeout(() => {
@@ -1070,9 +1077,8 @@ class DataTable extends BaseComponent {
     }
 
     destroy() {
-        // @ts-ignore
+        this.destroyed = true;
         if (this.addRemoveHandle) {
-            // @ts-ignore
             this.addRemoveHandle.remove();
         }
         clearTimeout(this.legacyTimer);
@@ -1085,7 +1091,7 @@ class DataTable extends BaseComponent {
         this.tfoot = null;
         dom.destroy(this.nodeHolder);
         super.destroy();
-        // console.log('***DESTROY***');
+        // console.log('***DESTROY***', this.name);
     }
 }
 
