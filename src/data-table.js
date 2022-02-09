@@ -56,7 +56,6 @@ class DataTable extends BaseComponent {
             util.storage('data-table-perf', enabled);
         };
         this.isInit = true;
-
     }
 
     get isPerf() {
@@ -75,9 +74,7 @@ class DataTable extends BaseComponent {
         return ((this.schema || {}).columns || []).find((col) => col.component && col.component.type === 'edit-rows');
     }
 
-    onConnected() {
-        console.log('table.connected');
-    }
+    onConnected() {}
 
     onUpdate(item) {
         if (!item) {
@@ -89,7 +86,6 @@ class DataTable extends BaseComponent {
         if (!rowItem) {
             return;
         }
-
 
         let changed = '';
         let column;
@@ -149,7 +145,6 @@ class DataTable extends BaseComponent {
     }
 
     onSchema(schema) {
-        // console.log('on.schema', schema);
         // only detects changes
         // not for init
         // only works if the is a key change
@@ -161,7 +156,6 @@ class DataTable extends BaseComponent {
             // This is not necessary
             // rerender the whole grid with a new key
             //
-            // console.log('schema.render');
             // this.orgSchema = util.copy(schema);
             // this.render();
         }
@@ -209,6 +203,7 @@ class DataTable extends BaseComponent {
             const id = dom.attr(tr, 'data-row-id');
             item = this.getItemById(id);
         } else {
+            item = this.getItemById(item.id);
             tr = dom.query(this, `tr[data-row-id="${item.id}"]`);
             if (!tr) {
                 console.log('row to collapse not found for', item);
@@ -321,12 +316,9 @@ class DataTable extends BaseComponent {
                 this.render();
                 this.displayNoData(true);
             } else {
-                // console.log('load.data...');
                 if (this.isExpanded() && this.hasRows()) {
-                    // console.log('   update...');
                     this.updateCells();
                 } else {
-                    // console.log('   render...');
                     this.render();
                     this.updateStatus();
                 }
@@ -806,6 +798,7 @@ class DataTable extends BaseComponent {
         const colSizes = [];
         const lastCol = [...columns].reverse().find((c) => !c.hidden);
         const hideShow = this['show-hide-columns'] || this.schema.showHideColumns;
+        const currentFilters = this['current-filters'] || [];
 
         (columns || []).forEach((col, i) => {
             const hasHideShowCols = hideShow && col === lastCol;
@@ -833,6 +826,7 @@ class DataTable extends BaseComponent {
                 };
                 this.hasAddRemove();
             } else {
+                // standard column
                 const key = col.key || col;
                 const label = col.label === undefined ? col : col.label;
 
@@ -843,6 +837,10 @@ class DataTable extends BaseComponent {
                 css(col.format || (col.component ? col.component.format : ''));
                 if (col.unsortable) {
                     css('unsortable');
+                }
+
+                if (currentFilters.includes(col.key)) {
+                    css('filter-on');
                 }
 
                 const hasFilter = dom.isNode(col.filter);
@@ -1145,9 +1143,6 @@ function renderRow(item, { index, columns, colSizes, tbody, selectable, dataTabl
     tr = dom('tr', rowOptions, tbody);
 
     columns.forEach((col, i) => {
-        // if (col.hidden) {
-        //     return true;
-        // }
         let isExpanded;
         let isExpandedEnd;
         const canExpand = schema.canExpand ? schema.canExpand(item) : true;
@@ -1517,6 +1512,7 @@ module.exports = BaseComponent.define('data-table', DataTable, {
         'add-button-class',
         'add-button-text',
         'name',
+        'current-filters',
     ],
     bools: [
         'sortable',

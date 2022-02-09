@@ -10,13 +10,17 @@ const Filterable = {
         if (!dom.isNode(col.filter)) {
             return null;
         }
+
         if (typeof col.filter === 'boolean') {
+            // TODO DOC THIS
+            // Is this for testing?
             return dom('span', { class: 'fas fa-filter' });
         }
 
         col.filter.close = () => {
             tooltip.close();
         };
+
         col.filter.send = (data) => {
             this.fire('filter', {
                 col: col,
@@ -25,11 +29,16 @@ const Filterable = {
             });
         };
 
+        col.filter.dataTable = this;
+        col.filter.col = col;
+
         const tooltip = dom('ui-tooltip', {
             value: col.filter,
             'use-click': true,
             'is-button': true,
+            align: 'B'
         });
+
 
         tooltip.onDomReady(() => {
             tooltip.popup.on('popup-open', () => {

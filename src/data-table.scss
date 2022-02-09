@@ -34,6 +34,11 @@
     --tbl-tr-added: rgb(236, 246, 255);
     --tbl-tr-bg: #eee;
 
+    --tbl-flt: #6B7682;
+    --tbl-flt-hvr: #77C2F0;
+    --tbl-flt-act:#417890;
+    --tbl-flt-sel: #3597D2;
+
     --tbl-td-brd: #b6b9bb;
     --tbl-td-pad: 10px;
     --tbl-td-focus: #ccc;
@@ -55,8 +60,9 @@
     --tbl-hless-text-size: 24px;
 
     --tbl-total-total: #64bb49;
-}
 
+    --tip-arrow-size: 12px;
+}
 
 // TODO
 // contain
@@ -205,8 +211,23 @@ data-table {
                     width: 32px;
                     font-size: 13px;
                     background-color: var(--tbl-head-bk);
+                    ui-icon{
+                        color: var(--tbl-flt);
+                    }
                     &:hover {
-                        background-color: var(--tbl-th-hvr);
+                        ui-icon{
+                            color: var(--tbl-flt-hvr);
+                        }
+                    }
+                    &:active{
+                        ui-icon{
+                            color: var(--tbl-flt-act);
+                        }
+                    }
+                }
+                &.filter-on{
+                    ui-icon, .th-content{
+                        color: var(--tbl-flt-sel);
                     }
                 }
             }
@@ -304,10 +325,13 @@ data-table {
 
     &[clickable] {
         tbody {
-            tr {
+            tr:not(.no-hover) {
                 &:hover {
                     cursor: pointer;
                 }
+            }
+            tr.no-hover{
+                cursor: no-drop;
             }
         }
     }
@@ -761,7 +785,7 @@ data-table {
     tr.expanded-row {
         & > td {
             padding: 0;
-            data-table{
+            data-table {
                 min-height: auto;
             }
         }

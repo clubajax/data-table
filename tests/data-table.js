@@ -129,7 +129,7 @@ describe('DataTable', function () {
             });
         });
 
-        describe.only('new schema + components', function () {
+        describe('new schema + components', function () {
             it('should use components and date', function (done) {
                 const data = copy(getData4());
                 const section = dom('section', { html: dom('label', { html: 'Use All Components (Date)' }) }, body);
@@ -893,7 +893,7 @@ describe('DataTable', function () {
         });
 
         describe('filtering', function () {
-            it('should be filterable', function (done) {
+            it.only('should be filterable', function (done) {
                 // https://mvc-grid.azurewebsites.net/Column/CustomFilter
                 // TODO: Make filter test, works with and without sorting
                 const components = getFilterComponents();
