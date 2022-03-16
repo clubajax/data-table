@@ -56,6 +56,7 @@ class DataTable extends BaseComponent {
             util.storage('data-table-perf', enabled);
         };
         this.isInit = true;
+
     }
 
     get isPerf() {
@@ -81,12 +82,12 @@ class DataTable extends BaseComponent {
             // initializing
             return;
         }
-
+        
         const rowItem = this.getItemById(item.id);
         if (!rowItem) {
             return;
         }
-
+        
         let changed = '';
         let column;
         Object.keys(item).forEach((key) => {
@@ -164,6 +165,10 @@ class DataTable extends BaseComponent {
         }
     }
 
+    getSchema() {
+        return this.schema || {columns: []}
+    }
+
     onLoading(loading) {
         this.displayLoading(loading);
         if (!loading && !this.error && this.items) {
@@ -204,6 +209,10 @@ class DataTable extends BaseComponent {
             item = this.getItemById(id);
         } else {
             item = this.getItemById(item.id);
+            if (!item) {
+                // table probably has been cleared before collpase
+                return;
+            }
             tr = dom.query(this, `tr[data-row-id="${item.id}"]`);
             if (!tr) {
                 console.log('row to collapse not found for', item);
@@ -307,7 +316,7 @@ class DataTable extends BaseComponent {
             dom.classList.toggle(this, 'has-grouped', !!this.grouped || !!this.expandable);
 
             // console.log('\ntable', this.name);
-            if (!items.length && !this.loading && !this.error) {
+            if (!this.items.length && !this.loading && !this.error) {
                 // fixes nav-away no-header bug in distribution
                 // if (this.tbody) {
                 //     dom.clean(this.tbody, true);
@@ -924,7 +933,7 @@ class DataTable extends BaseComponent {
         if (!items || !items.length) {
             if (!this.loading && !this.error) {
                 this.bodyHasRendered = true;
-                this.fire('render-body', { tbody: this.tbody }, null);
+                this.fire('render-body', {tbody: this.tbody}, null);
                 this.displayNoData(true);
             }
             return;
@@ -1106,7 +1115,7 @@ function renderRow(item, { index, columns, colSizes, tbody, selectable, dataTabl
         rowOptions = { 'data-row-id': item.id },
         tr;
 
-    const schema = dataTable.schema;
+    const schema = dataTable.getSchema();
     const headerless = schema.headerless;
     const expandable = schema.expandable;
     const grouped = schema.grouped;
@@ -1199,7 +1208,7 @@ function renderRow(item, { index, columns, colSizes, tbody, selectable, dataTabl
         if (isExpanded) {
             html = dom('div', {
                 html: [
-                    dataTable.schema.radios ? dom('ui-radio', { checked: item.selected, id: item.id }) : null,
+                    dataTable.getSchema().radios ? dom('ui-radio', { checked: item.selected, id: item.id }) : null,
                     dom('span', { class: isExpanded === 'on' ? 'fas fa-caret-down' : 'fas fa-caret-right' }),
                     dom('span', { html, class: 'content' }),
                 ],
@@ -1207,7 +1216,7 @@ function renderRow(item, { index, columns, colSizes, tbody, selectable, dataTabl
 
             css('expand-cell');
         }
-        if (dataTable.schema.labeled) {
+        if (dataTable.getSchema().labeled) {
             html = [
                 dom('div', { class: 'tbl-cell-label', html: col.label }),
                 dom('div', { class: 'tbl-cell-text', html }),
@@ -1318,7 +1327,7 @@ function renderTotals(items, columns, tbody, dataTable) {
         class: 'totals-row',
     };
     const tr = dom('tr', rowOptions, tbody);
-    const totals = dataTable.schema.totals;
+    const totals = dataTable.getSchema().totals;
     columns.forEach((col, i) => {
         const ttl = totals[i] || {};
         let html = ttl.label ? ttl.label : ttl.callback ? ttl.callback(items, col) : '';
@@ -1358,7 +1367,7 @@ function render(items, columns, colSizes, tbody, selectable, dataTable, callback
         }
     });
 
-    if (dataTable.schema.totals) {
+    if (dataTable.getSchema().totals) {
         renderTotals(items, columns, tbody, dataTable);
     }
 

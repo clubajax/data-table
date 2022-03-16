@@ -36,7 +36,9 @@ const Filterable = {
             value: col.filter,
             'use-click': true,
             'is-button': true,
-            align: 'B'
+            align: 'B',
+            shift: true,
+            ...(col.filter.tooltipOptions || {})
         });
 
 

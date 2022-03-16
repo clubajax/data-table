@@ -129,21 +129,29 @@ function create(col, item, dataTable, type, compType) {
             item = dataTable.getItemById(item.id);
             const changed = item[col.key] !== formatter.from(input.value);
 
-            if (window.keepPopupsOpen || persist) {
-                if (changed) {
-                    item = {...item};
-                    item[col.key] = formatter.from(input.value);
-                    if (col.component.update) {
-                        item = col.component.update(item, col);
-                        dataTable.onUpdate(item);
-                    }
-                    on.emit(dataTable, 'cell-change', {value: item, column: col});
+            // TODO
+            // was persist for BillRun
+            // seems all tables need this functionality though
+            // seems to work
+            // if (window.keepPopupsOpen || persist) {
+            if (changed) {
+                // item = { ...item };
+                item[col.key] = formatter.from(input.value);
+                if (col.component.update) {
+                    item = col.component.update(item, col);
+                    dataTable.onUpdate(item);
                 }
-                setTimeout(() => {
-                    input.value = formatter.to(input.value, true, options);
-                }, 30);
+                console.log('EMIT:', item.label, item.amount);
+                on.emit(dataTable, 'cell-change', { value: item, column: col });
+            }
+            setTimeout(() => {
+                input.value = formatter.to(input.value, true, options);
+            }, 30);
+
+            if (window.keepPopupsOpen || persist) {
                 return;
             }
+            // }
 
             item[col.key] = formatter.from(input.value);
             node.innerHTML = formatter.to(input.value, true, options);
