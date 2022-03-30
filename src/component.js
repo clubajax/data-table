@@ -125,9 +125,16 @@ function create(col, item, dataTable, type, compType) {
             });
         }
 
+        const isChanged = (a, b) => {
+            if (!a && !b) {
+                return false;
+            }
+            return a !== b;
+        };
+
         const destroy = () => {
             item = dataTable.getItemById(item.id);
-            const changed = item[col.key] !== formatter.from(input.value);
+            const changed = isChanged(item[col.key], formatter.from(input.value));
 
             // TODO
             // was persist for BillRun
@@ -135,13 +142,11 @@ function create(col, item, dataTable, type, compType) {
             // seems to work
             // if (window.keepPopupsOpen || persist) {
             if (changed) {
-                // item = { ...item };
                 item[col.key] = formatter.from(input.value);
                 if (col.component.update) {
                     item = col.component.update(item, col);
                     dataTable.onUpdate(item);
                 }
-                console.log('EMIT:', item.label, item.amount);
                 on.emit(dataTable, 'cell-change', { value: item, column: col });
             }
             setTimeout(() => {
