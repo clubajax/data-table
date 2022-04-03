@@ -38,7 +38,10 @@ const Sortable = {
         sort = sort || '';
         let key;
         if (typeof sort === 'string') {
-            const col = this.schema.columns.find((col) => sort.includes(col.key) || sort.includes(col.sort));
+            let col = this.schema.columns.find((col) => sort === col.key || sort === col.sort);
+            if (!col) {
+                col = this.schema.columns.find((col) => sort.includes(col.key) || sort.includes(col.sort));
+            }
             if (col) {
                 sort = col.sort || col.key;
                 key = col.key;
@@ -48,7 +51,7 @@ const Sortable = {
         this.current = {
             sort,
             dir,
-            key
+            key,
         };
 
         if (!this.extsort) {

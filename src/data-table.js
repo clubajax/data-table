@@ -262,6 +262,7 @@ class DataTable extends BaseComponent {
         this.hiddenHandled = true;
         this.storageKey =
             this.id ||
+            this.name ||
             this.schema.columns
                 .reduce((acc, col) => {
                     const key = col.key || col.sort;
