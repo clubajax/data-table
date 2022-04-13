@@ -7,7 +7,6 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
 const ProgressPlugin = require('webpack/lib/ProgressPlugin');
 
-
 console.log('args', isRTK, args);
 
 const DEV = args.mode === 'development';
@@ -25,20 +24,21 @@ let plugins = [
 ];
 
 const getDeps = () => {
-    return isRTK ? [] :
-    [
-        '@clubajax/dom',
-        '@clubajax/on',
-        '@clubajax/base-component',
-        '@clubajax/form',
-        '@clubajax/format',
+    return isRTK
+        ? []
+        : [
+              '@clubajax/dom',
+              '@clubajax/on',
+              '@clubajax/base-component',
+              '@clubajax/form',
+              '@clubajax/format',
 
-        // true imports:
-        // '@clubajax/custom-elements-polyfill',
-        // '@clubajax/key-nav',
-        // '@clubajax/no-dash'
-    ]
-}
+              // true imports:
+              // '@clubajax/custom-elements-polyfill',
+              // '@clubajax/key-nav',
+              // '@clubajax/no-dash'
+          ];
+};
 
 if (DEV) {
     function log(msg) {
@@ -113,9 +113,7 @@ module.exports = {
     // eval-source-map: has wrong line numbers, fastest
     // source-map: slow, org source, external
     devtool: DEV ? 'inline-source-map' : 'source-map',
-    externals: DEV
-        ? []
-        : getDeps(),
+    externals: DEV ? [] : getDeps(),
     module: {
         rules: [
             {
@@ -149,12 +147,18 @@ module.exports = {
     },
     plugins,
     devServer: {
-        contentBase: DIST,
+        // contentBase: DIST,
         compress: false,
-        progress: false,
         hot: true,
-        index: 'index.html',
-        port: 8200,
-        publicPath: 'http://localhost:8200/',
+        // index: 'index.html',
+        // port: 8200,
+        // publicPath: 'http://localhost:8200/',
+        client: {
+            progress: false,
+            webSocketURL: {
+                hostname: '0.0.0.0',
+                port: 8200,
+            },
+        },
     },
 };
