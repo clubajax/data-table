@@ -786,12 +786,11 @@ class DataTable extends BaseComponent {
         this.fire('render', { table: this.table || this, thead: this.thead, tbody: this.tbody });
     }
 
-    // is overwritten by scrollable
     renderTemplate() {
         if (this.table || !this.schema) {
             return;
         }
-        this.table = dom('table', { tabindex: '1' }, this);
+        this.table = dom('table', { tabindex: '1', class: 'dtt' }, this);
         if (!this.schema.headerless) {
             this.thead = dom('thead', {}, this.table);
         }
@@ -1185,6 +1184,7 @@ function renderRow(item, { index, columns, colSizes, tbody, selectable, dataTabl
             css(!col.component.readonly ? col.component.type : null);
             css(col.component.format);
             css('unsortable');
+            css('component');
         } else {
             html = key === 'index' ? index + 1 : item[key];
 
