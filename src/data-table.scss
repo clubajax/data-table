@@ -350,6 +350,7 @@ data-table{
         }
     }
     &[static-column] {
+        // TODO: Not scoped for expanded rows (needed?)
         th:first-child,
         td:first-child {
             position: sticky;
