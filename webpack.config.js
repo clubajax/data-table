@@ -148,17 +148,14 @@ module.exports = {
     plugins,
     devServer: {
         // contentBase: DIST,
+        // index: 'index.html',
         compress: false,
         hot: true,
-        // index: 'index.html',
-        // port: 8200,
-        // publicPath: 'http://localhost:8200/',
+        host: '0.0.0.0',
+        port: 8200,
         client: {
-            progress: false,
-            webSocketURL: {
-                hostname: '0.0.0.0',
-                port: 8200,
-            },
+            progress: true,
+            reconnect: 5,
         },
     },
 };
