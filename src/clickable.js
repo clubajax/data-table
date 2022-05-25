@@ -8,7 +8,7 @@ const Clickable = {
 		this.on('render', this.handleClicks.bind(this));
 	},
 
-	handleBodyClick (e) {
+    handleBodyClick(e) {
 		let
 			index,
 			item,
