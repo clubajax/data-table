@@ -519,16 +519,28 @@ function createEditButtons(col, item, dataTable, index) {
     });
 }
 
-function createActionButton(col, item, index) {
-    return dom('span', {
-        class: 'add-remove',
-        html: dom('ui-actionbutton', {
-            icon: 'kebob',
-            data: col.component.options,
-            'event-name': 'action-event',
-            class: 'tbl-icon-button icon-only',
-        }),
+function createActionButton(col, item, index, dataTable) {
+    const actionBtn = dom('ui-actionbutton', {
+        icon: 'kebob',
+        data: col.component.options,
+        'event-name': 'action-event-internal',
+        class: 'tbl-icon-button icon-only',
     });
+
+    const node = dom('span', {
+        class: 'add-remove',
+        html: actionBtn,
+    });
+
+    actionBtn.on('action-event-internal', (e) => {
+        on.fire(dataTable, 'action-event', {
+            value: e.detail.value,
+            item,
+            index,
+        });
+    });
+
+    return node;
 }
 
 function createReadonly(col, item, index, dataTable) {
@@ -570,7 +582,7 @@ function createComponent(col, item, index, dataTable) {
             return createTags(col, item, dataTable);
         case 'edit-rows':
             if (col.component.options) {
-                return createActionButton(col, item, index);
+                return createActionButton(col, item, index, dataTable);
             }
             return createEditCell(col, item, dataTable, index);
         case 'edit-buttons':

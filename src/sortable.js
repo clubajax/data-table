@@ -107,8 +107,11 @@ const Sortable = {
         let dir,
             field = e.detail.field,
             target = e.detail.cell;
-
-        if (!target || e.detail.isFilter || e.detail.isShowCols || target.className.indexOf('no-sort') > -1) {
+        if (!target || !e.detail) {
+            return;
+        }
+        const noSort = target.className.indexOf('no-sort') > -1 || target.className.indexOf('unsortable') > -1;
+        if (e.detail.isFilter || e.detail.isShowCols || noSort) {
             return;
         }
 

@@ -3,6 +3,7 @@ const dom = require('@clubajax/dom');
 
 const Filterable = {
     init() {
+        console.log('Filterable.init ! !');
         this.classList.add('filterable');
     },
 
@@ -38,9 +39,8 @@ const Filterable = {
             'is-button': true,
             align: 'B',
             shift: true,
-            ...(col.filter.tooltipOptions || {})
+            ...(col.filter.tooltipOptions || {}),
         });
-
 
         tooltip.onDomReady(() => {
             tooltip.popup.on('popup-open', () => {
