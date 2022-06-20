@@ -3,7 +3,6 @@ const dom = require('@clubajax/dom');
 
 const Filterable = {
     init() {
-        console.log('Filterable.init ! !');
         this.classList.add('filterable');
     },
 

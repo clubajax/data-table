@@ -56,7 +56,6 @@ class DataTable extends BaseComponent {
             util.storage('data-table-perf', enabled);
         };
         this.isInit = true;
-
     }
 
     get isPerf() {
@@ -82,12 +81,12 @@ class DataTable extends BaseComponent {
             // initializing
             return;
         }
-        
+
         const rowItem = this.getItemById(item.id);
         if (!rowItem) {
             return;
         }
-        
+
         let changed = '';
         let column;
         Object.keys(item).forEach((key) => {
@@ -166,7 +165,7 @@ class DataTable extends BaseComponent {
     }
 
     getSchema() {
-        return this.schema || {columns: []}
+        return this.schema || { columns: [] };
     }
 
     onLoading(loading) {
@@ -933,7 +932,7 @@ class DataTable extends BaseComponent {
         if (!items || !items.length) {
             if (!this.loading && !this.error) {
                 this.bodyHasRendered = true;
-                this.fire('render-body', {tbody: this.tbody}, null);
+                this.fire('render-body', { tbody: this.tbody }, null);
                 this.displayNoData(true);
             }
             return;
@@ -1391,7 +1390,7 @@ function setGrouped(items, schema) {
         }, {});
 
         items.forEach((item) => {
-            if (item.parentId) {
+            if (item.parentId && parentMap[item.parentId]) {
                 parentMap[item.parentId].subItemIds.push(item.id);
                 item.isSubitem = true;
             }
