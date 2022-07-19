@@ -851,7 +851,7 @@ class DataTable extends BaseComponent {
                     css('filter-on');
                 }
 
-                const hasFilter = dom.isNode(col.filter);
+                const hasFilter = dom.isNode(col.filter) || typeof col.filter === 'function';
                 css(hasFilter ? 'filter' : null);
 
                 if (hasHideShowCols) {

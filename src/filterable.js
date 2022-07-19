@@ -7,57 +7,77 @@ const Filterable = {
     },
 
     getIconFilter(col) {
-        if (!dom.isNode(col.filter)) {
-            return null;
-        }
+        const id = util.uid('filter');
 
-        if (typeof col.filter === 'boolean') {
-            // TODO DOC THIS
-            // Is this for testing?
-            return dom('span', { class: 'fas fa-filter' });
-        }
+        const render = (open) => {
+            col.filter.close = () => {
+                tooltip.close();
+            };
 
-        col.filter.close = () => {
-            tooltip.close();
+            col.filter.send = (data) => {
+                this.fire('filter', {
+                    col: col,
+                    value: data.value !== undefined ? data.value : data,
+                    name: data.name !== undefined ? data.name : '',
+                });
+            };
+
+            col.filter.dataTable = this;
+            col.filter.col = col;
+
+            const tooltip = dom(
+                'ui-tooltip',
+                {
+                    value: col.filter,
+                    'use-click': true,
+                    // 'is-button': true,
+                    buttonid: id,
+                    align: 'B',
+                    shift: true,
+                    ...(col.filter.tooltipOptions || {}),
+                    open,
+                },
+                document.body,
+            );
+
+            tooltip.onDomReady(() => {
+                tooltip.popup.on('popup-open', () => {
+                    if (col.filter.onOpen) {
+                        col.filter.onOpen();
+                    }
+                });
+                tooltip.popup.on('popup-close', () => {
+                    if (col.filter.onClose) {
+                        col.filter.onClose();
+                    }
+                });
+            });
+
+            return tooltip;
         };
 
-        col.filter.send = (data) => {
-            this.fire('filter', {
-                col: col,
-                value: data.value !== undefined ? data.value : data,
-                name: data.name !== undefined ? data.name : '',
+        const renderTip = () => {
+            return dom('ui-icon', {
+                id,
+                type: 'fas fa-filter',
+                // html: tooltip,
             });
         };
 
-        col.filter.dataTable = this;
-        col.filter.col = col;
+        if (dom.isNode(col.filter)) {
+            console.log('normal', id);
+            render();
+            return renderTip();
+        }
 
-        const tooltip = dom('ui-tooltip', {
-            value: col.filter,
-            'use-click': true,
-            'is-button': true,
-            align: 'B',
-            shift: true,
-            ...(col.filter.tooltipOptions || {}),
+        console.log('lazy!', id);
+        const tip = renderTip(dom('div'));
+        this.once(tip, 'click', () => {
+            col.filter = col.filter();
+            console.log('REDNER TIP', col.filter);
+            render(true);
         });
-
-        tooltip.onDomReady(() => {
-            tooltip.popup.on('popup-open', () => {
-                if (col.filter.onOpen) {
-                    col.filter.onOpen();
-                }
-            });
-            tooltip.popup.on('popup-close', () => {
-                if (col.filter.onClose) {
-                    col.filter.onClose();
-                }
-            });
-        });
-
-        return dom('ui-icon', {
-            type: 'fas fa-filter',
-            html: tooltip,
-        });
+        return tip;
     },
 };
 
