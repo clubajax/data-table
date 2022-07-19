@@ -520,9 +520,14 @@ function createEditButtons(col, item, dataTable, index) {
 }
 
 function createActionButton(col, item, index, dataTable) {
+    let options = col.component.options;
+    if (col.component.callback) {
+        options = col.component.callback(item);
+    }
+
     const actionBtn = dom('ui-actionbutton', {
         icon: 'kebob',
-        data: col.component.options,
+        data: options,
         'event-name': 'action-event-internal',
         class: 'tbl-icon-button icon-only',
     });
