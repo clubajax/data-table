@@ -508,7 +508,6 @@ function createEditButtons(col, item, dataTable, index) {
             .map(({ value, icon }) => {
                 return dom('button', {
                     onClick() {
-                        console.log('fire!');
                         on.fire(this, 'action', { value, index, item }, true);
                     },
                     class: `tbl-icon-button ${value}`,

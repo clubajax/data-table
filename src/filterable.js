@@ -65,16 +65,13 @@ const Filterable = {
         };
 
         if (dom.isNode(col.filter)) {
-            console.log('normal', id);
             render();
             return renderTip();
         }
 
-        console.log('lazy!', id);
         const tip = renderTip(dom('div'));
         this.once(tip, 'click', () => {
             col.filter = col.filter();
-            console.log('REDNER TIP', col.filter);
             render(true);
         });
         return tip;
