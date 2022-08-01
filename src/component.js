@@ -524,6 +524,10 @@ function createActionButton(col, item, index, dataTable) {
         options = col.component.callback(item);
     }
 
+    if (!options) {
+        return '<i class="fas fa-ban"></i>';
+    }
+
     const actionBtn = dom('ui-actionbutton', {
         icon: 'kebob',
         data: options,

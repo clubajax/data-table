@@ -1,6 +1,6 @@
 {
   "name": "@clubajax/data-table",
-  "version": "0.9.103",
+  "version": "10.0.0",
   "description": "Data Table Web Component",
   "main": "index.js",
   "repository": {

@@ -624,6 +624,12 @@ data-table table.dtt {
                 opacity: 1;
             }
         }
+        .fas.fa-ban {
+            opacity: 0;
+            &:hover {
+                opacity: 1;
+            }
+        }
         // formatting
         &.center {
             text-align: center;
