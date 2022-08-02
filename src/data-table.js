@@ -361,6 +361,122 @@ class DataTable extends BaseComponent {
         });
     }
 
+    isExpanded() {
+        // console.log('  is-expanded', !!dom.query(this, '.expanded-row') || this.items.some((m) => m.expanded));
+        // console.log('  rows', dom.queryAll(this, 'tr'));
+        // console.log('  this', this.items);
+        return !!dom.query(this, '.expanded-row') || this.items.some((m) => m.expanded);
+    }
+
+    handleExpand(tr, td) {
+        const id = dom.attr(tr, 'data-row-id');
+        const item = this.getItemById(id);
+        const state = dom.attr(td, 'data-expanded');
+
+        console.log('tr', tr);
+        console.log('td', td);
+
+        if (state === 'on' && this.schema.requestCollapse) {
+            this.fire(
+                'request-collapse',
+                {
+                    // node: container,
+                    rowIndex: tr.rowIndex,
+                    item,
+                },
+                true,
+            );
+            return;
+        }
+
+        if (this.expandable !== 'multiple' && this.grouped !== 'multiple') {
+            // first close all rows
+            this.items.forEach((item) => {
+                item.expanded = false;
+            });
+        }
+
+        item.expanded = !(state === 'on');
+
+        if (!item.expanded && tr.nextElementSibling) {
+            // non-request collapse
+            const container = dom.query(tr.nextElementSibling, '.expanded-container');
+            if (container) {
+                this.fire(
+                    'collapse',
+                    {
+                        node: container,
+                        rowIndex: tr.rowIndex,
+                        item,
+                    },
+                    true,
+                );
+                setTimeout(() => {
+                    dom.destroy(container.closest('.expanded-row'));
+                }, 30);
+            }
+        }
+
+        this.render();
+
+        const afterTR = dom.query(this, `[data-row-id="${id}"]`);
+        if (item.expanded) {
+            if (!afterTR.nextElementSibling) {
+                console.warn('Parent has no children');
+                return;
+            }
+            // non-request expand
+            this.fire(
+                'expand',
+                {
+                    node: dom.query(afterTR.nextElementSibling, '.expanded-container'),
+                    rowIndex: afterTR.rowIndex,
+                    item,
+                },
+                true,
+            );
+        }
+    }
+
+    makeExpandable() {
+        this.on('click', '[data-expanded]', (e) => {
+            const radio = e.target.closest('ui-radio');
+            const td = e.target.closest('td');
+            const tr = e.target.closest('tr');
+            if (radio) {
+                const id = dom.attr(tr, 'data-row-id');
+                dom.queryAll(this, 'td > div > ui-radio').forEach((radio) => {
+                    radio.checked = `${radio.id}` === `${id}`;
+                });
+                this.items.forEach((item) => {
+                    if (`${item.id}` === `${id}`) {
+                        item.selected = true;
+                        this.emit('select', { value: item.id, item });
+                    } else {
+                        item.selected = false;
+                    }
+                });
+                return;
+            }
+
+            this.handleExpand(tr, td);
+        });
+
+        setTimeout(() => {
+            if (this.schema && this.schema.headerless) {
+                this.on('click', 'tr', (e) => {
+                    if (e.target.closest('.expanded-row')) {
+                        return;
+                    }
+                    const tr = e.target.closest('tr');
+                    const td = dom.query(tr, '[data-expanded]');
+
+                    this.handleExpand(tr, td);
+                });
+            }
+        }, 30);
+    }
+
     getCell(rowId, cellProp) {
         const row = dom.query(this.tbody, `tr[data-row-id="${rowId}"]`);
         if (row) {
@@ -626,121 +742,8 @@ class DataTable extends BaseComponent {
         return col ? col.key || col.sort : null;
     }
 
-    isExpanded() {
-        // console.log('  is-expanded', !!dom.query(this, '.expanded-row') || this.items.some((m) => m.expanded));
-        // console.log('  rows', dom.queryAll(this, 'tr'));
-        // console.log('  this', this.items);
-        return !!dom.query(this, '.expanded-row') || this.items.some((m) => m.expanded);
-    }
-
     hasRows() {
         return !!dom.query(this, 'body tr');
-    }
-
-    makeExpandable() {
-        const handleExpand = (tr, td) => {
-            const id = dom.attr(tr, 'data-row-id');
-            const item = this.getItemById(id);
-            const state = dom.attr(td, 'data-expanded');
-
-            if (state === 'on' && this.schema.requestCollapse) {
-                this.fire(
-                    'request-collapse',
-                    {
-                        // node: container,
-                        rowIndex: tr.rowIndex,
-                        item,
-                    },
-                    true,
-                );
-                return;
-            }
-
-            if (this.expandable !== 'multiple' && this.grouped !== 'multiple') {
-                // first close all rows
-                this.items.forEach((item) => {
-                    item.expanded = false;
-                });
-            }
-
-            item.expanded = !(state === 'on');
-
-            if (!item.expanded && tr.nextElementSibling) {
-                // non-request collapse
-                const container = dom.query(tr.nextElementSibling, '.expanded-container');
-                if (container) {
-                    this.fire(
-                        'collapse',
-                        {
-                            node: container,
-                            rowIndex: tr.rowIndex,
-                            item,
-                        },
-                        true,
-                    );
-                    setTimeout(() => {
-                        dom.destroy(container.closest('.expanded-row'));
-                    }, 30);
-                }
-            }
-
-            this.render();
-
-            const afterTR = dom.query(this, `[data-row-id="${id}"]`);
-            if (item.expanded) {
-                if (!afterTR.nextElementSibling) {
-                    console.warn('Parent has no children');
-                    return;
-                }
-                // non-request expand
-                this.fire(
-                    'expand',
-                    {
-                        node: dom.query(afterTR.nextElementSibling, '.expanded-container'),
-                        rowIndex: afterTR.rowIndex,
-                        item,
-                    },
-                    true,
-                );
-            }
-        };
-
-        this.on('click', '[data-expanded]', (e) => {
-            const radio = e.target.closest('ui-radio');
-            const td = e.target.closest('td');
-            const tr = e.target.closest('tr');
-            if (radio) {
-                const id = dom.attr(tr, 'data-row-id');
-                dom.queryAll(this, 'td > div > ui-radio').forEach((radio) => {
-                    radio.checked = `${radio.id}` === `${id}`;
-                });
-                this.items.forEach((item) => {
-                    if (`${item.id}` === `${id}`) {
-                        item.selected = true;
-                        this.emit('select', { value: item.id, item });
-                    } else {
-                        item.selected = false;
-                    }
-                });
-                return;
-            }
-
-            handleExpand(tr, td);
-        });
-
-        setTimeout(() => {
-            if (this.schema && this.schema.headerless) {
-                this.on('click', 'tr', (e) => {
-                    if (e.target.closest('.expanded-row')) {
-                        return;
-                    }
-                    const tr = e.target.closest('tr');
-                    const td = dom.query(tr, '[data-expanded]');
-
-                    handleExpand(tr, td);
-                });
-            }
-        }, 30);
     }
 
     refresh(all) {
