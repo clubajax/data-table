@@ -5,6 +5,7 @@ const sortable = require('./sortable');
 const clickable = require('./clickable');
 const selectable = require('./selectable');
 const filterable = require('./filterable');
+const editable = require('./editable');
 const createComponent = require('./component');
 const formatters = require('@clubajax/format');
 const util = require('./util');
@@ -548,11 +549,9 @@ class DataTable extends BaseComponent {
             null,
             null,
         );
-        // @ts-ignore
         this.on('cell-edit', () => {
             dom.attr(this, 'is-editing', true);
         });
-        // @ts-ignore
         this.on('cell-blur', () => {
             this.updateStatus();
         });
@@ -623,93 +622,6 @@ class DataTable extends BaseComponent {
             type: 'fas fa-ellipsis-v',
             html: tooltip,
         });
-    }
-
-    addRow(index = 0, item) {
-        // index is 1-based
-        if (!item) {
-            this.emit('create-row', { value: { index } });
-        } else {
-            this.items.splice(index, 0, item);
-            this.loadData(this.items);
-        }
-    }
-
-    removeRow(index) {
-        // index is 1-based
-        const item = this.items[index];
-        this.emit('remove-row', { value: { index, id: item.id, item } });
-    }
-
-    getRowIndex(row) {
-        const rows = dom.queryAll(this.tbody, 'tr');
-        for (let i = 0; i <= rows.length; i++) {
-            if (row === rows[i]) {
-                return i;
-            }
-        }
-    }
-
-    saveRow(index) {
-        // index is 1-based
-        const item = this.items[index];
-        const event = { value: item };
-        const added = item.added;
-        if (added) {
-            this.emit(added ? 'add-row' : 'change', event);
-            item.added = false;
-            const row = dom.query(this, 'tr.added-row');
-            if (row) {
-                row.classList.remove('added-row');
-                dom.queryAll(row, 'ui-input,ui-search').forEach((input) => input.onCloseInputs());
-            }
-            this.updateStatus();
-        }
-    }
-
-    cancelEdit() {
-        const index = this.items.findIndex((item) => item.added);
-        this.items.splice(index, 1);
-        // plus one, to allow for the header
-        this.table.deleteRow(index + 1);
-        this.updateStatus();
-    }
-
-    hasAddRemove() {
-        if (this.actionEventsSet) {
-            return;
-        }
-        const action = (e, type) => {
-            const row = e.target.closest('tr');
-            const index = this.getRowIndex(row);
-            switch (type) {
-                case 'save':
-                    this.saveRow(index);
-                    break;
-                case 'add':
-                    this.addRow(index);
-                    break;
-                case 'remove':
-                    this.removeRow(index);
-                    break;
-                case 'cancel':
-                    this.cancelEdit();
-                    break;
-                default:
-                    this.fire('action', {
-                        type,
-                        item: e.detail.item,
-                        index,
-                    });
-            }
-        };
-
-        // @ts-ignore
-        this.on('action-event', (e) => {
-            action(e, e.detail.value);
-        });
-
-        this.actionEventsSet = true;
     }
 
     toggleCheckAll(value) {
@@ -1067,6 +979,7 @@ class DataTable extends BaseComponent {
     }
 
     mixPlugins() {
+        console.log('MIX!');
         if (this.clickable) {
             clickable.call(this);
         }
@@ -1081,6 +994,9 @@ class DataTable extends BaseComponent {
         if (this.schema.columns.find((c) => c.filter)) {
             clickable.call(this);
             filterable.call(this);
+        }
+        if (this.schema.columns.find((c) => c.component && /edit/.test(c.component.type))) {
+            editable.call(this);
         }
         this.mixPlugins = noop;
     }

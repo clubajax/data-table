@@ -241,7 +241,7 @@ describe('DataTable', function () {
                 });
             });
 
-            it('should have custom edit buttons', function (done) {
+            it.only('should have custom edit buttons', function (done) {
                 const data = getData3();
                 const col = data.schema.columns.find((c) => c.icon === 'edit');
                 col.component.type = 'edit-buttons';
@@ -729,7 +729,6 @@ describe('DataTable', function () {
                         //
                         // Also:
                         // error if using checks/radio + selectable
-
                     });
                 });
             });
@@ -893,7 +892,7 @@ describe('DataTable', function () {
         });
 
         describe('filtering', function () {
-            it.only('should be filterable', function (done) {
+            it('should be filterable', function (done) {
                 // https://mvc-grid.azurewebsites.net/Column/CustomFilter
                 // TODO: Make filter test, works with and without sorting
                 const components = getFilterComponents();

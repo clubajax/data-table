@@ -11,7 +11,6 @@
     <script src="src/test-files.js"></script>
     <script src="src/filter-components.js"></script>
     <script src="//localhost:35750/livereload.js"></script>
-
     <style>
         html,
         body {
@@ -22,7 +21,7 @@
             padding: 20px;
             font-family: sans-serif;
         }
-        
+
         * {
             box-sizing: border-box;
         }
@@ -49,26 +48,29 @@
             height: 500px;
         }
 
-        .tip-button-row{
+        .tip-button-row {
             text-align: right;
             margin-top: 5px;
         }
-        .tip-button-row .ui-button{
+
+        .tip-button-row .ui-button {
             display: inline-block;
         }
 
         data-table[scrollable] th {
             border: 1px solid #ccc;
         }
-        .test-table .batman{
+
+        .test-table .batman {
             background-color: red;
             display: none;
         }
+
     </style>
 </head>
 
 <body>
-    <h1>Test Data Table</h1>
+    <h1>OLD TESTS</h1>
     <div id="mocha"></div>
     <div id="tests">
         <input autofocus />
@@ -78,6 +80,7 @@
         window.mocha.setup('bdd');
         window.mocha.options.allowUncaught = true;
 
+        console.log('LOADED');
 
         function createSchema(options) {
             return {
@@ -86,7 +89,7 @@
                 height: 'Height',
                 weight: 'Weight',
                 bp: 'Bloodpressure'
-            }
+            };
         }
         describe('DataTable', function () {
             this.timeout(3000);
@@ -128,7 +131,7 @@
                         console.timeEnd('done');
                         resolve();
                     });
-                })
+                });
             }
 
             function destroyRenderNode() {
@@ -150,7 +153,7 @@
                     cls();
                     cls('two');
                     expect(cls()).to.equal('one two');
-                })
+                });
             });
 
             describe('data table', function () {
@@ -162,11 +165,11 @@
                             return {
                                 id: i + 1,
                                 label, typeId, appliedTypeId, rateTypeId, statusId: 48
-                            }
-                        })
+                            };
+                        });
                         const ta = dom('textarea', {class: 'drop-data'}, body);
                         console.log('data', data);
-                        ta.textContent = JSON.stringify(data, null, 4)
+                        ta.textContent = JSON.stringify(data, null, 4);
                     });
                     it('should render many dropdowns', function (done) {
                         async function render() {
@@ -235,7 +238,7 @@
                             node.on('create-row', function (e) {
                                 console.log('test.create', e.value.index);
                                 const rows = [...data.items];
-                                rows.splice(e.value.index + 1, 0, data.getBlankItem())
+                                rows.splice(e.value.index + 1, 0, data.getBlankItem());
                                 node.rows = rows;
                             });
                             done();
@@ -291,7 +294,7 @@
                         });
                     });
 
-                    it('should have custom edit buttons', function (done) {
+                    it.only('should have custom edit buttons', function (done) {
                         const data = getData3();
                         const col = data.schema.columns.find(c => c.icon === 'edit');
                         col.component.type = 'edit-buttons';
@@ -309,7 +312,7 @@
                                 icon: 'copy',
                                 value: 'copy'
                             }
-                        ]
+                        ];
 
                         const section = dom('section', {html: dom('label', {html: 'Custom Edit Buttons'})}, body);
                         const node = dom('data-table', {
@@ -367,7 +370,7 @@
                             node.on('create-row', function (e) {
                                 console.log('test.create', e.value.index);
                                 const rows = [...node.items];
-                                rows.splice(e.value.index + 1, 0, getData3().getBlankItem())
+                                rows.splice(e.value.index + 1, 0, getData3().getBlankItem());
                                 node.rows = rows;
                             });
                             done();
@@ -422,7 +425,7 @@
                             node.on('create-row', function (e) {
                                 console.log('test.create', e.value.index);
                                 const rows = [...items];
-                                rows.splice(e.value.index + 1, 0, data.getBlankItem())
+                                rows.splice(e.value.index + 1, 0, data.getBlankItem());
                                 console.log('rows', rows);
                                 node.rows = rows;
                             });
@@ -449,7 +452,7 @@
                             {value: 'add', label: 'Add Row'},
                             {value: 'edit', label: 'Edit Row'},
                             {value: 'remove', label: 'Remove Row'},
-                        ]
+                        ];
                         console.log('schema', schema);
                         const items = data.items.slice(0, 2);
                         const node = dom('data-table', {
@@ -575,7 +578,7 @@
                                     data.items.push(item2);
                                     node.rows = data.items;
                                 }, 30);
-                            }, 30)
+                            }, 30);
 
                             node.on('expanded', function (e) {
                                 console.log('expanded', e.detail);
@@ -617,7 +620,7 @@
                     it('should create paneled data', (done) => {
                         const data = getHeaderless();
                         const schema = data.schema;
-                        const rows = data.items.slice(5)
+                        const rows = data.items.slice(5);
                         rows.forEach((item) => {
                             delete item.childIds;
                         });
@@ -706,7 +709,7 @@
                             });
                             setTimeout(() => {
                                 // node.loading = false;
-                            }, 500)
+                            }, 500);
                             done();
                         });
                     });
@@ -725,7 +728,7 @@
                             });
                             setTimeout(() => {
                                 node.error = false;
-                            }, 1500)
+                            }, 1500);
                             done();
                         });
                     });
@@ -805,7 +808,7 @@
                         onDomReady(node, function () {
                             node.on('filter', (e) => {
                                 console.log('filter.event', e);
-                            })
+                            });
                             done();
                         });
                     });
@@ -1049,7 +1052,7 @@
                                     height: 5.9,
                                     weight: 220,
                                     bp: 30
-                                }
+                                };
                             }, 500);
                             done();
                         });
@@ -1140,8 +1143,8 @@
                     });
                 });
 
-                describe('hide show columns', function(){
-                    it.only('should hide and show columns', (done) => {
+                describe('hide show columns', function () {
+                    it('should hide and show columns', (done) => {
                         const section = dom('section', {html: dom('label', {html: 'Hide Show Cols'})}, body);
                         const data = getData20();
                         const node = dom('data-table', {
@@ -1157,15 +1160,15 @@
                             node.on('change', function (e) {
                                 console.log('change', e);
                             });
-                            node.on('check-all', function(e){
+                            node.on('check-all', function (e) {
                                 console.log('check-all', e.value);
-                            })
+                            });
 
                             done();
                         });
                     });
-                })
-                describe('totals', function(){
+                });
+                describe('totals', function () {
                     it('should render a total row', (done) => {
                         // TODO
                         // make readonly + checkable checboxes
@@ -1181,19 +1184,19 @@
                                 const items = data.items.map((item) => {
                                     item.checked = e.value;
                                     return item;
-                                })
+                                });
                                 node.rows = items;
-                            })
+                            });
                             node.on('change', (e) => {
                                 const index = data.items.findIndex(m => m.id === e.value.id);
                                 const items = [...data.items];
                                 items.splice(index, 1, data.items[index]);
                                 node.rows = items;
-                            })
+                            });
                             done();
                         });
-                    })
-                })
+                    });
+                });
             });
 
         });
@@ -1223,7 +1226,7 @@
             const th = dom.query(node, '[data-field="' + field + '"]');
             if (!th) {
                 console.warn('th not found', field);
-                return null
+                return null;
             }
             on.emit(th, 'click');
         }
@@ -1239,7 +1242,7 @@
                 } else {
                     item[key] = '';
                 }
-            })
+            });
             return item;
         }
 
