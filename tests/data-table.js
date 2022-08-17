@@ -241,7 +241,7 @@ describe('DataTable', function () {
                 });
             });
 
-            it.only('should have custom edit buttons', function (done) {
+            it('should have custom edit buttons', function (done) {
                 const data = getData3();
                 const col = data.schema.columns.find((c) => c.icon === 'edit');
                 col.component.type = 'edit-buttons';
@@ -529,7 +529,7 @@ describe('DataTable', function () {
         });
 
         describe('expandable', () => {
-            it('should expand rows', (done) => {
+            it.only('should expand rows', (done) => {
                 const data = getGeneralData();
                 const section = dom('section', { html: dom('label', { html: 'Expandable Rows' }) }, body);
                 const node = dom(
@@ -648,7 +648,7 @@ describe('DataTable', function () {
         });
 
         describe('grouping', () => {
-            it('should group based on parentIds', (done) => {
+            it.only('should group based on parentIds', (done) => {
                 const section = dom('section', { html: dom('label', { html: 'Group by Parent IDs' }) }, body);
                 const node = dom(
                     'data-table',

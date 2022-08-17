@@ -6,6 +6,7 @@ const clickable = require('./clickable');
 const selectable = require('./selectable');
 const filterable = require('./filterable');
 const editable = require('./editable');
+const expandable = require('./expandable');
 const createComponent = require('./component');
 const formatters = require('@clubajax/format');
 const util = require('./util');
@@ -45,7 +46,6 @@ class DataTable extends BaseComponent {
 
         this.nodeHolder = dom('div', { class: 'data-table-node-holder' }, document.body);
 
-        this.makeExpandable();
         // this.error = undefined;
         // this.loading = undefined;
         // this.errors = undefined;
@@ -293,11 +293,13 @@ class DataTable extends BaseComponent {
             });
         }
 
+        this.expandable = this.schema.expandable || this.schema.headerless;
         this.propCheck(true);
         this.displayNoData(false);
         this.items = [...items];
         this.mixPlugins();
         clearTimeout(this.noDataTimer);
+
         this.onDomReady(() => {
             this.grouped = setGrouped(this.items, this.schema);
             if (this.grouped && this.schema.grouped) {
@@ -313,7 +315,6 @@ class DataTable extends BaseComponent {
                 dom.attr(this, 'show-hide-columns', true);
             }
 
-            this.expandable = this.schema.expandable || this.schema.headerless;
             dom.classList.toggle(this, 'has-grouped', !!this.grouped || !!this.expandable);
 
             // console.log('\ntable', this.name);
@@ -338,144 +339,6 @@ class DataTable extends BaseComponent {
 
             this.setCheckAll();
         });
-    }
-
-    updateCells() {
-        // updates cells instead of re-render
-        // used during expanded row
-        const orgItems = this.orgItems;
-        this.items.forEach((item, i) => {
-            const org = orgItems[i];
-            if (!util.equal(item, org, ['expanded'])) {
-                this.schema.columns.forEach((col) => {
-                    const key = col.key;
-                    if (item[key] !== org[key]) {
-                        const cell = this.getCell(item.id, key);
-                        if (!cell) {
-                            console.log('tbl cell not found:', item.id, key);
-                            return;
-                        }
-                        cell.innerHTML = col.format ? formatters[col.format].toHtml(item[key]) : item[key];
-                    }
-                });
-            }
-        });
-    }
-
-    isExpanded() {
-        // console.log('  is-expanded', !!dom.query(this, '.expanded-row') || this.items.some((m) => m.expanded));
-        // console.log('  rows', dom.queryAll(this, 'tr'));
-        // console.log('  this', this.items);
-        return !!dom.query(this, '.expanded-row') || this.items.some((m) => m.expanded);
-    }
-
-    handleExpand(tr, td) {
-        const id = dom.attr(tr, 'data-row-id');
-        const item = this.getItemById(id);
-        const state = dom.attr(td, 'data-expanded');
-
-        console.log('tr', tr);
-        console.log('td', td);
-
-        if (state === 'on' && this.schema.requestCollapse) {
-            this.fire(
-                'request-collapse',
-                {
-                    // node: container,
-                    rowIndex: tr.rowIndex,
-                    item,
-                },
-                true,
-            );
-            return;
-        }
-
-        if (this.expandable !== 'multiple' && this.grouped !== 'multiple') {
-            // first close all rows
-            this.items.forEach((item) => {
-                item.expanded = false;
-            });
-        }
-
-        item.expanded = !(state === 'on');
-
-        if (!item.expanded && tr.nextElementSibling) {
-            // non-request collapse
-            const container = dom.query(tr.nextElementSibling, '.expanded-container');
-            if (container) {
-                this.fire(
-                    'collapse',
-                    {
-                        node: container,
-                        rowIndex: tr.rowIndex,
-                        item,
-                    },
-                    true,
-                );
-                setTimeout(() => {
-                    dom.destroy(container.closest('.expanded-row'));
-                }, 30);
-            }
-        }
-
-        this.render();
-
-        const afterTR = dom.query(this, `[data-row-id="${id}"]`);
-        if (item.expanded) {
-            if (!afterTR.nextElementSibling) {
-                console.warn('Parent has no children');
-                return;
-            }
-            // non-request expand
-            this.fire(
-                'expand',
-                {
-                    node: dom.query(afterTR.nextElementSibling, '.expanded-container'),
-                    rowIndex: afterTR.rowIndex,
-                    item,
-                },
-                true,
-            );
-        }
-    }
-
-    makeExpandable() {
-        this.on('click', '[data-expanded]', (e) => {
-            const radio = e.target.closest('ui-radio');
-            const td = e.target.closest('td');
-            const tr = e.target.closest('tr');
-            if (radio) {
-                const id = dom.attr(tr, 'data-row-id');
-                dom.queryAll(this, 'td > div > ui-radio').forEach((radio) => {
-                    radio.checked = `${radio.id}` === `${id}`;
-                });
-                this.items.forEach((item) => {
-                    if (`${item.id}` === `${id}`) {
-                        item.selected = true;
-                        this.emit('select', { value: item.id, item });
-                    } else {
-                        item.selected = false;
-                    }
-                });
-                return;
-            }
-
-            this.handleExpand(tr, td);
-        });
-
-        setTimeout(() => {
-            if (this.schema && this.schema.headerless) {
-                this.on('click', 'tr', (e) => {
-                    if (e.target.closest('.expanded-row')) {
-                        return;
-                    }
-                    const tr = e.target.closest('tr');
-                    const td = dom.query(tr, '[data-expanded]');
-
-                    this.handleExpand(tr, td);
-                });
-            }
-        }, 30);
     }
 
     getCell(rowId, cellProp) {
@@ -991,6 +854,10 @@ class DataTable extends BaseComponent {
             clickable.call(this);
             selectable.call(this);
         }
+        if (this.expandable) {
+            expandable.call(this);
+        }
+
         if (this.schema.columns.find((c) => c.filter)) {
             clickable.call(this);
             filterable.call(this);
