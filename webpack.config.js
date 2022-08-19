@@ -23,7 +23,7 @@ let plugins = [
     }),
 ];
 
-const getDeps = () => {
+const getExternals = () => {
     return isRTK
         ? []
         : [
@@ -113,7 +113,7 @@ module.exports = {
     // eval-source-map: has wrong line numbers, fastest
     // source-map: slow, org source, external
     devtool: DEV ? 'inline-source-map' : 'source-map',
-    externals: DEV ? [] : getDeps(),
+    externals: DEV ? [] : getExternals(),
     module: {
         rules: [
             {
