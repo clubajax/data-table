@@ -1,6 +1,6 @@
 {
   "name": "@clubajax/data-table",
-  "version": "10.0.3",
+  "version": "10.0.5",
   "description": "Data Table Web Component",
   "main": "src/data-table.js",
   "directories": {
@@ -10,6 +10,7 @@
     "start": "webpack serve --mode development --config ./webpack.config.js",
     "build": "webpack --mode production --config ./webpack.config.js && node ./scripts/deploy.js",
     "jk": "webpack --mode production --config ./webpack.config.js && node ./scripts/deploy.js --jk",
+    "jk-quick": "webpack --mode production --config ./webpack.config.js && node ./scripts/swap.js --jk",
     "quick-build": "webpack --mode production --config ./webpack.config.js && node ./scripts/clean.js",
     "rtk-build": "webpack --env='rtk' --mode production --config ./webpack.config.js && node ./scripts/rtk-copy.js",
     "jk-build": "webpack --mode production --config ./webpack.config.js && node ./scripts/jk-copy.js"
@@ -38,6 +39,7 @@
   "dependencies": {
     "@clubajax/base-component": "2.4.6",
     "@clubajax/dom": "2.8.6",
+    "@clubajax/format": "^0.5.36",
     "@clubajax/on": "2.2.2"
   },
   "peerDependencies": {
@@ -50,8 +52,7 @@
     "@babel/register": "^7.17.7",
     "@clubajax/custom-elements-polyfill": "^0.9.4",
     "@clubajax/form": "0.9.72",
-    "@clubajax/format": "^0.5.36",
-    "@clubajax/node-file-managment": "^0.1.5",
+    "@clubajax/node-file-managment": "^0.1.7",
     "@webpack-cli/serve": "^1.6.1",
     "babel-loader": "^8.2.5",
     "chai": "^4.3.6",

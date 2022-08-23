@@ -1,0 +1,10 @@
+registry=https://pkgs.dev.azure.com/janiking/FMS/_packaging/jk-npm-feed/npm/registry/
+always-auth=true
+; begin auth token
+//pkgs.dev.azure.com/janiking/FMS/_packaging/jk-npm-feed/npm/registry/:username=janiking
+//pkgs.dev.azure.com/janiking/FMS/_packaging/jk-npm-feed/npm/registry/:_password=NjZ4M3dkYWxpYXppZHpsbXljMnFtbGR2amllYXJkeGg0ZzQ0NmxqbnNhYnVkYnAzNXRwcQ==
+//pkgs.dev.azure.com/janiking/FMS/_packaging/jk-npm-feed/npm/registry/:email=slovelidge@janiking.com
+//pkgs.dev.azure.com/janiking/FMS/_packaging/jk-npm-feed/npm/:username=janiking
+//pkgs.dev.azure.com/janiking/FMS/_packaging/jk-npm-feed/npm/:_password=NjZ4M3dkYWxpYXppZHpsbXljMnFtbGR2amllYXJkeGg0ZzQ0NmxqbnNhYnVkYnAzNXRwcQ==
+//pkgs.dev.azure.com/janiking/FMS/_packaging/jk-npm-feed/npm/:email=slovelidge@janiking.com
+; end auth token

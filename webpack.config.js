@@ -27,11 +27,11 @@ const getExternals = () => {
     return isRTK
         ? []
         : [
-              '@clubajax/dom',
-              '@clubajax/on',
-              '@clubajax/base-component',
+              //   '@clubajax/dom',
+              //   '@clubajax/on',
+              //   '@clubajax/base-component',
               '@clubajax/form',
-              '@clubajax/format',
+              //   '@clubajax/format',
 
               // true imports:
               // '@clubajax/custom-elements-polyfill',

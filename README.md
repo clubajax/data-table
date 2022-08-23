@@ -65,7 +65,7 @@ The Schema can have several properties:
 -   **width**: The width of that column. Can be an interger (pixels) or a string (to use percentages).
 -   **columns**: An array of objects which represents the columns. Each object s a key-value pair; the `key` property should map to a property in a data object. The `label` is what displays in the table header. Columns can also contain an additional property:
 -   **columns.component**: An object that represents a widget that will make that column of cells editable.
--   **columns.component.type**: The type of widget that will appear in the cell. Note for all but `link`, a `peerDependency` of [@clubajax/form](https://github.com/clubajax/form).
+-   **columns.component.type**: The type of widget that will appear in the cell. Note for all but `link`, a `peerDependency` of [@clubajax/form](https://www.npmjs.com/package/@janiking/form).
 
 ### Component Types
 
