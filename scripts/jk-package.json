@@ -1,6 +1,6 @@
 {
   "name": "@janiking/data-table",
-  "version": "10.0.5",
+  "version": "10.0.6",
   "author": "Jani-King",
   "description": "Data Table Web Component",
   "main": "index.js",
