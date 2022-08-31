@@ -22,6 +22,10 @@ const Filterable = {
                 });
             };
 
+            col.filter.destroy = () => {
+                tooltip.destroy();
+            };
+
             col.filter.dataTable = this;
             col.filter.col = col;
 
@@ -41,6 +45,9 @@ const Filterable = {
             );
 
             tooltip.onDomReady(() => {
+                tooltip.popup.once('popup-open', () => {
+                    tooltip.position();
+                });
                 tooltip.popup.on('popup-open', () => {
                     if (col.filter.onOpen) {
                         col.filter.onOpen();
