@@ -1,5 +1,4 @@
-const formatters = require('@clubajax/format');
-const dom = require('@clubajax/dom');
+const { dom, formatters } = require('./libs');
 
 function bindMethods(object, context) {
     Object.keys(object).forEach((key) => {

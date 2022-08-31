@@ -1,12 +1,14 @@
-require('@clubajax/form');
-const BaseComponent = require('@clubajax/base-component');
-const dom = require('@clubajax/dom');
+window.IS_JK = false;
+
+console.log('JK:', window.IS_JK);
+console.log('JK2:', IS_JK2);
+
+const { BaseComponent, dom, formatters } = require('./libs');
 const sortable = require('./sortable');
 const clickable = require('./clickable');
 const selectable = require('./selectable');
 const filterable = require('./filterable');
 const createComponent = require('./component');
-const formatters = require('@clubajax/format');
 const util = require('./util');
 
 formatters.checkbox = {

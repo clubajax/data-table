@@ -1,5 +1,5 @@
+const { dom } = require('./libs');
 const util = require('./util');
-const dom = require('@clubajax/dom');
 
 const Filterable = {
     init() {

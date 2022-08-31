@@ -1,6 +1,5 @@
+const { on, dom } = require('./libs');
 const util = require('./util');
-const dom = require('@clubajax/dom');
-const on = require('@clubajax/on');
 
 const Clickable = {
     init(grid) {

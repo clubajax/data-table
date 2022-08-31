@@ -1,6 +1,4 @@
-const dom = require('@clubajax/dom');
-const on = require('@clubajax/on');
-const formatters = require('@clubajax/format');
+const { on, dom, formatters } = require('./libs');
 const { getFormatter, fromHtml, toHtml, isNull, classnames } = require('./util');
 //
 // helpers

@@ -1,8 +1,5 @@
-window.dom = require('@clubajax/dom');
-window.on = require('@clubajax/on');
-require('@clubajax/base-component');
-require('@clubajax/form');
-
+window.dom = require('../src/libs').dom;
+window.on = require('../src/libs').on;
 window.util = require('../src/util');
 
 require('./filter-components');

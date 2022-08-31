@@ -1,0 +1,12 @@
+{
+  "name": "@janiking-org/data-table",
+  "author": "janiking",
+  "version": "10.0.2",
+  "description": "Data Table Web Component",
+  "main": "index.js",
+  "dependencies": {
+    "@janiking-org/base-component": "^2.4.11",
+    "@janiking-org/dom": "^2.8.14",
+    "@janiking-org/on": "^2.2.8"
+  }
+}
