@@ -8,12 +8,16 @@ const CopyPlugin = require('copy-webpack-plugin');
 const ProgressPlugin = require('webpack/lib/ProgressPlugin');
 const DefinePlugin = require('webpack/lib/DefinePlugin');
 
-console.log('args', isRTK, args);
+const isJK = process.argv.includes('-jk');
+// console.log('argv', process.argv);
+console.log('\n\n\n\n\nargs.isJK', isJK);
+console.log('args.isRTK', isRTK);
 
 const DEV = args.mode === 'development';
 const distFolder = DEV ? './dist' : './build';
 const ROOT = __dirname;
 const DIST = path.resolve(ROOT, distFolder);
+const LIB = isJK ? '@janiking-org' : '@clubajax';
 
 let plugins = [
     new MiniCssExtractPlugin({
@@ -21,6 +25,9 @@ let plugins = [
         // all options are optional
         filename: 'data-table.css',
         ignoreOrder: false, // Enable to remove warnings about conflicting order
+    }),
+    new DefinePlugin({
+        IS_JK: JSON.stringify(isJK),
     }),
 ];
 
@@ -82,16 +89,12 @@ if (DEV) {
             patterns: [
                 { from: 'tests', to: 'tests' },
                 { from: 'assets', to: 'assets/src' },
-                { from: './node_modules/@janiking-org/form/form.css', to: 'assets/form.css' },
+                { from: `./node_modules/${LIB}/form/form.css`, to: 'assets/form.css' },
                 { from: './node_modules/mocha/mocha.css', to: 'assets/mocha.css' },
                 { from: './node_modules/mocha/mocha.js', to: 'assets/mocha.js' },
                 { from: './node_modules/chai/chai.js', to: 'assets/chai.js' },
                 { from: './node_modules/chai-spies/chai-spies.js', to: 'assets/chai-spies.js' },
             ],
-        }),
-        new DefinePlugin({
-            IS_JK: JSON.stringify(true),
-            IS_JK2: JSON.stringify(true),
         }),
     ];
 }

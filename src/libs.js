@@ -1,16 +1,21 @@
-console.log('LIBS.JK:', window.IS_JK);
-console.log('LIBS.JK2:', IS_JK2);
+console.log('LIBS.JK:', IS_JK);
 
-const BaseComponent = require('@janiking-org/base-component');
-const dom = require('@janiking-org/dom');
-const on = require('@janiking-org/on');
-const formatters = require('@janiking-org/format');
-const form = require('@janiking-org/form');
-
-module.exports = {
-    BaseComponent,
-    dom,
-    on,
-    form,
-    formatters,
-};
+if (IS_JK) {
+    console.log('EXPORT JK');
+    module.exports = {
+        BaseComponent: require('@janiking-org/base-component'),
+        dom: require('@janiking-org/dom'),
+        on: require('@janiking-org/on'),
+        form: require('@janiking-org/form'),
+        formatters: require('@janiking-org/format'),
+    };
+} else {
+    console.log('EXPORT CA');
+    module.exports = {
+        BaseComponent: require('@clubajax/base-component'),
+        dom: require('@clubajax/dom'),
+        on: require('@clubajax/on'),
+        form: require('@clubajax/form'),
+        formatters: require('@clubajax/format'),
+    };
+}

@@ -1,7 +1,4 @@
-window.IS_JK = false;
-
-console.log('JK:', window.IS_JK);
-console.log('JK2:', IS_JK2);
+console.log('DATA.JK:', window.IS_JK);
 
 const { BaseComponent, dom, formatters } = require('./libs');
 const sortable = require('./sortable');
