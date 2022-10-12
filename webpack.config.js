@@ -31,21 +31,20 @@ let plugins = [
     }),
 ];
 
-const getDeps = () => {
-    return isRTK
-        ? []
-        : [
-              '@clubajax/dom',
-              '@clubajax/on',
-              '@clubajax/base-component',
-              '@clubajax/form',
-              '@clubajax/format',
-
-              // true imports:
-              // '@clubajax/custom-elements-polyfill',
-              // '@clubajax/key-nav',
-              // '@clubajax/no-dash'
-          ];
+const getExternals = () => {
+    if (isRTK) {
+        return [];
+    }
+    if (isJK) {
+        return [
+            '@janiking-org/dom',
+            '@janiking-org/on',
+            '@janiking-org/base-component',
+            '@janiking-org/form',
+            '@janiking-org/format',
+        ];
+    }
+    return ['@clubajax/dom', '@clubajax/on', '@clubajax/base-component', '@clubajax/form', '@clubajax/format'];
 };
 
 if (DEV) {
@@ -121,7 +120,7 @@ module.exports = {
     // eval-source-map: has wrong line numbers, fastest
     // source-map: slow, org source, external
     devtool: DEV ? 'inline-source-map' : 'source-map',
-    externals: DEV ? [] : getDeps(),
+    externals: DEV ? [] : getExternals(),
     module: {
         rules: [
             {

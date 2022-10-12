@@ -529,6 +529,27 @@ describe('DataTable', function () {
         });
 
         describe('expandable', () => {
+            it.only('should expand rows with checkboxes', (done) => {
+                const data = getGeneralData();
+                console.log('data', data);
+                data.items[1].disabled = true;
+                const section = dom('section', { html: dom('label', { html: 'Expandable Rows' }) }, body);
+                const node = dom(
+                    'data-table',
+                    {
+                        schema: data.schemaExpandable,
+                        rows: data.items,
+                    },
+                    section,
+                );
+                const events = [];
+                onDomReady(node, function () {
+                    node.on('expanded', function (e) {
+                        console.log('expanded', e.detail);
+                    });
+                    done();
+                });
+            });
             it('should expand rows', (done) => {
                 const data = getGeneralData();
                 const section = dom('section', { html: dom('label', { html: 'Expandable Rows' }) }, body);
@@ -729,7 +750,6 @@ describe('DataTable', function () {
                         //
                         // Also:
                         // error if using checks/radio + selectable
-
                     });
                 });
             });
@@ -893,7 +913,7 @@ describe('DataTable', function () {
         });
 
         describe('filtering', function () {
-            it.only('should be filterable', function (done) {
+            it('should be filterable', function (done) {
                 // https://mvc-grid.azurewebsites.net/Column/CustomFilter
                 // TODO: Make filter test, works with and without sorting
                 const components = getFilterComponents();

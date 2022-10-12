@@ -1,7 +1,4 @@
-console.log('LIBS.JK:', IS_JK);
-
 if (IS_JK) {
-    console.log('EXPORT JK');
     module.exports = {
         BaseComponent: require('@janiking-org/base-component'),
         dom: require('@janiking-org/dom'),
@@ -10,7 +7,6 @@ if (IS_JK) {
         formatters: require('@janiking-org/format'),
     };
 } else {
-    console.log('EXPORT CA');
     module.exports = {
         BaseComponent: require('@clubajax/base-component'),
         dom: require('@clubajax/dom'),
